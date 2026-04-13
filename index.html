@@ -163,20 +163,20 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
   .hbtn{flex:none;padding:10px 20px}
 
   /* Two-column page layout */
-  .layout{display:grid;grid-template-columns:340px 1fr;gap:0;align-items:start}
+  .layout{display:grid;grid-template-columns:300px 1fr;gap:0;align-items:start}
 
   /* Sidebar (stat + search) */
-  .sidebar{position:sticky;top:0;padding:16px 0 16px 24px;max-height:100vh;overflow-y:auto}
+  .sidebar{position:sticky;top:0;padding:24px 20px 24px 32px;max-height:100vh;overflow-y:auto;border-right:1px solid var(--border)}
   .sidebar .stat{margin:0 0 12px 0}
   .sidebar .srch{margin:0}
 
   /* Main col (list) */
-  .main-col{padding:0 24px 0 0}
-  .lhead{padding:16px 0 8px}
-  .fbar{padding:0 0 10px}
+  .main-col{padding:0 32px;min-width:0}
+  .lhead{padding:24px 0 10px}
+  .fbar{padding:0 0 12px;overflow-x:visible;flex-wrap:wrap}
   .err{margin:0 0 10px}
-  .cards{padding:0 0 40px;display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start}
-  #loadMoreWrap{padding:0 0 20px}
+  .cards{padding:0 0 40px;display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}
+  #loadMoreWrap{padding:0 0 24px}
 
   /* PC: sheets become centered modals */
   .sheet{
@@ -205,10 +205,10 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 }
 
 @media(min-width:1280px){
-  .hd{padding:20px 40px}
-  .layout{grid-template-columns:380px 1fr}
-  .sidebar{padding-left:40px}
-  .main-col{padding-right:40px}
+  .hd{padding:20px 48px}
+  .layout{grid-template-columns:320px 1fr}
+  .sidebar{padding:24px 20px 24px 48px}
+  .main-col{padding:0 48px}
   .cards{grid-template-columns:1fr 1fr 1fr}
 }
 </style>
@@ -498,7 +498,7 @@ function openDetail(item){
   const color=SC[item.status]||'#999',bg=SBG[item.status]||'#F3F4F6',dday=getDday(item.deadline);
   $('dBadges').innerHTML=`<span class="sb ${SCLS[item.status]||'cls'}">${esc(item.status)}</span>${item.recommend?'<span class="rb" style="margin-left:6px">추천</span>':''}`;
   const ddayHtml=dday?`<div class="dday-box" style="background:${bg};border-color:${color}40"><span class="dday-lbl">마감까지</span><span class="dday-val" id="ddayTimer" style="color:${item.status==='마감'?'#9CA3AF':color}">${esc(dday)}</span></div>`:'';
-  const g2bUrl='https://www.g2b.go.kr:8101/ep/invitation/publish/bidInfoSrch.do?bidNtceNm='+encodeURIComponent(item.title||'')+'&fromDt=&toDt=&radOrgan=1&searchDiv=1';
+  const g2bUrl=`https://www.g2b.go.kr:8101/ep/invitation/publish/bidInfoSrch.do?bidNtceNo=${encodeURIComponent(item.id||'')}&bidNtceOrd=00&fromDt=&toDt=&radOrgan=1&searchDiv=1`;
   $('dBody').innerHTML=`
     <div class="dtitle">${esc(item.title||'—')}</div>
     <div class="dagency">${esc(item.agency||'—')}</div>
@@ -510,7 +510,8 @@ function openDetail(item){
       <div class="ibox"><div class="ilbl">지역</div><div class="ival">${esc(item.region||'—')}</div></div>
     </div>
     <div class="ibox" style="margin-bottom:16px"><div class="ilbl">공고번호</div><div class="ival" style="color:var(--faint);font-weight:500">${esc(item.id||'—')}</div></div>
-    <a href="${g2bUrl}" target="_blank" class="g2b-btn">나라장터에서 보기</a>
+    <a href="${g2bUrl}" target="_blank" rel="noopener" class="g2b-btn">나라장터에서 보기 (공고번호 검색)</a>
+    <a href="https://www.g2b.go.kr/pt/menu/selectSubFrame.do?framesrc=/pt/menu/frameTgong.do" target="_blank" rel="noopener" style="display:block;background:var(--soft);color:var(--muted);border:1px solid var(--border);border-radius:var(--r);padding:12px;text-align:center;font-size:13px;font-weight:600;text-decoration:none;margin-bottom:8px">나라장터 메인 바로가기</a>
     <button class="close-btn" onclick="closeDetail()">닫기</button>`;
   $('bd1').classList.add('open');$('sh1').classList.add('open');
   if(window._ti)clearInterval(window._ti);
