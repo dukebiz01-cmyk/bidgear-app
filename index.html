@@ -195,6 +195,9 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 </div>
 <div class="err" id="errBox"></div>
 <div class="cards" id="cardList"><div class="loading"><div class="spinner"></div>데이터 로딩중...</div></div>
+<div id="loadMoreWrap" style="padding:0 16px 20px;display:none">
+  <button id="loadMoreBtn" onclick="loadMore()" style="width:100%;background:#fff;border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:13px;font-weight:700;color:var(--muted);padding:14px;cursor:pointer">더보기</button>
+</div>
 
 <!-- Detail Sheet -->
 <div class="backdrop" id="bd1" onclick="closeDetail()"></div>
@@ -233,6 +236,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 
 <script>
 const PROXY='https://salsubid-proxy.onrender.com';
+let currentPage=1, totalCount=0, isLoadingMore=false;
 const SC={'마감임박':'#DC2626','D-3':'#E9A23B','진행중':'#16A34A','마감':'#9CA3AF'};
 const SBG={'마감임박':'#FEECEC','D-3':'#FFF7E8','진행중':'#EAF7EE','마감':'#F3F4F6'};
 const SCLS={'마감임박':'urg','D-3':'d3','진행중':'act','마감':'cls'};
@@ -299,16 +303,54 @@ function renderList(){
 
 async function loadAllBids(){
   setErr('');setLoading(true);searched=true;
+  currentPage=1; rawItems=[];
   try{
-    const res=await fetch(PROXY+'/api/bids?numOfRows=100');
+    const res=await fetch(PROXY+'/api/bids?numOfRows=100&pageNo=1');
     const data=await res.json();
     if(!data.ok)throw new Error(data.message||'조회 실패');
+    totalCount=data.total||0;
     const region=$('selRegion').value,equip=$('selEquip').value;
     rawItems=(data.items||[]).map(i=>{const status=getStatus(i.deadline);const recommend=status!=='마감'&&(i.title||'').includes(equip)&&((i.agency||'').includes(region)||(i.region||'').includes(region));return{...i,status,recommend};});
     allItems=rawItems;updateStats();currentFilter='전체';
-    document.querySelectorAll('.fbtn').forEach((b,i)=>b.classList.toggle('on',i===0));renderList();
+    document.querySelectorAll('.fbtn').forEach((b,i)=>b.classList.toggle('on',i===0));
+    renderList();
+    updateLoadMore();
   }catch(e){rawItems=[];allItems=[];updateStats();renderList();setErr('조회 실패: '+e.message);}
   finally{setLoading(false);}
+}
+
+async function loadMore(){
+  if(isLoadingMore) return;
+  isLoadingMore=true;
+  const btn=$('loadMoreBtn');
+  btn.textContent='불러오는 중...'; btn.disabled=true;
+  try{
+    currentPage++;
+    const res=await fetch(PROXY+'/api/bids?numOfRows=100&pageNo='+currentPage);
+    const data=await res.json();
+    if(!data.ok)throw new Error(data.message||'조회 실패');
+    const region=$('selRegion').value,equip=$('selEquip').value;
+    const newItems=(data.items||[]).map(i=>{const status=getStatus(i.deadline);const recommend=status!=='마감'&&(i.title||'').includes(equip)&&((i.agency||'').includes(region)||(i.region||'').includes(region));return{...i,status,recommend};});
+    rawItems=[...rawItems,...newItems];
+    const kw=($('kwInput').value||'').trim();
+    allItems=kw?rawItems.filter(i=>(i.title||'').includes(kw)):rawItems;
+    updateStats();renderList();
+    updateLoadMore();
+  }catch(e){setErr('추가 로드 실패: '+e.message);currentPage--;}
+  finally{isLoadingMore=false;btn.textContent='더보기';btn.disabled=false;}
+}
+
+function updateLoadMore(){
+  const wrap=$('loadMoreWrap');
+  const btn=$('loadMoreBtn');
+  if(!wrap)return;
+  const loaded=rawItems.length;
+  if(loaded<totalCount){
+    wrap.style.display='block';
+    btn.textContent=`더보기 (${loaded}/${totalCount}건)`;
+  } else {
+    wrap.style.display='none';
+  }
 }
 
 function doSearch(){applySearch();$('listHeader').scrollIntoView({behavior:'smooth',block:'start'});}
