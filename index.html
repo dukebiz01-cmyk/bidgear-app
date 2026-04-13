@@ -314,12 +314,14 @@ async function doSearch(){
   setLoading(true);
   searched=true;
   try{
-    const res=await fetch(PROXY+'/api/bids?keyword='+encodeURIComponent(kw)+'&numOfRows=30');
+    const res=await fetch(PROXY+'/api/bids?numOfRows=100');
     const data=await res.json();
     if(!data.ok) throw new Error(data.message||'조회 실패');
     const region=document.getElementById('selRegion').value;
     const equip=document.getElementById('selEquip').value;
-    allItems=(data.items||[]).map(i=>{
+    // 클라이언트 키워드 필터
+    const filtered=(data.items||[]).filter(i=>!kw||(i.title||'').includes(kw));
+    allItems=filtered.map(i=>{
       const status=getStatus(i.deadline);
       const recommend=status!=='마감'&&(i.title||'').includes(equip)&&((i.agency||'').includes(region)||(i.region||'').includes(region));
       return{...i,status,recommend};
