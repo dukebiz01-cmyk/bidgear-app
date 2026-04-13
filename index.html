@@ -101,6 +101,18 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .cls{background:#F3F4F6;color:#6B7280}
 .rb{background:#E6F7F5;color:var(--accent);border:1px solid rgba(47,183,164,.25);border-radius:4px;font-size:11px;font-weight:700;padding:3px 9px}
 .cmore{font-size:11px;color:var(--faint)}
+.score-badge{display:inline-flex;align-items:center;justify-content:center;border-radius:6px;font-size:11px;font-weight:800;padding:2px 8px;letter-spacing:.02em}
+.score-hi{background:#E6F7F5;color:#0F8A7A}
+.score-mid{background:#FFF7E8;color:#B45309}
+.score-lo{background:#FEF2F2;color:#B91C1C}
+.score-na{background:#F3F4F6;color:#6B7280}
+.bid-rec-box{background:linear-gradient(135deg,#EAF7F5 0%,#F0FBF9 100%);border:1px solid rgba(47,183,164,.3);border-radius:var(--r);padding:12px 14px;margin-bottom:12px}
+.bid-rec-title{font-size:10px;font-weight:800;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+.bid-rec-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.bid-rec-item{text-align:center}
+.bid-rec-lbl{font-size:9px;color:var(--faint);font-weight:700;margin-bottom:3px;letter-spacing:.04em}
+.bid-rec-val{font-size:13px;font-weight:800;color:var(--text)}
+.bid-rec-val.accent{color:var(--accent);font-size:15px}
 .ctitle{font-size:13px;font-weight:700;line-height:1.5;margin-bottom:4px;color:var(--text);
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.8em}
 .cagency{font-size:11px;color:var(--muted);margin-bottom:10px;
@@ -351,22 +363,85 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 <script>
 const PROXY='https://salsubid-proxy.onrender.com';
 let currentPage=1,totalCount=0,isLoadingMore=false;
-const SC={'마감임박':'#DC2626','D-3':'#E9A23B','진행중':'#16A34A','마감':'#9CA3AF'};
-const SBG={'마감임박':'#FEECEC','D-3':'#FFF7E8','진행중':'#EAF7EE','마감':'#F3F4F6'};
-const SCLS={'마감임박':'urg','D-3':'d3','진행중':'act','마감':'cls'};
+const SC={'마감임박':'#DC2626','D-1':'#DC2626','D-3':'#E9A23B','진행중':'#16A34A','마감':'#9CA3AF'};
+const SBG={'마감임박':'#FEECEC','D-1':'#FEECEC','D-3':'#FFF7E8','진행중':'#EAF7EE','마감':'#F3F4F6'};
+const SCLS={'마감임박':'urg','D-1':'urg','D-3':'d3','진행중':'act','마감':'cls'};
 let allItems=[],rawItems=[],currentFilter='전체',searched=false;
 const $=id=>document.getElementById(id);
 
+// ── 유틸 ──
 function toNum(v){const n=Number(String(v||0).replace(/[^\d.-]/g,''));return isFinite(n)?n:0;}
 function fmtAmt(a){const n=toNum(a);if(!n)return'—';if(n>=100000000)return(n/100000000).toFixed(1)+'억';if(n>=10000)return Math.round(n/10000).toLocaleString()+'만';return n.toLocaleString()+'원';}
 function fmtDL(s){if(!s)return'—';const t=String(s).trim();if(/^\d{14}$/.test(t))return t.slice(0,4)+'.'+t.slice(4,6)+'.'+t.slice(6,8)+' '+t.slice(8,10)+':'+t.slice(10,12);if(/^\d{4}-\d{2}-\d{2}/.test(t))return t.slice(0,16).replace('T',' ');return t;}
 function parseDL(s){if(!s)return null;const t=String(s).trim();let d;if(/^\d{14}$/.test(t))d=new Date(t.slice(0,4)+'-'+t.slice(4,6)+'-'+t.slice(6,8)+'T'+t.slice(8,10)+':'+t.slice(10,12)+':00+09:00');else if(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}/.test(t))d=new Date(t.replace(' ','T')+'+09:00');else d=new Date(t);return isNaN(d)?null:d;}
-function getStatus(s){const dt=parseDL(s);if(!dt)return'확인필요';const h=(dt-Date.now())/3600000;if(h<0)return'마감';if(h<24)return'마감임박';if(h<72)return'D-3';return'진행중';}
+function getStatus(s){const dt=parseDL(s);if(!dt)return'확인필요';const h=(dt-Date.now())/3600000;if(h<0)return'마감';if(h<24)return'마감임박';if(h<48)return'D-1';if(h<72)return'D-3';return'진행중';}
 function getDday(s){const dt=parseDL(s);if(!dt)return null;const diff=dt-Date.now();if(diff<0)return'마감됨';const ts=Math.floor(diff/1000),d=Math.floor(ts/86400),h=Math.floor((ts%86400)/3600),m=Math.floor((ts%3600)/60),sec=ts%60;if(d>0)return d+'일 '+h+'시간 '+m+'분';if(h>0)return h+'시간 '+m+'분 '+sec+'초';return m+'분 '+sec+'초';}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
+// ── ① 스코어링 엔진 ──
+const EQUIP_KEYWORDS=['살수차','굴착기','덤프트럭','포크레인','크레인','로더','노면청소','제설','급수차','물차','용수'];
+function getProfile(){
+  return{region:($('selRegion')||{value:'충북'}).value,equip:($('selEquip')||{value:'살수차'}).value};
+}
+function scoreItem(item){
+  const p=getProfile();
+  const title=item.title||'',agency=item.agency||'',region=item.region||'';
+  let s=0,detail={equip:0,region:0,urgency:0,amount:0};
+
+  // 장비 적합도 40점
+  if(title.includes(p.equip)){detail.equip=40;}
+  else if(EQUIP_KEYWORDS.some(k=>title.includes(k))){detail.equip=20;}
+
+  // 지역 적합도 25점
+  if(agency.includes(p.region)||region.includes(p.region)){detail.region=25;}
+  else if(agency.includes('전국')||!region){detail.region=10;}
+
+  // 마감 긴박도 15점 (진행중=15, D-3=12, D-1=8, 마감임박=5)
+  const urgMap={'진행중':15,'D-3':12,'D-1':8,'마감임박':5,'마감':0};
+  detail.urgency=urgMap[item.status]||0;
+
+  // 예산 적정성 20점 (500만~3억 = 만점)
+  const amt=toNum(item.amount);
+  if(amt>=5000000&&amt<=300000000)detail.amount=20;
+  else if(amt>=1000000&&amt<=500000000)detail.amount=12;
+  else if(amt>0)detail.amount=6;
+
+  s=detail.equip+detail.region+detail.urgency+detail.amount;
+  return{score:Math.min(s,100),detail};
+}
+function scoreClass(n){if(n>=75)return'score-hi';if(n>=50)return'score-mid';if(n>=30)return'score-lo';return'score-na';}
+function scoreLabel(n){if(n>=75)return'HIGH';if(n>=50)return'MID';if(n>=30)return'LOW';return'—';}
+
+// ── ② 투찰가 추천 엔진 ──
+function calcBidPrice(amount){
+  const base=toNum(amount);
+  if(!base)return null;
+  if(base<200000000){
+    // 적격심사 (2억 미만): 낙찰하한율 87.745%
+    const rate=0.87745;
+    return{method:'적격심사',rate:'87.745%',
+      min:Math.round(base*0.875),
+      rec:Math.round(base*rate),
+      max:Math.round(base*0.895)};
+  } else {
+    // 복수예비가 (2억 이상): 통계적 범위
+    return{method:'복수예비가',rate:'82~88% 추정',
+      min:Math.round(base*0.820),
+      rec:Math.round(base*0.851),
+      max:Math.round(base*0.880)};
+  }
+}
+
+// ── 아이템 가공 ──
+function processItem(i){
+  const status=getStatus(i.deadline);
+  const {score,detail}=scoreItem({...i,status});
+  const recommend=status!=='마감'&&score>=55;
+  return{...i,status,score,detail,recommend};
+}
+
 function updateStats(){
-  const t=allItems.length,u=allItems.filter(i=>i.status==='마감임박').length;
+  const t=allItems.length,u=allItems.filter(i=>i.status==='마감임박'||i.status==='D-1').length;
   const d=allItems.filter(i=>i.status==='D-3').length,a=allItems.filter(i=>i.status==='진행중').length;
   const c=allItems.filter(i=>i.status==='마감').length;
   const b=allItems.reduce((s,i)=>s+toNum(i.amount),0),r=allItems.filter(i=>i.recommend).length;
@@ -386,23 +461,26 @@ function updateStats(){
 
 function getFiltered(){
   if(currentFilter==='추천')return allItems.filter(i=>i.recommend);
-  if(currentFilter==='검토')return allItems.filter(i=>i.status==='진행중'||i.status==='D-3');
+  if(currentFilter==='검토')return allItems.filter(i=>i.status==='진행중'||i.status==='D-3'||i.status==='D-1');
   if(currentFilter==='제외')return allItems.filter(i=>i.status==='마감');
-  if(currentFilter==='마감임박')return allItems.filter(i=>i.status==='마감임박');
+  if(currentFilter==='마감임박')return allItems.filter(i=>i.status==='마감임박'||i.status==='D-1');
   return allItems;
 }
 function setFilter(f,btn){currentFilter=f;document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));if(btn)btn.classList.add('on');renderList();}
 
 function renderList(){
-  const items=getFiltered();
+  const items=getFiltered().slice().sort((a,b)=>b.score-a.score);
   $('countBadge').textContent=items.length+'건';
   if(!searched){$('cardList').innerHTML='<div class="loading"><div class="spinner"></div>데이터 로딩중...</div>';return;}
   if(!items.length){$('cardList').innerHTML='<div class="empty">조건에 맞는 공고가 없습니다</div>';return;}
   $('cardList').innerHTML=items.map(item=>`
     <div class="card${item.recommend?' rec':''}">
       <div class="ctop">
-        <div class="cbadges"><span class="sb ${SCLS[item.status]||'cls'}">${esc(item.status)}</span>${item.recommend?'<span class="rb">추천</span>':''}</div>
-        <span class="cmore">상세 ›</span>
+        <div class="cbadges">
+          <span class="sb ${SCLS[item.status]||'cls'}">${esc(item.status)}</span>
+          ${item.recommend?'<span class="rb">추천</span>':''}
+        </div>
+        <span class="score-badge ${scoreClass(item.score)}">${item.score}pt</span>
       </div>
       <div class="ctitle">${esc(item.title||'—')}</div>
       <div class="cagency">${esc(item.agency||'—')}</div>
@@ -433,8 +511,7 @@ async function loadAllBids(retry=0){
     const data=await res.json();
     if(!data.ok)throw new Error(data.message||'조회 실패');
     totalCount=data.total||0;
-    const region=$('selRegion').value,equip=$('selEquip').value;
-    rawItems=(data.items||[]).map(i=>{const status=getStatus(i.deadline);const recommend=status!=='마감'&&(i.title||'').includes(equip)&&((i.agency||'').includes(region)||(i.region||'').includes(region));return{...i,status,recommend};});
+    rawItems=(data.items||[]).map(processItem);
     allItems=rawItems;updateStats();currentFilter='전체';
     document.querySelectorAll('.fbtn').forEach((b,i)=>b.classList.toggle('on',i===0));
     renderList();updateLoadMore();
@@ -465,11 +542,10 @@ async function loadMore(){
   btn.textContent='불러오는 중...';btn.disabled=true;
   try{
     currentPage++;
-    const res=await fetch(PROXY+'/api/bids?numOfRows=100&pageNo='+currentPage);
+    const res=await fetchWithTO(PROXY+'/api/bids?numOfRows=100&pageNo='+currentPage);
     const data=await res.json();
     if(!data.ok)throw new Error(data.message||'조회 실패');
-    const region=$('selRegion').value,equip=$('selEquip').value;
-    const newItems=(data.items||[]).map(i=>{const status=getStatus(i.deadline);const recommend=status!=='마감'&&(i.title||'').includes(equip)&&((i.agency||'').includes(region)||(i.region||'').includes(region));return{...i,status,recommend};});
+    const newItems=(data.items||[]).map(processItem);
     rawItems=[...rawItems,...newItems];
     const kw=($('kwInput').value||'').trim();
     allItems=kw?rawItems.filter(i=>(i.title||'').includes(kw)):rawItems;
@@ -499,13 +575,47 @@ function setErr(msg){const e=$('errBox');e.textContent=msg;e.style.display=msg?'
 
 function openDetail(item){
   const color=SC[item.status]||'#999',bg=SBG[item.status]||'#F3F4F6',dday=getDday(item.deadline);
-  $('dBadges').innerHTML=`<span class="sb ${SCLS[item.status]||'cls'}">${esc(item.status)}</span>${item.recommend?'<span class="rb" style="margin-left:6px">추천</span>':''}`;
+  const bp=calcBidPrice(item.amount);
+  const sc=item.score||0;
+
+  $('dBadges').innerHTML=`
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+      <span class="sb ${SCLS[item.status]||'cls'}">${esc(item.status)}</span>
+      ${item.recommend?'<span class="rb">추천</span>':''}
+      <span class="score-badge ${scoreClass(sc)}">${sc}pt ${scoreLabel(sc)}</span>
+    </div>`;
+
   const ddayHtml=dday?`<div class="dday-box" style="background:${bg};border-color:${color}40"><span class="dday-lbl">마감까지</span><span class="dday-val" id="ddayTimer" style="color:${item.status==='마감'?'#9CA3AF':color}">${esc(dday)}</span></div>`:'';
+
+  const bpHtml=bp?`
+    <div class="bid-rec-box">
+      <div class="bid-rec-title">💡 투찰가 추천 · ${bp.method} (${bp.rate})</div>
+      <div class="bid-rec-grid">
+        <div class="bid-rec-item"><div class="bid-rec-lbl">최저선</div><div class="bid-rec-val">${fmtAmt(bp.min)}</div></div>
+        <div class="bid-rec-item"><div class="bid-rec-lbl">추천가</div><div class="bid-rec-val accent">${fmtAmt(bp.rec)}</div></div>
+        <div class="bid-rec-item"><div class="bid-rec-lbl">안전선</div><div class="bid-rec-val">${fmtAmt(bp.max)}</div></div>
+      </div>
+    </div>`:'';
+
+  const scoreHtml=`
+    <div style="background:var(--soft);border-radius:var(--r);padding:10px 14px;margin-bottom:12px">
+      <div style="font-size:10px;font-weight:800;color:var(--faint);letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px">적합도 분석</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <div style="font-size:12px;color:var(--muted)">🔧 장비 적합도 <b style="color:var(--text);float:right">${item.detail?.equip||0}/40</b></div>
+        <div style="font-size:12px;color:var(--muted)">📍 지역 적합도 <b style="color:var(--text);float:right">${item.detail?.region||0}/25</b></div>
+        <div style="font-size:12px;color:var(--muted)">⏰ 마감 긴박도 <b style="color:var(--text);float:right">${item.detail?.urgency||0}/15</b></div>
+        <div style="font-size:12px;color:var(--muted)">💰 예산 적정성 <b style="color:var(--text);float:right">${item.detail?.amount||0}/20</b></div>
+      </div>
+    </div>`;
+
   const g2bUrl=`https://www.g2b.go.kr:8101/ep/invitation/publish/bidInfoSrch.do?bidNtceNo=${encodeURIComponent(item.id||'')}&bidNtceOrd=00&fromDt=&toDt=&radOrgan=1&searchDiv=1`;
+
   $('dBody').innerHTML=`
     <div class="dtitle">${esc(item.title||'—')}</div>
     <div class="dagency">${esc(item.agency||'—')}</div>
     ${ddayHtml}
+    ${bpHtml}
+    ${scoreHtml}
     <div class="igrid">
       <div class="ibox"><div class="ilbl">기초금액</div><div class="ival big">${esc(fmtAmt(item.amount))}</div></div>
       <div class="ibox"><div class="ilbl">마감일시</div><div class="ival">${esc(fmtDL(item.deadline))}</div></div>
@@ -513,9 +623,10 @@ function openDetail(item){
       <div class="ibox"><div class="ilbl">지역</div><div class="ival">${esc(item.region||'—')}</div></div>
     </div>
     <div class="ibox" style="margin-bottom:16px"><div class="ilbl">공고번호</div><div class="ival" style="color:var(--faint);font-weight:500">${esc(item.id||'—')}</div></div>
-    <a href="${g2bUrl}" target="_blank" rel="noopener" class="g2b-btn">나라장터에서 보기 (공고번호 검색)</a>
-    <a href="https://www.g2b.go.kr/pt/menu/selectSubFrame.do?framesrc=/pt/menu/frameTgong.do" target="_blank" rel="noopener" style="display:block;background:var(--soft);color:var(--muted);border:1px solid var(--border);border-radius:var(--r);padding:12px;text-align:center;font-size:13px;font-weight:600;text-decoration:none;margin-bottom:8px">나라장터 메인 바로가기</a>
+    <a href="${g2bUrl}" target="_blank" rel="noopener" class="g2b-btn">나라장터에서 보기</a>
+    <a href="https://www.g2b.go.kr/pt/menu/selectSubFrame.do?framesrc=/pt/menu/frameTgong.do" target="_blank" rel="noopener" style="display:block;background:var(--soft);color:var(--muted);border:1px solid var(--border);border-radius:var(--r);padding:12px;text-align:center;font-size:13px;font-weight:600;text-decoration:none;margin-bottom:8px">나라장터 메인</a>
     <button class="close-btn" onclick="closeDetail()">닫기</button>`;
+
   $('bd1').classList.add('open');$('sh1').classList.add('open');
   if(window._ti)clearInterval(window._ti);
   const dl=item.deadline;
@@ -535,9 +646,9 @@ function openProfile(){$('bd3').classList.add('open');$('sh3').classList.add('op
 function closeProfile(){$('bd3').classList.remove('open');$('sh3').classList.remove('open');}
 function updateProfileSummary(){const r=$('selRegion').value,e=$('selEquip').value,s=$('selScale').value;const t=$('profileSummary');if(t)t.textContent=r+' · '+e+' · '+s;}
 function applyProfile(){
-  closeProfile();const region=$('selRegion').value,equip=$('selEquip').value;
-  const calc=i=>({...i,recommend:i.status!=='마감'&&(i.title||'').includes(equip)&&((i.agency||'').includes(region)||(i.region||'').includes(region))});
-  rawItems=rawItems.map(calc);allItems=allItems.map(calc);
+  closeProfile();
+  rawItems=rawItems.map(processItem);
+  allItems=allItems.map(processItem);
   updateStats();renderList();updateProfileSummary();
 }
 
