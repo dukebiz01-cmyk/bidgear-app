@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
-<title>BidGear - 나라장터 입찰공고</title>
+<title>BIDGEAR PRO - 최강입찰엔진</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -17,30 +17,39 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:#1C1C1C;fo
 /* Header */
 .header{padding:16px 16px 12px;background:var(--bg)}
 .header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
-.ai-badge{background:var(--orange);color:#fff;font-size:11px;font-weight:700;border-radius:20px;padding:4px 12px;letter-spacing:.06em;display:flex;align-items:center;gap:5px}
+.ai-badge{background:var(--orange);color:#fff;font-size:11px;font-weight:800;border-radius:20px;padding:5px 14px;letter-spacing:.1em;display:flex;align-items:center;gap:6px}
 .ai-dot{width:7px;height:7px;border-radius:50%;background:#fff;display:inline-block}
 .hist-btn{background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:7px 14px;font-family:inherit;font-size:13px;color:#444;cursor:pointer;display:flex;align-items:center;gap:5px}
 .app-title{font-size:22px;font-weight:800;letter-spacing:-.02em}
-.divider{height:1px;background:var(--border)}
+.divider{height:1px;background:#E8E6E0}
 
 /* Stats */
-.stats{padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.stat-card{background:var(--card);border-radius:14px;padding:12px 14px 10px;min-height:72px;display:flex;flex-direction:column;justify-content:space-between}
-.stat-label{font-size:12px;color:#888;margin-bottom:4px}
-.stat-bar{width:20px;height:3px;border-radius:2px}
-.stat-val{font-size:18px;font-weight:800}
-.stat-line{width:100%;height:2px;border-radius:2px;opacity:.35;margin-top:8px}
+.stats{padding:14px 16px 10px}
+.stat-overview{background:var(--card);border-radius:14px;padding:14px 16px}
+.stat-total-row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px}
+.stat-total-num{font-size:28px;font-weight:900;letter-spacing:-.03em;color:#1C1C1C}
+.stat-total-sub{font-size:11px;color:#999;font-weight:600;letter-spacing:.04em}
+.stat-seg-bar{display:flex;height:8px;border-radius:6px;overflow:hidden;gap:2px;margin-bottom:12px}
+.stat-seg{border-radius:4px;transition:width .5s ease;min-width:4px}
+.stat-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px}
+.stat-item{text-align:center}
+.stat-item-val{font-size:16px;font-weight:900;letter-spacing:-.02em}
+.stat-item-lbl{font-size:10px;color:#999;font-weight:600;letter-spacing:.03em;margin-top:2px}
+.stat-bottom{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.stat-bottom-item{background:#fff;border-radius:10px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center}
+.stat-bottom-lbl{font-size:11px;color:#999;font-weight:600;letter-spacing:.03em}
+.stat-bottom-val{font-size:13px;font-weight:800;color:#1C1C1C}
 
 /* Search */
 .search-wrap{padding:0 16px 14px}
 .search-row{display:flex;gap:8px;margin-bottom:12px}
-.search-input{flex:1;background:#fff;border:1.5px solid var(--border);border-radius:12px;font-family:inherit;font-size:15px;color:#1C1C1C;padding:13px 16px;outline:none;transition:border-color .2s}
+.search-input{flex:1;background:#fff;border:1.5px solid var(--border);border-radius:12px;font-family:inherit;font-size:14px;font-weight:500;color:#1C1C1C;padding:13px 16px;outline:none;transition:border-color .2s}
 .search-input:focus{border-color:var(--orange)}
-.search-btn{background:var(--orange);color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:15px;font-weight:700;padding:13px 20px;cursor:pointer;white-space:nowrap;min-width:90px;transition:opacity .2s}
+.search-btn{background:var(--orange);color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:13px;font-weight:800;padding:13px 20px;cursor:pointer;white-space:nowrap;min-width:80px;transition:opacity .2s;letter-spacing:.08em}
 .search-btn:disabled{opacity:.7;cursor:default}
 .quick-wrap{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .quick-label{font-size:12px;color:#888;flex-shrink:0}
-.quick-btn{background:#fff;color:#444;border:1.5px solid var(--border);border-radius:20px;font-family:inherit;font-size:13px;padding:5px 14px;cursor:pointer;transition:all .15s}
+.quick-btn{background:#fff;color:#555;border:1.5px solid var(--border);border-radius:20px;font-family:inherit;font-size:12px;font-weight:600;padding:6px 14px;cursor:pointer;transition:all .15s;letter-spacing:.01em}
 .quick-btn.active{background:var(--orange);color:#fff;border-color:var(--orange);font-weight:600}
 
 /* Profile */
@@ -55,7 +64,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:#1C1C1C;fo
 .list-title{font-size:15px;font-weight:700}
 .count-badge{background:var(--orange);color:#fff;border-radius:20px;font-size:12px;font-weight:700;padding:3px 12px}
 .filter-bar{padding:0 16px 12px;display:flex;gap:7px;overflow-x:auto;-webkit-overflow-scrolling:touch}
-.filter-btn{background:#fff;color:#555;border:1.5px solid var(--border);border-radius:20px;font-family:inherit;font-size:13px;padding:6px 16px;cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0}
+.filter-btn{background:#fff;color:#666;border:1.5px solid var(--border);border-radius:20px;font-family:inherit;font-size:12px;font-weight:600;padding:7px 16px;cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0;letter-spacing:.02em}
 .filter-btn.active{background:var(--orange);color:#fff;border-color:var(--orange);font-weight:600}
 .error-box{margin:0 16px 12px;background:#FEE2E2;border:1px solid #FECACA;border-radius:10px;color:#B91C1C;font-size:12px;padding:10px 14px;display:none}
 .cards{padding:0 16px 80px;display:flex;flex-direction:column;gap:10px}
@@ -69,7 +78,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:#1C1C1C;fo
 .status-badge{border-radius:8px;font-size:11px;font-weight:700;padding:2px 9px}
 .rec-badge{background:#FFF3E0;color:var(--orange);border:1px solid rgba(245,99,26,.4);border-radius:8px;font-size:11px;font-weight:700;padding:2px 9px}
 .card-more{font-size:11px;color:#bbb}
-.card-title{font-size:13px;font-weight:600;line-height:1.5;margin-bottom:4px}
+.card-title{font-size:13px;font-weight:700;line-height:1.55;margin-bottom:4px;letter-spacing:-.01em}
 .card-agency{font-size:12px;color:#888;margin-bottom:10px}
 .meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:7px}
 .meta-box{background:var(--card);border-radius:9px;padding:8px 11px}
@@ -114,28 +123,69 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:#1C1C1C;fo
 .hist-del{background:none;border:none;color:#bbb;font-family:inherit;font-size:12px;cursor:pointer;padding:4px 8px}
 .hist-empty{padding:30px 20px;text-align:center;color:#aaa;font-size:13px}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 </head>
 <body>
 
 <div class="header">
   <div class="header-top">
-    <div class="ai-badge"><span class="ai-dot"></span>AI ENGINE ACTIVE</div>
-    <button class="hist-btn" onclick="openHist()">📊 이력</button>
+    <div class="ai-badge"><span class="ai-dot"></span>BID-AI</div>
   </div>
-  <div class="app-title">BidGear 🚛🏗</div>
+  <div style="font-size:26px;font-weight:900;letter-spacing:-.03em;margin:4px 0 12px">
+    BIDGEAR <span style="color:var(--orange)">PRO</span>
+  </div>
+  <div style="display:flex;gap:8px">
+    <button onclick="openProfile()" style="flex:1;background:#fff;border:1.5px solid var(--border);border-radius:10px;font-family:inherit;font-size:12px;font-weight:700;color:#1C1C1C;padding:9px 12px;cursor:pointer;letter-spacing:.02em">
+      입찰자격증명
+    </button>
+    <button onclick="openHist()" style="background:#fff;border:1.5px solid var(--border);border-radius:10px;font-family:inherit;font-size:12px;font-weight:600;color:#555;padding:9px 16px;cursor:pointer;letter-spacing:.02em">
+      <span style="font-size:12px;font-weight:700;letter-spacing:.04em">조회기록</span>
+    </button>
+  </div>
 </div>
 <div class="divider"></div>
 
-<div class="stats" id="statsGrid"></div>
+<div class="stats">
+  <div class="stat-overview">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div>
+        <div class="stat-total-num" id="statTotalNum">—</div>
+        <div class="stat-total-sub">총 공고</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:13px;font-weight:800;color:#F5631A" id="statRecNum">—</div>
+        <div style="font-size:10px;color:#999;font-weight:600;letter-spacing:.03em;margin-top:2px">추천투찰</div>
+      </div>
+    </div>
+    <!-- 차트 영역 -->
+    <div style="display:flex;gap:12px;align-items:flex-end;margin-bottom:12px">
+      <!-- 도넛 차트 -->
+      <div style="position:relative;width:100px;height:100px;flex-shrink:0">
+        <canvas id="donutChart" width="100" height="100"></canvas>
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none">
+          <div id="donutCenter" style="font-size:18px;font-weight:900;color:#1C1C1C;line-height:1">—</div>
+          <div style="font-size:9px;color:#999;font-weight:600;letter-spacing:.03em">진행중</div>
+        </div>
+      </div>
+      <!-- 수직 바 차트 -->
+      <div style="flex:1;height:100px">
+        <canvas id="barChart"></canvas>
+      </div>
+    </div>
+    <!-- 범례 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px" id="statLegend"></div>
+  </div>
+</div>
 
 <div class="search-wrap">
   <div class="search-row">
-    <input class="search-input" id="kwInput" value="살수차" placeholder="공고 키워드 입력" onkeydown="if(event.key==='Enter')doSearch()"/>
-    <button class="search-btn" id="searchBtn" onclick="doSearch()">🔍 검색</button>
+    <input class="search-input" id="kwInput" value="" placeholder="공고명 입력 후 검색" placeholder="공고 키워드 입력" onkeydown="if(event.key==='Enter')doSearch()"/>
+    <button class="search-btn" id="searchBtn" onclick="doSearch()">검색</button>
   </div>
   <div class="quick-wrap">
-    <span class="quick-label">빠른검색</span>
-    <button class="quick-btn active" onclick="quickSearch(this,'살수차')">살수차</button>
+    <span class="quick-label" style="font-size:11px;font-weight:600;letter-spacing:.03em;color:#999">QUICK</span>
+    <button class="quick-btn active" id="btnAll" onclick="quickSearch(this,'')">전체</button>
+    <button class="quick-btn" onclick="quickSearch(this,'살수차')">살수차</button>
     <button class="quick-btn" onclick="quickSearch(this,'굴착기')">굴착기</button>
     <button class="quick-btn" onclick="quickSearch(this,'덤프트럭')">덤프트럭</button>
     <button class="quick-btn" onclick="quickSearch(this,'포크레인')">포크레인</button>
@@ -146,13 +196,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:#1C1C1C;fo
   </div>
 </div>
 
-<div class="profile-wrap">
-  <div class="profile-label">⚙ 자사 프로필</div>
-  <div class="sel-wrap"><select id="selRegion"><option>충북</option><option>충남</option><option>경북</option><option>경남</option><option>전북</option><option>전남</option><option>경기</option><option>강원</option><option>서울</option><option>부산</option></select><span class="sel-arrow">▼</span></div>
-  <div class="sel-wrap"><select id="selEquip"><option>살수차</option><option>굴착기</option><option>덤프트럭</option><option>포크레인</option><option>크레인</option><option>로더</option></select><span class="sel-arrow">▼</span></div>
-  <div class="sel-wrap"><select id="selScale"><option>소형 운영사</option><option selected>중형 운영사</option><option>대형 운영사</option></select><span class="sel-arrow">▼</span></div>
-  <div class="sel-wrap"><select id="selResp"><option>마감대응 낮음</option><option selected>마감대응 보통</option><option>마감대응 높음</option></select><span class="sel-arrow">▼</span></div>
-</div>
+
 <div class="divider"></div>
 
 <div class="list-header" id="listHeader">
@@ -177,6 +221,38 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:#1C1C1C;fo
     <button class="sheet-close" onclick="closeDetail()">×</button>
   </div>
   <div class="sheet-body" id="detailBody"></div>
+</div>
+
+<!-- Profile Sheet -->
+<div class="backdrop" id="profileBackdrop" onclick="closeProfile()"></div>
+<div class="hist-sheet" id="profileSheet" style="max-height:70vh">
+  <div class="hist-head">
+    <span class="hist-title">입찰자격증명</span>
+    <button class="sheet-close" onclick="closeProfile()">×</button>
+  </div>
+  <div style="padding:16px;display:flex;flex-direction:column;gap:10px">
+    <div id="credentialSummary" style="background:#F8F7F3;border-radius:10px;padding:12px 14px;margin-bottom:4px">
+      <div style="font-size:10px;color:#999;font-weight:600;letter-spacing:.05em;margin-bottom:6px">현재 설정</div>
+      <div id="credentialSummaryText" style="font-size:13px;font-weight:700;color:#1C1C1C">충북 · 살수차 · 중형 운영사</div>
+    </div>
+    <div>
+      <div style="font-size:12px;color:#888;margin-bottom:6px">지역</div>
+      <div class="sel-wrap" style="margin-bottom:0"><select id="selRegion" onchange="updateProfileBtn()"><option>충북</option><option>충남</option><option>경북</option><option>경남</option><option>전북</option><option>전남</option><option>경기</option><option>강원</option><option>서울</option><option>부산</option></select><span class="sel-arrow">▼</span></div>
+    </div>
+    <div>
+      <div style="font-size:12px;color:#888;margin-bottom:6px">주력 장비</div>
+      <div class="sel-wrap" style="margin-bottom:0"><select id="selEquip" onchange="updateProfileBtn()"><option>살수차</option><option>굴착기</option><option>덤프트럭</option><option>포크레인</option><option>크레인</option><option>로더</option></select><span class="sel-arrow">▼</span></div>
+    </div>
+    <div>
+      <div style="font-size:12px;color:#888;margin-bottom:6px">운영 규모</div>
+      <div class="sel-wrap" style="margin-bottom:0"><select id="selScale"><option>소형 운영사</option><option selected>중형 운영사</option><option>대형 운영사</option></select><span class="sel-arrow">▼</span></div>
+    </div>
+    <div>
+      <div style="font-size:12px;color:#888;margin-bottom:6px">마감 대응</div>
+      <div class="sel-wrap" style="margin-bottom:0"><select id="selResp"><option>마감대응 낮음</option><option selected>마감대응 보통</option><option>마감대응 높음</option></select><span class="sel-arrow">▼</span></div>
+    </div>
+    <button onclick="applyProfile()" style="background:#F5631A;color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:14px;font-weight:700;padding:14px;cursor:pointer;margin-top:4px">적용하기</button>
+  </div>
 </div>
 
 <!-- History Sheet -->
@@ -239,26 +315,81 @@ function getDday(s){
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 // 통계
+let donutChartInst=null, barChartInst=null;
 function updateStats(){
-  const urgent=allItems.filter(i=>i.status==='마감임박').length;
-  const d3=allItems.filter(i=>i.status==='D-3').length;
-  const active=allItems.filter(i=>i.status==='진행중').length;
-  const budget=allItems.reduce((s,i)=>s+toNum(i.amount),0);
-  const rec=allItems.filter(i=>i.recommend).length;
-  const stats=[
-    {label:'전체',val:allItems.length||'—',color:'#F5631A'},
-    {label:'마감임박',val:urgent||'—',color:'#E53E3E'},
-    {label:'D-3',val:d3||'—',color:'#9C8C00'},
-    {label:'진행중',val:active||'—',color:'#2E7D52'},
-    {label:'총 예산',val:budget?fmtAmt(budget):'—',color:'#F5631A'},
-    {label:'추천투찰',val:rec||'—',color:'#2E7D52'},
-  ];
-  document.getElementById('statsGrid').innerHTML = stats.map(s=>`
-    <div class="stat-card">
-      <div><div class="stat-label">${s.label}</div><div class="stat-bar" style="background:${s.color}"></div></div>
-      <div class="stat-val">${s.val}</div>
-      <div class="stat-line" style="background:${s.color}"></div>
-    </div>`).join('');
+  const total  = allItems.length;
+  const urgent = allItems.filter(i=>i.status==='마감임박').length;
+  const d3     = allItems.filter(i=>i.status==='D-3').length;
+  const active = allItems.filter(i=>i.status==='진행중').length;
+  const closed = allItems.filter(i=>i.status==='마감').length;
+  const budget = allItems.reduce((s,i)=>s+toNum(i.amount),0);
+  const rec    = allItems.filter(i=>i.recommend).length;
+
+  // 숫자 업데이트
+  const tn=document.getElementById('statTotalNum');
+  const rn=document.getElementById('statRecNum');
+  if(tn) tn.textContent=total||'—';
+  if(rn) rn.textContent=rec?rec+'건 추천':'추천 없음';
+
+  const dc=document.getElementById('donutCenter');
+  if(dc) dc.textContent=active||'0';
+
+  // 범례
+  const leg=document.getElementById('statLegend');
+  if(leg){
+    const items=[
+      {label:'마감임박',val:urgent,color:'#E53E3E'},
+      {label:'D-3',val:d3,color:'#9C8C00'},
+      {label:'진행중',val:active,color:'#2E7D52'},
+      {label:'마감',val:closed,color:'#CBD5E0'},
+    ];
+    leg.innerHTML=items.map(i=>`
+      <div style="display:flex;align-items:center;gap:6px;background:#fff;border-radius:8px;padding:7px 10px">
+        <div style="width:8px;height:8px;border-radius:50%;background:${i.color};flex-shrink:0"></div>
+        <span style="font-size:11px;color:#666;font-weight:600;letter-spacing:.02em">${i.label}</span>
+        <span style="font-size:13px;font-weight:900;color:#1C1C1C;margin-left:auto">${i.val}</span>
+      </div>`).join('');
+  }
+
+  // 도넛 차트
+  const donutEl=document.getElementById('donutChart');
+  if(donutEl){
+    const donutData=total?[urgent,d3,active,closed]:[1];
+    const donutColors=total?['#E53E3E','#9C8C00','#2E7D52','#E8E6E0']:['#E8E6E0'];
+    if(donutChartInst){ donutChartInst.destroy(); }
+    donutChartInst=new Chart(donutEl,{
+      type:'doughnut',
+      data:{datasets:[{data:donutData,backgroundColor:donutColors,borderWidth:0,hoverOffset:0}]},
+      options:{cutout:'72%',plugins:{legend:{display:false},tooltip:{enabled:false}},animation:{duration:600}}
+    });
+  }
+
+  // 수직 바 차트
+  const barEl=document.getElementById('barChart');
+  if(barEl){
+    if(barChartInst){ barChartInst.destroy(); }
+    barChartInst=new Chart(barEl,{
+      type:'bar',
+      data:{
+        labels:['마감임박','D-3','진행중','마감'],
+        datasets:[{
+          data:[urgent,d3,active,closed],
+          backgroundColor:['#E53E3E','#9C8C00','#2E7D52','#CBD5E0'],
+          borderRadius:4,
+          borderSkipped:false
+        }]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{enabled:false}},
+        scales:{
+          x:{grid:{display:false},ticks:{font:{size:9,weight:'600'},color:'#999'}},
+          y:{display:false,beginAtZero:true}
+        },
+        animation:{duration:600}
+      }
+    });
+  }
 }
 
 // 필터
@@ -307,9 +438,9 @@ function renderList(){
   });
 }
 
-// 검색
-async function doSearch(){
-  const kw=(document.getElementById('kwInput').value||'').trim()||'살수차';
+// 전체 공고 로드 (앱 시작시)
+let rawItems = [];
+async function loadAllBids(){
   setError('');
   setLoading(true);
   searched=true;
@@ -319,36 +450,52 @@ async function doSearch(){
     if(!data.ok) throw new Error(data.message||'조회 실패');
     const region=document.getElementById('selRegion').value;
     const equip=document.getElementById('selEquip').value;
-    // 클라이언트 키워드 필터
-    const filtered=(data.items||[]).filter(i=>!kw||(i.title||'').includes(kw));
-    allItems=filtered.map(i=>{
+    rawItems=(data.items||[]).map(i=>{
       const status=getStatus(i.deadline);
       const recommend=status!=='마감'&&(i.title||'').includes(equip)&&((i.agency||'').includes(region)||(i.region||'').includes(region));
       return{...i,status,recommend};
     });
+    // 초기 로드시 전체 표시
+    allItems=rawItems;
     updateStats();
     currentFilter='전체';
     document.querySelectorAll('.filter-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
     renderList();
-    addHistory(kw);
-    if(!allItems.length) setError('"'+kw+'" 검색 결과가 없습니다');
-    document.getElementById('listHeader').scrollIntoView({behavior:'smooth',block:'start'});
   }catch(e){
-    allItems=[]; updateStats(); renderList();
+    rawItems=[]; allItems=[]; updateStats(); renderList();
     setError('조회 실패: '+e.message);
   }finally{ setLoading(false); }
+}
+
+// 검색 - 클라이언트 필터만
+function doSearch(){
+  applySearch();
+  document.getElementById('listHeader').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function applySearch(){
+  const kw=(document.getElementById('kwInput').value||'').trim();
+  allItems=kw ? rawItems.filter(i=>(i.title||'').includes(kw)) : rawItems;
+  updateStats();
+  currentFilter='전체';
+  document.querySelectorAll('.filter-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
+  renderList();
+  if(kw) addHistory(kw);
+  if(kw&&!allItems.length) setError('"'+kw+'" 검색 결과가 없습니다');
+  else setError('');
 }
 
 function quickSearch(btn, kw){
   document.getElementById('kwInput').value=kw;
   document.querySelectorAll('.quick-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  doSearch();
+  applySearch();
+  document.getElementById('listHeader').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 function setLoading(on){
   const btn=document.getElementById('searchBtn');
-  btn.disabled=on; btn.textContent=on?'검색중...':'🔍 검색';
+  btn.disabled=on; btn.textContent=on?'검색중':'검색';
   if(on) document.getElementById('cardList').innerHTML='<div class="loading"><div class="spinner"></div>나라장터 실데이터 조회중...</div>';
 }
 function setError(msg){
@@ -410,8 +557,37 @@ function histSearch(kw){ closeHist(); document.getElementById('kwInput').value=k
 function openHist(){ renderHistory(); document.getElementById('histBackdrop').classList.add('open'); document.getElementById('histSheet').classList.add('open'); }
 function closeHist(){ document.getElementById('histBackdrop').classList.remove('open'); document.getElementById('histSheet').classList.remove('open'); }
 
+// 프로필 시트
+function openProfile(){
+  document.getElementById('profileBackdrop').classList.add('open');
+  document.getElementById('profileSheet').classList.add('open');
+}
+function closeProfile(){
+  document.getElementById('profileBackdrop').classList.remove('open');
+  document.getElementById('profileSheet').classList.remove('open');
+}
+function updateProfileBtn(){
+  const region=document.getElementById('selRegion').value;
+  const equip=document.getElementById('selEquip').value;
+  const scale=document.getElementById('selScale').value;
+  const txt=document.getElementById('credentialSummaryText');
+  if(txt) txt.textContent=region+' · '+equip+' · '+scale;
+}
+function applyProfile(){
+  closeProfile();
+  // 추천 재계산
+  const region=document.getElementById('selRegion').value;
+  const equip=document.getElementById('selEquip').value;
+  rawItems=rawItems.map(i=>({...i,recommend:i.status!=='마감'&&(i.title||'').includes(equip)&&((i.agency||'').includes(region)||(i.region||'').includes(region))}));
+  allItems=allItems.map(i=>({...i,recommend:i.status!=='마감'&&(i.title||'').includes(equip)&&((i.agency||'').includes(region)||(i.region||'').includes(region))}));
+  updateStats();
+  renderList();
+  updateProfileBtn();
+}
+
 // 초기화
 updateStats();
+loadAllBids();
 </script>
 </body>
 </html>
