@@ -214,8 +214,13 @@ function parseDL(s){
   if(!s) return null;
   const t=String(s).trim();
   let d;
-  if(/^\d{14}$/.test(t)) d=new Date(t.slice(0,4)+'-'+t.slice(4,6)+'-'+t.slice(6,8)+'T'+t.slice(8,10)+':'+t.slice(10,12)+':00+09:00');
-  else d=new Date(t.replace(' ','T')+(t.includes('+')?'':'+09:00'));
+  if(/^\d{14}$/.test(t)){
+    d=new Date(t.slice(0,4)+'-'+t.slice(4,6)+'-'+t.slice(6,8)+'T'+t.slice(8,10)+':'+t.slice(10,12)+':00+09:00');
+  } else if(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}/.test(t)){
+    d=new Date(t.replace(' ','T')+'+09:00');
+  } else {
+    d=new Date(t);
+  }
   return isNaN(d)?null:d;
 }
 function getStatus(s){
