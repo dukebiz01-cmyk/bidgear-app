@@ -88,9 +88,10 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .cards{padding:0 16px 80px;display:flex;flex-direction:column;gap:8px}
 
 /* ── CARDS ── */
-.card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r2);padding:14px;animation:fadeIn .2s ease;cursor:pointer;box-shadow:0 1px 3px rgba(15,23,42,.04);transition:box-shadow .15s,transform .15s}
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r2);padding:14px;animation:fadeIn .2s ease;cursor:pointer;box-shadow:0 1px 3px rgba(15,23,42,.04);transition:box-shadow .15s,transform .15s;display:flex;flex-direction:column}
 .card:hover{box-shadow:0 4px 16px rgba(15,23,42,.1);transform:translateY(-1px)}
 .card.rec{border-left:3px solid var(--accent);border-color:var(--accent)}
+.card .cagency{flex:1}
 .ctop{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .cbadges{display:flex;gap:5px}
 .sb{border-radius:4px;font-size:11px;font-weight:700;padding:3px 9px}
@@ -100,12 +101,14 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .cls{background:#F3F4F6;color:#6B7280}
 .rb{background:#E6F7F5;color:var(--accent);border:1px solid rgba(47,183,164,.25);border-radius:4px;font-size:11px;font-weight:700;padding:3px 9px}
 .cmore{font-size:11px;color:var(--faint)}
-.ctitle{font-size:13px;font-weight:700;line-height:1.55;margin-bottom:3px;color:var(--text)}
-.cagency{font-size:12px;color:var(--muted);margin-bottom:10px}
-.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px}
-.mbox{background:var(--soft);border-radius:8px;padding:8px 10px}
-.mlbl{font-size:10px;color:var(--faint);margin-bottom:2px;font-weight:700;letter-spacing:.03em;text-transform:uppercase}
-.mval{font-size:12px;font-weight:700;color:var(--text)}
+.ctitle{font-size:13px;font-weight:700;line-height:1.5;margin-bottom:4px;color:var(--text);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.8em}
+.cagency{font-size:11px;color:var(--muted);margin-bottom:10px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:5px}
+.mbox{background:var(--soft);border-radius:8px;padding:7px 10px}
+.mlbl{font-size:9px;color:var(--faint);margin-bottom:2px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.mval{font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mval.big{font-size:13px;font-weight:800}
 
 .loading,.empty,.intro{padding:50px 20px;text-align:center;color:var(--muted);font-size:13px}
@@ -172,7 +175,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
   .lhead{padding:16px 0 8px}
   .fbar{padding:0 0 10px}
   .err{margin:0 0 10px}
-  .cards{padding:0 0 40px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .cards{padding:0 0 40px;display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start}
   #loadMoreWrap{padding:0 0 20px}
 
   /* PC: sheets become centered modals */
@@ -300,7 +303,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
       <div class="err" id="errBox"></div>
       <div class="cards" id="cardList"><div class="loading"><div class="spinner"></div>데이터 로딩중...</div></div>
       <div id="loadMoreWrap" style="padding:0 16px 20px;display:none">
-        <button id="loadMoreBtn" onclick="loadMore()" style="width:100%;background:#fff;border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:13px;font-weight:700;color:var(--muted);padding:14px;cursor:pointer">더보기</button>
+        <button id="loadMoreBtn" onclick="loadMore()" style="width:100%;background:var(--primary);border:none;border-radius:var(--r);font-family:inherit;font-size:14px;font-weight:800;color:#fff;padding:16px;cursor:pointer;letter-spacing:.04em;box-shadow:0 2px 8px rgba(14,42,71,.18);transition:opacity .15s">더보기</button>
       </div>
     </div>
 
