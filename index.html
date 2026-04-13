@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<title>BidGear - 나라장터 입찰공고</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--orange:#F5631A;--red:#E53E3E;--olive:#9C8C00;--green:#2E7D52;--bg:#F2F1EC;--card:#ECEAE4;--border:#E0DEDB}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:#1C1C1C;font-size:14px;max-width:480px;margin:0 auto;min-height:100vh}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+::-webkit-scrollbar{display:none}
+
+/* Header */
+.header{padding:16px 16px 12px;background:var(--bg)}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.ai-badge{background:var(--orange);color:#fff;font-size:11px;font-weight:700;border-radius:20px;padding:4px 12px;letter-spacing:.06em;display:flex;align-items:center;gap:5px}
+.ai-dot{width:7px;height:7px;border-radius:50%;background:#fff;display:inline-block}
+.hist-btn{background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:7px 14px;font-family:inherit;font-size:13px;color:#444;cursor:pointer;display:flex;align-items:center;gap:5px}
+.app-title{font-size:22px;font-weight:800;letter-spacing:-.02em}
+.divider{height:1px;background:var(--border)}
+
+/* Stats */
+.stats{padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat-card{background:var(--card);border-radius:14px;padding:12px 14px 10px;min-height:72px;display:flex;flex-direction:column;justify-content:space-between}
+.stat-label{font-size:12px;color:#888;margin-bottom:4px}
+.stat-bar{width:20px;height:3px;border-radius:2px}
+.stat-val{font-size:18px;font-weight:800}
+.stat-line{width:100%;height:2px;border-radius:2px;opacity:.35;margin-top:8px}
+
+/* Search */
+.search-wrap{padding:0 16px 14px}
+.search-row{display:flex;gap:8px;margin-bottom:12px}
+.search-input{flex:1;background:#fff;border:1.5px solid var(--border);border-radius:12px;font-family:inherit;font-size:15px;color:#1C1C1C;padding:13px 16px;outline:none;transition:border-color .2s}
+.search-input:focus{border-color:var(--orange)}
+.search-btn{background:var(--orange);color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:15px;font-weight:700;padding:13px 20px;cursor:pointer;white-space:nowrap;min-width:90px;transition:opacity .2s}
+.search-btn:disabled{opacity:.7;cursor:default}
+.quick-wrap{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.quick-label{font-size:12px;color:#888;flex-shrink:0}
+.quick-btn{background:#fff;color:#444;border:1.5px solid var(--border);border-radius:20px;font-family:inherit;font-size:13px;padding:5px 14px;cursor:pointer;transition:all .15s}
+.quick-btn.active{background:var(--orange);color:#fff;border-color:var(--orange);font-weight:600}
+
+/* Profile */
+.profile-wrap{padding:0 16px 14px}
+.profile-label{font-size:12px;color:#888;margin-bottom:8px}
+.sel-wrap{position:relative;margin-bottom:8px}
+.sel-wrap select{width:100%;appearance:none;-webkit-appearance:none;background:#fff;border:1.5px solid #E8E6E0;border-radius:12px;font-family:inherit;font-size:14px;color:#1C1C1C;padding:13px 40px 13px 16px;outline:none;cursor:pointer}
+.sel-arrow{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:#999;font-size:12px;pointer-events:none}
+
+/* List */
+.list-header{padding:14px 16px 6px;display:flex;align-items:center;justify-content:space-between}
+.list-title{font-size:15px;font-weight:700}
+.count-badge{background:var(--orange);color:#fff;border-radius:20px;font-size:12px;font-weight:700;padding:3px 12px}
+.filter-bar{padding:0 16px 12px;display:flex;gap:7px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.filter-btn{background:#fff;color:#555;border:1.5px solid var(--border);border-radius:20px;font-family:inherit;font-size:13px;padding:6px 16px;cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0}
+.filter-btn.active{background:var(--orange);color:#fff;border-color:var(--orange);font-weight:600}
+.error-box{margin:0 16px 12px;background:#FEE2E2;border:1px solid #FECACA;border-radius:10px;color:#B91C1C;font-size:12px;padding:10px 14px;display:none}
+.cards{padding:0 16px 80px;display:flex;flex-direction:column;gap:10px}
+
+/* Card */
+.bid-card{background:#fff;border:1.5px solid #E8E6E0;border-radius:14px;padding:14px;animation:fadeIn .2s ease;cursor:pointer;transition:opacity .1s}
+.bid-card:active{opacity:.85}
+.bid-card.recommended{border-color:var(--orange);border-left:4px solid var(--orange)}
+.card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.card-badges{display:flex;gap:6px}
+.status-badge{border-radius:8px;font-size:11px;font-weight:700;padding:2px 9px}
+.rec-badge{background:#FFF3E0;color:var(--orange);border:1px solid rgba(245,99,26,.4);border-radius:8px;font-size:11px;font-weight:700;padding:2px 9px}
+.card-more{font-size:11px;color:#bbb}
+.card-title{font-size:13px;font-weight:600;line-height:1.5;margin-bottom:4px}
+.card-agency{font-size:12px;color:#888;margin-bottom:10px}
+.meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:7px}
+.meta-box{background:var(--card);border-radius:9px;padding:8px 11px}
+.meta-lbl{font-size:10px;color:#888;margin-bottom:2px}
+.meta-val{font-size:12px;font-weight:600}
+.meta-val.big{font-size:13px;font-weight:700}
+
+/* Loading/Empty */
+.loading,.empty{padding:50px 20px;text-align:center;color:#888;font-size:13px}
+.spinner{width:26px;height:26px;border:3px solid var(--border);border-top-color:var(--orange);border-radius:50%;margin:0 auto 14px;animation:spin .7s linear infinite}
+.intro{padding:40px 20px;text-align:center;color:#aaa;font-size:13px}
+
+/* Detail Sheet */
+.backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;display:none}
+.backdrop.open{display:block}
+.detail-sheet{position:fixed;bottom:-100%;left:0;right:0;background:#fff;border-radius:18px 18px 0 0;z-index:301;max-height:80vh;display:flex;flex-direction:column;transition:bottom .28s cubic-bezier(.32,.72,0,1);max-width:480px;margin:0 auto}
+.detail-sheet.open{bottom:0}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 12px;border-bottom:1px solid #F0EFEA;flex-shrink:0}
+.sheet-close{background:none;border:none;font-size:22px;color:#888;cursor:pointer;line-height:1}
+.sheet-body{overflow-y:auto;padding:16px 16px 32px}
+.sheet-title{font-size:16px;font-weight:700;line-height:1.5;margin-bottom:6px}
+.sheet-agency{font-size:13px;color:#888;margin-bottom:16px}
+.dday-box{border-radius:12px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+.dday-label{font-size:13px;color:#555}
+.dday-val{font-size:16px;font-weight:800}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.info-box{background:#ECEAE4;border-radius:10px;padding:9px 12px}
+.info-lbl{font-size:10px;color:#888;margin-bottom:3px}
+.info-val{font-size:12px;font-weight:600}
+.info-val.big{font-size:14px;font-weight:700}
+.g2b-btn{display:block;background:var(--orange);color:#fff;border-radius:12px;padding:14px;text-align:center;font-size:14px;font-weight:700;text-decoration:none;margin-bottom:8px}
+.close-btn{width:100%;background:#F2F1EC;border:none;border-radius:12px;font-family:inherit;font-size:14px;color:#555;padding:14px;cursor:pointer}
+
+/* History Sheet */
+.hist-sheet{position:fixed;bottom:-100%;left:0;right:0;background:#fff;border-radius:16px 16px 0 0;z-index:301;max-height:55vh;display:flex;flex-direction:column;transition:bottom .28s ease;max-width:480px;margin:0 auto}
+.hist-sheet.open{bottom:0}
+.hist-head{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 12px;border-bottom:1px solid #E8E6E0}
+.hist-title{font-size:15px;font-weight:700}
+.hist-list{overflow-y:auto}
+.hist-item{display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid #F2F1EC;gap:8px}
+.hist-kw{flex:1;background:none;border:none;font-family:inherit;font-size:14px;text-align:left;cursor:pointer;color:#1C1C1C;padding:0}
+.hist-del{background:none;border:none;color:#bbb;font-family:inherit;font-size:12px;cursor:pointer;padding:4px 8px}
+.hist-empty{padding:30px 20px;text-align:center;color:#aaa;font-size:13px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="ai-badge"><span class="ai-dot"></span>AI ENGINE ACTIVE</div>
+    <button class="hist-btn" onclick="openHist()">📊 이력</button>
+  </div>
+  <div class="app-title">BidGear 🚛🏗</div>
+</div>
+<div class="divider"></div>
+
+<div class="stats" id="statsGrid"></div>
+
+<div class="search-wrap">
+  <div class="search-row">
+    <input class="search-input" id="kwInput" value="살수차" placeholder="공고 키워드 입력" onkeydown="if(event.key==='Enter')doSearch()"/>
+    <button class="search-btn" id="searchBtn" onclick="doSearch()">🔍 검색</button>
+  </div>
+  <div class="quick-wrap">
+    <span class="quick-label">빠른검색</span>
+    <button class="quick-btn active" onclick="quickSearch(this,'살수차')">살수차</button>
+    <button class="quick-btn" onclick="quickSearch(this,'굴착기')">굴착기</button>
+    <button class="quick-btn" onclick="quickSearch(this,'덤프트럭')">덤프트럭</button>
+    <button class="quick-btn" onclick="quickSearch(this,'포크레인')">포크레인</button>
+    <button class="quick-btn" onclick="quickSearch(this,'크레인')">크레인</button>
+    <button class="quick-btn" onclick="quickSearch(this,'로더')">로더</button>
+    <button class="quick-btn" onclick="quickSearch(this,'노면청소')">노면청소</button>
+    <button class="quick-btn" onclick="quickSearch(this,'제설')">제설</button>
+  </div>
+</div>
+
+<div class="profile-wrap">
+  <div class="profile-label">⚙ 자사 프로필</div>
+  <div class="sel-wrap"><select id="selRegion"><option>충북</option><option>충남</option><option>경북</option><option>경남</option><option>전북</option><option>전남</option><option>경기</option><option>강원</option><option>서울</option><option>부산</option></select><span class="sel-arrow">▼</span></div>
+  <div class="sel-wrap"><select id="selEquip"><option>살수차</option><option>굴착기</option><option>덤프트럭</option><option>포크레인</option><option>크레인</option><option>로더</option></select><span class="sel-arrow">▼</span></div>
+  <div class="sel-wrap"><select id="selScale"><option>소형 운영사</option><option selected>중형 운영사</option><option>대형 운영사</option></select><span class="sel-arrow">▼</span></div>
+  <div class="sel-wrap"><select id="selResp"><option>마감대응 낮음</option><option selected>마감대응 보통</option><option>마감대응 높음</option></select><span class="sel-arrow">▼</span></div>
+</div>
+<div class="divider"></div>
+
+<div class="list-header" id="listHeader">
+  <span class="list-title">입찰공고</span>
+  <span class="count-badge" id="countBadge">0건</span>
+</div>
+<div class="filter-bar">
+  <button class="filter-btn active" onclick="setFilter('전체',this)">전체</button>
+  <button class="filter-btn" onclick="setFilter('추천',this)">⭐ 추천</button>
+  <button class="filter-btn" onclick="setFilter('검토',this)">검토</button>
+  <button class="filter-btn" onclick="setFilter('제외',this)">제외</button>
+  <button class="filter-btn" onclick="setFilter('마감임박',this)">마감임박</button>
+</div>
+<div class="error-box" id="errorBox"></div>
+<div class="cards" id="cardList"><div class="intro">키워드를 입력하고 검색하세요</div></div>
+
+<!-- Detail Sheet -->
+<div class="backdrop" id="detailBackdrop" onclick="closeDetail()"></div>
+<div class="detail-sheet" id="detailSheet">
+  <div class="sheet-head">
+    <div id="detailBadges"></div>
+    <button class="sheet-close" onclick="closeDetail()">×</button>
+  </div>
+  <div class="sheet-body" id="detailBody"></div>
+</div>
+
+<!-- History Sheet -->
+<div class="backdrop" id="histBackdrop" onclick="closeHist()"></div>
+<div class="hist-sheet" id="histSheet">
+  <div class="hist-head">
+    <span class="hist-title">최근 검색어</span>
+    <button class="sheet-close" onclick="closeHist()">×</button>
+  </div>
+  <div class="hist-list" id="histList"></div>
+</div>
+
+<script>
+const PROXY = 'https://salsubid-proxy.onrender.com';
+const STATUS_COLOR = {'마감임박':'#E53E3E','D-3':'#9C8C00','진행중':'#2E7D52','마감':'#999'};
+
+let allItems = [], currentFilter = '전체', searched = false;
+
+// 유틸
+function toNum(v){ const n=Number(String(v||0).replace(/[^\d.-]/g,'')); return isFinite(n)?n:0; }
+function fmtAmt(a){
+  const n=toNum(a); if(!n) return '—';
+  if(n>=100000000) return (n/100000000).toFixed(1)+'억';
+  if(n>=10000) return Math.round(n/10000).toLocaleString()+'만';
+  return n.toLocaleString()+'원';
+}
+function fmtDL(s){
+  if(!s) return '—';
+  const t=String(s).trim();
+  if(/^\d{14}$/.test(t)) return t.slice(0,4)+'.'+t.slice(4,6)+'.'+t.slice(6,8)+' '+t.slice(8,10)+':'+t.slice(10,12);
+  if(/^\d{4}-\d{2}-\d{2}/.test(t)) return t.slice(0,16).replace('T',' ');
+  return t;
+}
+function parseDL(s){
+  if(!s) return null;
+  const t=String(s).trim();
+  let d;
+  if(/^\d{14}$/.test(t)) d=new Date(t.slice(0,4)+'-'+t.slice(4,6)+'-'+t.slice(6,8)+'T'+t.slice(8,10)+':'+t.slice(10,12)+':00+09:00');
+  else d=new Date(t.replace(' ','T')+(t.includes('+')?'':'+09:00'));
+  return isNaN(d)?null:d;
+}
+function getStatus(s){
+  const dt=parseDL(s); if(!dt) return '확인필요';
+  const h=(dt-Date.now())/3600000;
+  if(h<0) return '마감'; if(h<24) return '마감임박'; if(h<72) return 'D-3'; return '진행중';
+}
+function getDday(s){
+  const dt=parseDL(s); if(!dt) return null;
+  const h=(dt-Date.now())/3600000;
+  if(h<0) return '마감됨';
+  if(h<1) return Math.ceil(h*60)+'분 남음';
+  if(h<24) return Math.ceil(h)+'시간 남음';
+  return Math.ceil(h/24)+'일 남음';
+}
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// 통계
+function updateStats(){
+  const urgent=allItems.filter(i=>i.status==='마감임박').length;
+  const d3=allItems.filter(i=>i.status==='D-3').length;
+  const active=allItems.filter(i=>i.status==='진행중').length;
+  const budget=allItems.reduce((s,i)=>s+toNum(i.amount),0);
+  const rec=allItems.filter(i=>i.recommend).length;
+  const stats=[
+    {label:'전체',val:allItems.length||'—',color:'#F5631A'},
+    {label:'마감임박',val:urgent||'—',color:'#E53E3E'},
+    {label:'D-3',val:d3||'—',color:'#9C8C00'},
+    {label:'진행중',val:active||'—',color:'#2E7D52'},
+    {label:'총 예산',val:budget?fmtAmt(budget):'—',color:'#F5631A'},
+    {label:'추천투찰',val:rec||'—',color:'#2E7D52'},
+  ];
+  document.getElementById('statsGrid').innerHTML = stats.map(s=>`
+    <div class="stat-card">
+      <div><div class="stat-label">${s.label}</div><div class="stat-bar" style="background:${s.color}"></div></div>
+      <div class="stat-val">${s.val}</div>
+      <div class="stat-line" style="background:${s.color}"></div>
+    </div>`).join('');
+}
+
+// 필터
+function getFiltered(){
+  if(currentFilter==='추천') return allItems.filter(i=>i.recommend);
+  if(currentFilter==='검토') return allItems.filter(i=>i.status==='진행중'||i.status==='D-3');
+  if(currentFilter==='제외') return allItems.filter(i=>i.status==='마감');
+  if(currentFilter==='마감임박') return allItems.filter(i=>i.status==='마감임박');
+  return allItems;
+}
+function setFilter(f, btn){
+  currentFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  renderList();
+}
+
+// 렌더
+function renderList(){
+  const items=getFiltered();
+  document.getElementById('countBadge').textContent=items.length+'건';
+  if(!searched){ document.getElementById('cardList').innerHTML='<div class="intro">키워드를 입력하고 검색하세요</div>'; return; }
+  if(!items.length){ document.getElementById('cardList').innerHTML='<div class="empty">조건에 맞는 공고가 없습니다</div>'; return; }
+  document.getElementById('cardList').innerHTML = items.map((item,i)=>{
+    const color=STATUS_COLOR[item.status]||'#999';
+    return `<div class="bid-card${item.recommend?' recommended':''}" onclick="openDetail(${i})">
+      <div class="card-top">
+        <div class="card-badges">
+          <span class="status-badge" style="background:${color}1A;color:${color};border:1px solid ${color}40">${esc(item.status)}</span>
+          ${item.recommend?'<span class="rec-badge">⭐ 추천</span>':''}
+        </div>
+        <span class="card-more">상세 ›</span>
+      </div>
+      <div class="card-title">${esc(item.title||'—')}</div>
+      <div class="card-agency">${esc(item.agency||'—')}</div>
+      <div class="meta-grid">
+        <div class="meta-box"><div class="meta-lbl">기초금액</div><div class="meta-val big">${esc(fmtAmt(item.amount))}</div></div>
+        <div class="meta-box"><div class="meta-lbl">마감일시</div><div class="meta-val">${esc(fmtDL(item.deadline))}</div></div>
+      </div>
+      <div class="meta-box"><div class="meta-lbl">공고번호</div><div class="meta-val" style="color:#555;font-weight:400">${esc(item.id||'—')}</div></div>
+    </div>`;
+  }).join('');
+  // onclick 인덱스를 filtered 기준으로 재매핑
+  document.querySelectorAll('.bid-card').forEach((el,i)=>{
+    el.onclick=()=>openDetail(items[i]);
+  });
+}
+
+// 검색
+async function doSearch(){
+  const kw=(document.getElementById('kwInput').value||'').trim()||'살수차';
+  setError('');
+  setLoading(true);
+  searched=true;
+  try{
+    const res=await fetch(PROXY+'/api/bids?keyword='+encodeURIComponent(kw)+'&numOfRows=30');
+    const data=await res.json();
+    if(!data.ok) throw new Error(data.message||'조회 실패');
+    const region=document.getElementById('selRegion').value;
+    const equip=document.getElementById('selEquip').value;
+    allItems=(data.items||[]).map(i=>{
+      const status=getStatus(i.deadline);
+      const recommend=status!=='마감'&&(i.title||'').includes(equip)&&((i.agency||'').includes(region)||(i.region||'').includes(region));
+      return{...i,status,recommend};
+    });
+    updateStats();
+    currentFilter='전체';
+    document.querySelectorAll('.filter-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
+    renderList();
+    addHistory(kw);
+    if(!allItems.length) setError('"'+kw+'" 검색 결과가 없습니다');
+    document.getElementById('listHeader').scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(e){
+    allItems=[]; updateStats(); renderList();
+    setError('조회 실패: '+e.message);
+  }finally{ setLoading(false); }
+}
+
+function quickSearch(btn, kw){
+  document.getElementById('kwInput').value=kw;
+  document.querySelectorAll('.quick-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  doSearch();
+}
+
+function setLoading(on){
+  const btn=document.getElementById('searchBtn');
+  btn.disabled=on; btn.textContent=on?'검색중...':'🔍 검색';
+  if(on) document.getElementById('cardList').innerHTML='<div class="loading"><div class="spinner"></div>나라장터 실데이터 조회중...</div>';
+}
+function setError(msg){
+  const el=document.getElementById('errorBox');
+  el.textContent=msg; el.style.display=msg?'block':'none';
+}
+
+// Detail
+function openDetail(item){
+  const color=STATUS_COLOR[item.status]||'#999';
+  const dday=getDday(item.deadline);
+  document.getElementById('detailBadges').innerHTML=`
+    <span class="status-badge" style="background:${color}1A;color:${color};border:1px solid ${color}40">${esc(item.status)}</span>
+    ${item.recommend?'<span class="rec-badge" style="margin-left:6px">⭐ 추천</span>':''}`;
+  const ddayHtml=dday?`<div class="dday-box" style="background:${item.status==='마감'?'#F5F4EF':color+'12'};border:1px solid ${color}30">
+    <span class="dday-label">마감까지</span>
+    <span class="dday-val" style="color:${item.status==='마감'?'#aaa':color}">${esc(dday)}</span></div>`:'';
+  const g2bUrl='https://www.g2b.go.kr/ep/invitation/publish/bidInfoDtl.do?bidno='+encodeURIComponent(item.id||'')+'&bidseq=00';
+  document.getElementById('detailBody').innerHTML=`
+    <div class="sheet-title">${esc(item.title||'—')}</div>
+    <div class="sheet-agency">${esc(item.agency||'—')}</div>
+    ${ddayHtml}
+    <div class="info-grid">
+      <div class="info-box"><div class="info-lbl">기초금액</div><div class="info-val big">${esc(fmtAmt(item.amount))}</div></div>
+      <div class="info-box"><div class="info-lbl">마감일시</div><div class="info-val">${esc(fmtDL(item.deadline))}</div></div>
+      <div class="info-box"><div class="info-lbl">공고유형</div><div class="info-val">${esc(item.bidType||'—')}</div></div>
+      <div class="info-box"><div class="info-lbl">지역</div><div class="info-val">${esc(item.region||'—')}</div></div>
+    </div>
+    <div class="info-box" style="margin-bottom:16px"><div class="info-lbl">공고번호</div><div class="info-val" style="color:#555;font-weight:400">${esc(item.id||'—')}</div></div>
+    <a href="${g2bUrl}" target="_blank" class="g2b-btn">🏛 나라장터에서 보기</a>
+    <button class="close-btn" onclick="closeDetail()">닫기</button>`;
+  document.getElementById('detailBackdrop').classList.add('open');
+  document.getElementById('detailSheet').classList.add('open');
+}
+function closeDetail(){
+  document.getElementById('detailBackdrop').classList.remove('open');
+  document.getElementById('detailSheet').classList.remove('open');
+}
+
+// History
+function loadHistory(){ try{ return JSON.parse(localStorage.getItem('bidgear_hist')||'[]'); }catch{ return []; } }
+function saveHistory(h){ try{ localStorage.setItem('bidgear_hist',JSON.stringify(h.slice(0,10))); }catch{} }
+function addHistory(kw){
+  let h=loadHistory();
+  h=[kw,...h.filter(x=>x!==kw)].slice(0,10);
+  saveHistory(h); renderHistory();
+}
+function removeHistory(kw){ saveHistory(loadHistory().filter(x=>x!==kw)); renderHistory(); }
+function renderHistory(){
+  const h=loadHistory();
+  const el=document.getElementById('histList');
+  if(!h.length){ el.innerHTML='<div class="hist-empty">검색 이력 없음</div>'; return; }
+  el.innerHTML=h.map(kw=>`<div class="hist-item">
+    <button class="hist-kw" onclick="histSearch('${esc(kw)}')">🔎 ${esc(kw)}</button>
+    <button class="hist-del" onclick="removeHistory('${esc(kw)}')">삭제</button>
+  </div>`).join('');
+}
+function histSearch(kw){ closeHist(); document.getElementById('kwInput').value=kw; doSearch(); }
+function openHist(){ renderHistory(); document.getElementById('histBackdrop').classList.add('open'); document.getElementById('histSheet').classList.add('open'); }
+function closeHist(){ document.getElementById('histBackdrop').classList.remove('open'); document.getElementById('histSheet').classList.remove('open'); }
+
+// 초기화
+updateStats();
+</script>
+</body>
+</html>
