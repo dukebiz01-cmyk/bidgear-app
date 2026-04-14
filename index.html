@@ -63,11 +63,11 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 
 /* ── SEARCH ── */
 .srch{background:var(--surface);border-radius:var(--r2);margin:12px 16px 0;padding:14px;border:1px solid var(--border);box-shadow:0 2px 8px rgba(15,23,42,.06)}
-.srch-row{display:flex;gap:8px;margin-bottom:10px}
-.sinput{flex:1;background:var(--soft);border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:14px;font-weight:500;color:var(--text);padding:11px 14px;outline:none;transition:border-color .2s}
+.srch-row{display:flex;gap:8px;margin-bottom:10px;width:100%}
+.sinput{min-width:0;flex:1;background:var(--soft);border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:14px;font-weight:500;color:var(--text);padding:11px 14px;outline:none;transition:border-color .2s}
 .sinput:focus{border-color:var(--accent)}
 .sinput::placeholder{color:var(--faint)}
-.sbtn{background:var(--primary);color:#fff;border:none;border-radius:var(--r);font-family:inherit;font-size:13px;font-weight:800;padding:11px 18px;cursor:pointer;letter-spacing:.04em;transition:opacity .15s}
+.sbtn{flex-shrink:0;background:var(--primary);color:#fff;border:none;border-radius:var(--r);font-family:inherit;font-size:13px;font-weight:800;padding:11px 18px;cursor:pointer;letter-spacing:.04em;transition:opacity .15s;white-space:nowrap}
 .sbtn:disabled{opacity:.6}
 .sbtn:hover:not(:disabled){opacity:.85}
 .qwrap{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
@@ -882,26 +882,34 @@ function scoreItem(item){
   const title=item.title||'',agency=item.agency||'',region=item.region||'';
   let riskPenalty=0;
   const riskItems=[];
-
-  // ── 장비 적합도 (핵심 항목) ──
-  // 완전 일치: +15 보너스 / 관련 키워드: 0 / 무관: -20 패널티
   let equipBonus=0;
+  let equipMatch=false; // 장비 일치 여부 (추천 기준)
+
+  // ── 장비 적합도 (가장 중요 항목) ──
   if(title.includes(p.equip)){
     equipBonus=15;
+    equipMatch=true;
   } else if(EQUIP_KEYWORDS.some(k=>title.includes(k))){
-    equipBonus=0; // 관련 장비지만 주력 장비 아님
-    riskPenalty+=10;
+    // 관련 장비지만 주력 장비 아님 → 소폭 패널티
+    riskPenalty+=15;
     riskItems.push({code:'equip_partial',label:'장비 부분 일치 (주력 장비 아님)'});
   } else {
-    riskPenalty+=20; // 완전 무관
-    riskItems.push({code:'equip_mismatch',label:'장비 불일치'});
+    // 완전 무관 → 대폭 패널티 (면허 누락 수준)
+    riskPenalty+=40;
+    riskItems.push({code:'equip_mismatch',label:'장비 불일치 — 무관한 공고'});
   }
 
   // ── 지역 리스크 ──
-  const regionMatch=agency.includes(p.region)||region.includes(p.region)||rule.allowed_regions.includes(region)||!region;
+  // 전국 발주기관 (지역 무관) 목록
+  const NATIONAL_AGENCIES=['조달청','교육부','문화체육','환경부','국토교통','행정안전','보건복지','고용노동','농림','산업통상','외교부','법무부','국방부','경찰청','소방청','기상청','통계청','특허청','식품의약','질병관리','국가유산','방위사업','원자력','한국수자원','한국도로','한국철도','한국토지','한국전력','한국농어촌','대법원','헌법재판','감사원','중앙선관'];
+  const REGION_MAP={'충북':['충청북도','충북'],'충남':['충청남도','충남'],'경북':['경상북도','경북'],'경남':['경상남도','경남'],'전북':['전라북도','전북','전북특별자치도'],'전남':['전라남도','전남'],'경기':['경기도','경기'],'강원':['강원도','강원','강원특별자치도'],'서울':['서울특별시','서울'],'부산':['부산광역시','부산'],'대구':['대구광역시','대구'],'인천':['인천광역시','인천'],'광주':['광주광역시','광주'],'대전':['대전광역시','대전'],'울산':['울산광역시','울산'],'세종':['세종특별자치시','세종'],'제주':['제주특별자치도','제주']};
+  const userRegionTerms=REGION_MAP[p.region]||[p.region];
+  const agencyLower=agency.toLowerCase();
+  const isNational=NATIONAL_AGENCIES.some(n=>agency.includes(n));
+  const regionMatch=isNational||userRegionTerms.some(t=>agency.includes(t)||region.includes(t));
   if(!regionMatch){
     riskPenalty+=w.region_mismatch;
-    riskItems.push({code:'region_mismatch',label:'지역 불일치'});
+    riskItems.push({code:'region_mismatch',label:'지역 불일치 ('+p.region+' 외 발주)'});
   }
 
   // ── 면허 리스크 ──
@@ -921,20 +929,24 @@ function scoreItem(item){
   const amt=toNum(item.amount);
   if(amt>0&&amt<3000000){riskPenalty+=w.budget_too_low;riskItems.push({code:'budget_low',label:'예산 과소'});}
 
-  // ── 최종 점수 ──
+  // ── 점수 계산 ──
   const baseScore=100-Math.min(riskPenalty,100);
   const urgBonus={'진행중':5,'D-3':3,'D-1':1,'마감임박':0,'마감':-10}[item.status]||0;
-  const amtBonus=(amt>=5000000&&amt<=300000000)?5:(amt>=1000000&&amt<=500000000)?2:0;
-  const finalScore=Math.max(0,Math.min(100,baseScore+equipBonus+urgBonus+amtBonus));
+  const amtBonus=(amt>=5000000&&amt<=300000000)?3:(amt>=1000000&&amt<=500000000)?1:0;
+  let finalScore=Math.max(0,Math.min(100,baseScore+equipBonus+urgBonus+amtBonus));
 
-  // ── 위험 등급 (기준 현실화) ──
-  // HIGH: 60점 이상 감점 / MEDIUM: 30점 이상 / LOW: 30점 미만
+  // ── 장비 불일치 시 점수 상한 ── (최대 검토 수준)
+  if(!equipMatch && !EQUIP_KEYWORDS.some(k=>title.includes(k))){
+    finalScore=Math.min(finalScore,54); // 최적합/적합 불가, 검토 수준으로 억제
+  }
+
+  // ── 위험 등급 ──
   const riskLevel=riskPenalty>=60?'HIGH':riskPenalty>=30?'MEDIUM':'LOW';
 
-  return{score:finalScore,riskPenalty,riskItems,riskLevel,equipBonus,urgBonus};
+  return{score:finalScore,riskPenalty,riskItems,riskLevel,equipBonus,urgBonus,equipMatch};
 }
 
-// 등급 기준: 장비 일치 + 지역 일치가 모두 있어야 최적합 가능
+// 등급 + 추천 기준: 장비 일치가 없으면 최적합/적합 불가
 function getGrade(score){
   return score>=80?'최적합':score>=65?'적합':score>=50?'검토':score>=35?'주의':'부적합';
 }
@@ -983,10 +995,11 @@ function getGradeBg(score){return score>=80?'#CCFBF1':score>=65?'#DCFCE7':score>
 
 function processItem(i){
   const status=getStatus(i.deadline);
-  const {score,riskPenalty,riskItems,riskLevel,equipBonus,urgBonus}=scoreItem({...i,status});
-  const recommend=status!=='마감'&&score>=55&&riskLevel!=='HIGH';
+  const {score,riskPenalty,riskItems,riskLevel,equipBonus,urgBonus,equipMatch}=scoreItem({...i,status});
+  // 추천 조건: 마감 아님 + 점수 65 이상 + 위험 HIGH 아님 + 장비 일치 필수
+  const recommend=status!=='마감'&&score>=65&&riskLevel!=='HIGH'&&equipMatch===true;
   const grade=getGrade(score);
-  return{...i,status,score,grade,riskPenalty,riskItems,riskLevel,equipBonus,urgBonus,recommend};
+  return{...i,status,score,grade,riskPenalty,riskItems,riskLevel,equipBonus,urgBonus,equipMatch,recommend};
 }
 
 // ════════════════════════════════════════════
