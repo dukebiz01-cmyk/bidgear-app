@@ -88,31 +88,160 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .cards{padding:0 16px 80px;display:flex;flex-direction:column;gap:8px}
 
 /* ── CARDS ── */
-.card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r2);padding:14px;animation:fadeIn .2s ease;cursor:pointer;box-shadow:0 1px 3px rgba(15,23,42,.04);transition:box-shadow .15s,transform .15s;display:flex;flex-direction:column}
-.card:hover{box-shadow:0 4px 16px rgba(15,23,42,.1);transform:translateY(-1px)}
-.card.rec{border-left:3px solid var(--accent);border-color:var(--accent)}
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r2);padding:14px 16px;animation:fadeIn .2s ease;cursor:pointer;box-shadow:0 2px 8px rgba(15,23,42,.06);transition:box-shadow .15s,transform .15s;display:flex;flex-direction:column}
+.card:hover{box-shadow:0 6px 20px rgba(15,23,42,.12);transform:translateY(-2px)}
+/* 높은 매칭 카드 강조 */
+.card.top-match{border-left:4px solid var(--accent);background:linear-gradient(to right,#F0FBF9 0%,#fff 60%)}
+.card.top-match:hover{box-shadow:0 6px 20px rgba(47,183,164,.18)}
+.card.high-risk{border-left:4px solid #DC2626;background:linear-gradient(to right,#FFF5F5 0%,#fff 60%)}
 .card .cagency{flex:1}
 .ctop{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.cbadges{display:flex;gap:5px}
-.sb{border-radius:4px;font-size:11px;font-weight:700;padding:3px 9px}
+.cbadges{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+.sb{border-radius:4px;font-size:10px;font-weight:800;padding:3px 8px;letter-spacing:.02em}
 .urg{background:#FEECEC;color:#B91C1C}
 .d3{background:#FFF7E8;color:#B45309}
 .act{background:#EAF7EE;color:#15803D}
 .cls{background:#F3F4F6;color:#6B7280}
-.rb{background:#E6F7F5;color:var(--accent);border:1px solid rgba(47,183,164,.25);border-radius:4px;font-size:11px;font-weight:700;padding:3px 9px}
-.cmore{font-size:11px;color:var(--faint)}
-.score-badge{display:inline-flex;align-items:center;justify-content:center;border-radius:6px;font-size:11px;font-weight:800;padding:2px 8px;letter-spacing:.02em}
-.score-hi{background:#E6F7F5;color:#0F8A7A}
-.score-mid{background:#FFF7E8;color:#B45309}
-.score-lo{background:#FEF2F2;color:#B91C1C}
-.score-na{background:#F3F4F6;color:#6B7280}
-.bid-rec-box{background:linear-gradient(135deg,#EAF7F5 0%,#F0FBF9 100%);border:1px solid rgba(47,183,164,.3);border-radius:var(--r);padding:12px 14px;margin-bottom:12px}
-.bid-rec-title{font-size:10px;font-weight:800;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
-.bid-rec-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
-.bid-rec-item{text-align:center}
-.bid-rec-lbl{font-size:9px;color:var(--faint);font-weight:700;margin-bottom:3px;letter-spacing:.04em}
-.bid-rec-val{font-size:13px;font-weight:800;color:var(--text)}
-.bid-rec-val.accent{color:var(--accent);font-size:15px}
+.rb{background:var(--accent);color:#fff;border-radius:4px;font-size:10px;font-weight:800;padding:3px 8px}
+/* 등급 뱃지 */
+.grade-badge{border-radius:4px;font-size:10px;font-weight:800;padding:3px 8px;letter-spacing:.01em}
+/* 점수 뱃지 */
+.score-badge{display:inline-flex;align-items:center;gap:3px;border-radius:6px;font-size:11px;font-weight:900;padding:3px 9px;letter-spacing:.01em;border:1.5px solid}
+.score-hi{background:#E6F7F5;color:#0C6B61;border-color:rgba(47,183,164,.3)}
+.score-mid{background:#FFF7E8;color:#92400E;border-color:rgba(180,83,9,.25)}
+.score-lo{background:#FEF2F2;color:#991B1B;border-color:rgba(185,28,28,.2)}
+.score-na{background:#F3F4F6;color:#4B5563;border-color:rgba(107,114,128,.2)}
+
+/* ── 종합 평가 카드 ── */
+.eval-card{border-radius:var(--r);padding:16px;margin-bottom:12px;border:1.5px solid}
+.eval-top{display:flex;align-items:center;gap:16px;margin-bottom:14px}
+.score-ring{position:relative;width:80px;height:80px;flex-shrink:0}
+.score-ring svg{width:80px;height:80px;transform:rotate(-90deg)}
+.score-ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.score-ring-num{font-size:24px;font-weight:900;line-height:1;letter-spacing:-.04em}
+.score-ring-lbl{font-size:9px;font-weight:700;letter-spacing:.06em;margin-top:2px;text-transform:uppercase}
+.eval-meta{flex:1}
+.eval-grade{font-size:26px;font-weight:900;letter-spacing:-.03em;line-height:1;margin-bottom:6px}
+.eval-prob-row{display:flex;align-items:baseline;gap:6px;margin-bottom:4px}
+.eval-prob-label{font-size:11px;font-weight:700;color:var(--muted)}
+.eval-prob-num{font-size:28px;font-weight:900;line-height:1;letter-spacing:-.04em}
+.eval-prob-unit{font-size:13px;font-weight:800}
+.eval-hint{font-size:11px;color:var(--muted);font-weight:600;line-height:1.4}
+.eval-bars{display:flex;flex-direction:column;gap:8px;margin-top:2px}
+.ebar-row{display:flex;align-items:center;gap:8px}
+.ebar-lbl{font-size:11px;font-weight:700;width:60px;flex-shrink:0;color:var(--muted)}
+.ebar-track{flex:1;height:8px;background:rgba(0,0,0,.07);border-radius:4px;overflow:hidden}
+.ebar-fill{height:100%;border-radius:4px;transition:width .5s ease}
+.ebar-val{font-size:11px;font-weight:800;width:38px;text-align:right;flex-shrink:0}
+
+/* ── 섹션 타이틀 (이모티콘 없이) ── */
+.sec-title{font-size:11px;font-weight:800;color:var(--primary);letter-spacing:.06em;text-transform:uppercase;border-bottom:2px solid var(--primary);padding-bottom:5px;margin-bottom:10px}
+
+/* ── 필터 패널 ── */
+.filter-tabs{display:flex;gap:4px;margin:10px 0 8px}
+.ftab{flex:1;background:var(--soft);border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;padding:7px 4px;cursor:pointer;color:var(--muted);transition:all .15s}
+.ftab.on{background:var(--primary);border-color:var(--primary);color:#fff}
+.ftpanel{display:none}
+.ftpanel.on{display:block}
+.ftcat-label{font-size:10px;font-weight:800;color:var(--faint);letter-spacing:.06em;text-transform:uppercase;margin:8px 0 5px}
+.chip-wrap{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px}
+.chip{background:var(--soft);border:1.5px solid var(--border);border-radius:6px;font-family:inherit;font-size:11px;font-weight:600;padding:5px 10px;cursor:pointer;color:var(--muted);transition:all .15s;white-space:nowrap}
+.chip.on{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:700}
+.chip.cat{background:var(--surface);border-color:var(--primary);color:var(--primary);font-weight:800}
+.chip.cat.on{background:var(--primary);color:#fff}
+.sort-options{display:flex;flex-direction:column;gap:5px}
+.sort-opt{background:var(--soft);border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:12px;font-weight:600;padding:9px 12px;cursor:pointer;color:var(--muted);text-align:left;transition:all .15s;display:flex;align-items:center;gap:8px}
+.sort-opt.on{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:700}
+.bid-rec-box{display:none} /* 기존 스타일 비활성 */
+
+/* ═══════════════ 프로 리포트 스타일 ═══════════════ */
+.rpt-section-title{font-size:9px;font-weight:800;color:var(--faint);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.rpt-section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* 공고 헤더 */
+.rpt-header{background:var(--primary);border-radius:var(--r);padding:15px 16px;margin-bottom:14px}
+.rpt-header-meta{font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:5px}
+.rpt-header-title{font-size:15px;font-weight:800;line-height:1.5;color:#fff;margin-bottom:3px}
+.rpt-header-agency{font-size:12px;color:rgba(255,255,255,.65);font-weight:500}
+
+/* 점수/매칭 블록 */
+.rpt-score-block{display:grid;grid-template-columns:80px 1fr;gap:0;background:var(--surface);border-radius:var(--r);border:1.5px solid var(--border);overflow:hidden;margin-bottom:14px;box-shadow:0 2px 8px rgba(15,23,42,.06)}
+.rpt-score-left{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 10px;border-right:1.5px solid var(--border)}
+.rpt-score-num{font-size:36px;font-weight:900;letter-spacing:-.06em;line-height:1}
+.rpt-score-unit{font-size:10px;font-weight:700;color:var(--faint);letter-spacing:.04em;margin-top:2px}
+.rpt-score-right{padding:14px 16px}
+.rpt-grade-pill{display:inline-block;border-radius:5px;font-size:13px;font-weight:900;padding:3px 10px;letter-spacing:.02em;margin-bottom:8px}
+.rpt-match-row{display:flex;align-items:baseline;gap:3px;margin-bottom:4px}
+.rpt-match-label{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.04em}
+.rpt-match-num{font-size:30px;font-weight:900;letter-spacing:-.04em;line-height:1}
+.rpt-match-unit{font-size:12px;font-weight:800}
+.rpt-match-hint{font-size:11px;color:var(--muted);font-weight:600;line-height:1.4}
+
+/* 적합도 바 */
+.rpt-bars{display:flex;flex-direction:column;gap:9px;padding:14px;background:var(--soft);border-radius:var(--r);border:1.5px solid var(--border);margin-bottom:14px}
+.rpt-bar-row{display:grid;grid-template-columns:60px 1fr 40px;align-items:center;gap:8px}
+.rpt-bar-lbl{font-size:11px;font-weight:700;color:var(--muted)}
+.rpt-bar-track{height:8px;background:rgba(0,0,0,.08);border-radius:4px;overflow:hidden}
+.rpt-bar-fill{height:100%;border-radius:4px;transition:width .5s ease}
+.rpt-bar-val{font-size:11px;font-weight:800;text-align:right}
+
+/* 투찰가 테이블 */
+.rpt-price-block{border-radius:var(--r);border:1.5px solid var(--border);overflow:hidden;margin-bottom:14px}
+.rpt-price-head{background:var(--primary);color:#fff;padding:11px 14px;display:flex;justify-content:space-between;align-items:center}
+.rpt-price-head-title{font-size:12px;font-weight:800;letter-spacing:.02em}
+.rpt-price-head-sub{font-size:10px;opacity:.65;font-weight:700}
+.rpt-price-base{padding:10px 14px;border-bottom:1px solid var(--border);background:var(--soft);display:flex;justify-content:space-between;align-items:center}
+.rpt-price-base-lbl{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.rpt-price-base-val{font-size:15px;font-weight:900;color:var(--text)}
+.rpt-price-table{width:100%;border-collapse:collapse}
+.rpt-price-table th{font-size:9px;font-weight:800;color:var(--faint);letter-spacing:.08em;text-transform:uppercase;padding:8px 14px;text-align:left;border-bottom:1px solid var(--border);background:rgba(0,0,0,.02)}
+.rpt-price-table td{padding:11px 14px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--text)}
+.rpt-price-table tr:last-child td{border-bottom:none}
+.rpt-price-table tr.rec-row td{background:rgba(47,183,164,.06);color:#0C6B61;font-weight:900}
+.rpt-price-table td.price-val{font-size:15px;font-weight:900}
+.rpt-price-table td.rate-val{font-size:11px;color:var(--muted);font-weight:600}
+.rec-tag{font-size:9px;font-weight:900;background:var(--accent);color:#fff;border-radius:3px;padding:2px 5px;margin-left:5px;letter-spacing:.04em;vertical-align:middle}
+
+/* 공고 정보 테이블 */
+.rpt-info-table{width:100%;border-collapse:collapse}
+.rpt-info-table tr{border-bottom:1px solid var(--border)}
+.rpt-info-table tr:last-child{border-bottom:none}
+.rpt-info-table td{padding:9px 0;font-size:12px;vertical-align:top}
+.rpt-info-table td:first-child{color:var(--muted);font-weight:700;width:68px;font-size:11px}
+.rpt-info-table td:last-child{font-weight:700;color:var(--text);padding-left:8px}
+
+/* 리스크 */
+.rpt-risk-item{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#FEF2F2;border:1px solid rgba(185,28,28,.15);border-radius:6px;margin-bottom:5px}
+.rpt-risk-label{font-size:12px;font-weight:700;color:#991B1B}
+.rpt-risk-tag{font-size:9px;font-weight:800;color:#B91C1C;background:#FEE2E2;border-radius:3px;padding:2px 6px;letter-spacing:.04em}
+
+/* 액션 버튼 */
+.action-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.action-btn{border-radius:var(--r);padding:12px 8px;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer;border:1.5px solid;transition:all .15s;text-align:center}
+.action-btn .icon{display:none}
+.action-btn.watch{background:#FFFBEB;border-color:rgba(202,138,4,.3);color:#92400E}
+.action-btn.watch.on{background:#FDE68A;border-color:#D97706;color:#78350F}
+.action-btn.bid{background:#EFF6FF;border-color:rgba(59,130,246,.3);color:#1E40AF}
+.action-btn.bid.on{background:#2563EB;border-color:#1D4ED8;color:#fff}
+.action-btn.outcome{background:#F0FDF4;border-color:rgba(34,197,94,.3);color:#166534}
+.action-btn.share{background:var(--soft);border-color:var(--border);color:var(--muted)}
+/* 나라장터 버튼 */
+.g2b-btn-primary{display:block;background:var(--primary);color:#fff;border-radius:var(--r);padding:14px;text-align:center;font-size:13px;font-weight:800;text-decoration:none;margin-bottom:6px;letter-spacing:.04em;transition:opacity .15s}
+.g2b-btn-primary:hover{opacity:.85}
+.g2b-btn-secondary{display:block;background:var(--surface);color:var(--muted);border:1.5px solid var(--border);border-radius:var(--r);padding:10px;text-align:center;font-size:12px;font-weight:700;text-decoration:none;margin-bottom:8px;cursor:pointer;font-family:inherit;width:100%;transition:background .15s}
+.g2b-btn-secondary:hover{background:var(--soft)}
+
+/* 심층분석 탭 */
+.analysis-section{border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:12px}
+.analysis-tab-bar{display:flex;border-bottom:1px solid var(--border);background:var(--soft)}
+.atab{flex:1;padding:10px 6px;font-family:inherit;font-size:11px;font-weight:700;background:none;border:none;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:all .15s}
+.atab.on{background:#fff;color:var(--primary);border-bottom-color:var(--primary)}
+.analysis-panel{padding:12px 14px;display:none}
+.analysis-panel.on{display:block}
+.arow{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px}
+.arow:last-child{border-bottom:none}
+.akey{color:var(--muted);font-weight:600}
+.aval{font-weight:700;color:var(--text)}
 .ctitle{font-size:13px;font-weight:700;line-height:1.5;margin-bottom:4px;color:var(--text);
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.8em}
 .cagency{font-size:11px;color:var(--muted);margin-bottom:10px;
@@ -287,17 +416,72 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
           <input class="sinput" id="kwInput" placeholder="공고명 입력 후 검색" onkeydown="if(event.key==='Enter'){event.preventDefault();doSearch()}"/>
           <button class="sbtn" id="searchBtn" onclick="doSearch()">검색</button>
         </div>
-        <div class="qwrap">
-          <span class="qlbl">QUICK</span>
-          <button class="qbtn on" onclick="quickSearch(this,'')">전체</button>
-          <button class="qbtn" onclick="quickSearch(this,'살수차')">살수차</button>
-          <button class="qbtn" onclick="quickSearch(this,'굴착기')">굴착기</button>
-          <button class="qbtn" onclick="quickSearch(this,'덤프트럭')">덤프트럭</button>
-          <button class="qbtn" onclick="quickSearch(this,'포크레인')">포크레인</button>
-          <button class="qbtn" onclick="quickSearch(this,'크레인')">크레인</button>
-          <button class="qbtn" onclick="quickSearch(this,'로더')">로더</button>
-          <button class="qbtn" onclick="quickSearch(this,'노면청소')">노면청소</button>
-          <button class="qbtn" onclick="quickSearch(this,'제설')">제설</button>
+
+        <!-- 필터 탭 -->
+        <div class="filter-tabs">
+          <button class="ftab on" onclick="switchFtab(0,this)">종목</button>
+          <button class="ftab" onclick="switchFtab(1,this)">지역</button>
+          <button class="ftab" onclick="switchFtab(2,this)">정렬</button>
+        </div>
+
+        <!-- 종목 탭 -->
+        <div class="ftpanel on" id="ftpanel0">
+          <div class="ftcat-label">대분류</div>
+          <div class="chip-wrap" id="catChips">
+            <button class="chip cat on" data-cat="전체" onclick="selectCat(this)">전체</button>
+            <button class="chip cat" data-cat="중장비" onclick="selectCat(this)">중장비</button>
+            <button class="chip cat" data-cat="특수차" onclick="selectCat(this)">특수차</button>
+            <button class="chip cat" data-cat="용역" onclick="selectCat(this)">용역</button>
+          </div>
+          <div class="ftcat-label">소분류 <span id="subLabel" style="color:var(--muted);font-weight:400;font-size:10px">— 대분류 선택 후 활성화</span></div>
+          <div class="chip-wrap" id="subChips">
+            <button class="chip on" data-kw="" onclick="selectSub(this,'')">전체</button>
+            <button class="chip" data-kw="살수차" onclick="selectSub(this,'살수차')">살수차</button>
+            <button class="chip" data-kw="굴착기" onclick="selectSub(this,'굴착기')">굴착기</button>
+            <button class="chip" data-kw="덤프트럭" onclick="selectSub(this,'덤프트럭')">덤프트럭</button>
+            <button class="chip" data-kw="포크레인" onclick="selectSub(this,'포크레인')">포크레인</button>
+            <button class="chip" data-kw="크레인" onclick="selectSub(this,'크레인')">크레인</button>
+            <button class="chip" data-kw="로더" onclick="selectSub(this,'로더')">로더</button>
+            <button class="chip" data-kw="노면청소" onclick="selectSub(this,'노면청소')">노면청소</button>
+            <button class="chip" data-kw="제설" onclick="selectSub(this,'제설')">제설</button>
+          </div>
+        </div>
+
+        <!-- 지역 탭 -->
+        <div class="ftpanel" id="ftpanel1">
+          <div class="ftcat-label">지역 선택</div>
+          <div class="chip-wrap" id="regionChips">
+            <button class="chip on" data-region="" onclick="selectRegion(this,'')">전체</button>
+            <button class="chip" data-region="서울" onclick="selectRegion(this,'서울')">서울</button>
+            <button class="chip" data-region="경기" onclick="selectRegion(this,'경기')">경기</button>
+            <button class="chip" data-region="인천" onclick="selectRegion(this,'인천')">인천</button>
+            <button class="chip" data-region="충북" onclick="selectRegion(this,'충북')">충북</button>
+            <button class="chip" data-region="충남" onclick="selectRegion(this,'충남')">충남</button>
+            <button class="chip" data-region="대전" onclick="selectRegion(this,'대전')">대전</button>
+            <button class="chip" data-region="강원" onclick="selectRegion(this,'강원')">강원</button>
+            <button class="chip" data-region="전북" onclick="selectRegion(this,'전북')">전북</button>
+            <button class="chip" data-region="전남" onclick="selectRegion(this,'전남')">전남</button>
+            <button class="chip" data-region="광주" onclick="selectRegion(this,'광주')">광주</button>
+            <button class="chip" data-region="경북" onclick="selectRegion(this,'경북')">경북</button>
+            <button class="chip" data-region="경남" onclick="selectRegion(this,'경남')">경남</button>
+            <button class="chip" data-region="부산" onclick="selectRegion(this,'부산')">부산</button>
+            <button class="chip" data-region="대구" onclick="selectRegion(this,'대구')">대구</button>
+            <button class="chip" data-region="울산" onclick="selectRegion(this,'울산')">울산</button>
+            <button class="chip" data-region="제주" onclick="selectRegion(this,'제주')">제주</button>
+          </div>
+        </div>
+
+        <!-- 정렬 탭 -->
+        <div class="ftpanel" id="ftpanel2">
+          <div class="ftcat-label">정렬 기준</div>
+          <div class="sort-options" id="sortOptions">
+            <button class="sort-opt on" data-sort="score" onclick="selectSort(this,'score')">적합도 높은순 (기본)</button>
+            <button class="sort-opt" data-sort="newest" onclick="selectSort(this,'newest')">신규 등록순</button>
+            <button class="sort-opt" data-sort="amount_desc" onclick="selectSort(this,'amount_desc')">금액 높은순</button>
+            <button class="sort-opt" data-sort="amount_asc" onclick="selectSort(this,'amount_asc')">금액 낮은순</button>
+            <button class="sort-opt" data-sort="deadline_asc" onclick="selectSort(this,'deadline_asc')">마감 임박순</button>
+            <button class="sort-opt" data-sort="deadline_desc" onclick="selectSort(this,'deadline_desc')">마감 여유순</button>
+          </div>
         </div>
       </div>
     </div>
@@ -341,22 +525,187 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 
 <!-- Profile Sheet -->
 <div class="backdrop" id="bd3" onclick="closeProfile()"></div>
-<div class="sheet" id="sh3" style="max-height:72vh">
+<div class="sheet" id="sh3" style="max-height:90vh;display:flex;flex-direction:column">
   <div class="shead"><span class="stitle2">입찰자격증명</span><button class="sclose" onclick="closeProfile()">×</button></div>
-  <div style="padding:16px;display:flex;flex-direction:column;gap:10px;overflow-y:auto">
-    <div style="background:var(--soft);border-radius:10px;padding:12px 14px">
-      <div style="font-size:10px;color:var(--faint);font-weight:700;letter-spacing:.05em;margin-bottom:6px;text-transform:uppercase">현재 설정</div>
-      <div id="profileSummary" style="font-size:13px;font-weight:700;color:var(--text)">충북 · 살수차 · 중형 운영사</div>
+  <div id="profileBody" style="overflow-y:auto;flex:1;padding:0 0 24px">
+
+    <!-- 현재 설정 요약 -->
+    <div style="background:var(--primary);padding:14px 20px">
+      <div style="font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:4px">현재 설정</div>
+      <div id="profileSummary" style="font-size:15px;font-weight:900;color:#fff;letter-spacing:-.01em">충북 · 살수차 · 균형형</div>
     </div>
-    <div><div style="font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:600">지역</div>
-    <div class="sel-wrap" style="margin-bottom:0"><select id="selRegion" onchange="updateProfileSummary()"><option>충북</option><option>충남</option><option>경북</option><option>경남</option><option>전북</option><option>전남</option><option>경기</option><option>강원</option><option>서울</option><option>부산</option></select><span class="sel-arrow">▼</span></div></div>
-    <div><div style="font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:600">주력 장비</div>
-    <div class="sel-wrap" style="margin-bottom:0"><select id="selEquip" onchange="updateProfileSummary()"><option>살수차</option><option>굴착기</option><option>덤프트럭</option><option>포크레인</option><option>크레인</option><option>로더</option></select><span class="sel-arrow">▼</span></div></div>
-    <div><div style="font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:600">운영 규모</div>
-    <div class="sel-wrap" style="margin-bottom:0"><select id="selScale"><option>소형 운영사</option><option selected>중형 운영사</option><option>대형 운영사</option></select><span class="sel-arrow">▼</span></div></div>
-    <div><div style="font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:600">마감 대응</div>
-    <div class="sel-wrap" style="margin-bottom:0"><select id="selResp"><option>마감대응 낮음</option><option selected>마감대응 보통</option><option>마감대응 높음</option></select><span class="sel-arrow">▼</span></div></div>
-    <button onclick="applyProfile()" style="background:var(--primary);color:#fff;border:none;border-radius:var(--r);font-family:inherit;font-size:14px;font-weight:800;padding:14px;cursor:pointer;letter-spacing:.02em">적용하기</button>
+
+    <div style="padding:20px 20px 0">
+
+      <!-- 지역 + 장비 -->
+      <div style="font-size:9px;font-weight:800;color:var(--faint);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:6px">기본 정보</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px">지역</div>
+          <div class="sel-wrap" style="margin-bottom:0"><select id="selRegion" onchange="updateProfileSummary()">
+            <option>충북</option><option>충남</option><option>경북</option><option>경남</option>
+            <option>전북</option><option>전남</option><option>경기</option><option>강원</option>
+            <option>서울</option><option>부산</option><option>대구</option><option>인천</option>
+            <option>광주</option><option>대전</option><option>울산</option><option>제주</option>
+          </select><span class="sel-arrow">▼</span></div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px">주력 장비</div>
+          <div class="sel-wrap" style="margin-bottom:0"><select id="selEquip" onchange="updateProfileSummary()">
+            <option>살수차</option><option>굴착기</option><option>덤프트럭</option>
+            <option>포크레인</option><option>크레인</option><option>로더</option>
+          </select><span class="sel-arrow">▼</span></div>
+        </div>
+      </div>
+
+      <!-- 업력 / 차량 / 실적 -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px">업력(년)</div>
+          <input id="selExpYears" type="number" min="0" value="3" style="width:100%;background:var(--soft);border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:15px;font-weight:700;padding:10px 12px;outline:none;color:var(--text);text-align:center"/>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px">차량 수</div>
+          <input id="selVehicles" type="number" min="0" value="2" style="width:100%;background:var(--soft);border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:15px;font-weight:700;padding:10px 12px;outline:none;color:var(--text);text-align:center"/>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px">실적 건</div>
+          <input id="selProjects" type="number" min="0" value="12" style="width:100%;background:var(--soft);border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:15px;font-weight:700;padding:10px 12px;outline:none;color:var(--text);text-align:center"/>
+        </div>
+      </div>
+
+      <!-- 보유 면허 -->
+      <div style="font-size:9px;font-weight:800;color:var(--faint);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:6px">보유 면허</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
+        <label style="display:flex;align-items:center;gap:10px;background:var(--soft);border:1.5px solid var(--border);border-radius:10px;padding:11px 14px;cursor:pointer">
+          <input type="checkbox" id="lic1" checked style="width:16px;height:16px;accent-color:var(--primary);flex-shrink:0">
+          <div><div style="font-size:13px;font-weight:700;color:var(--text)">건설기계대여업</div><div style="font-size:10px;color:var(--accent);font-weight:700">필수</div></div>
+        </label>
+        <label style="display:flex;align-items:center;gap:10px;background:var(--soft);border:1.5px solid var(--border);border-radius:10px;padding:11px 14px;cursor:pointer">
+          <input type="checkbox" id="lic2" checked style="width:16px;height:16px;accent-color:var(--primary);flex-shrink:0">
+          <div><div style="font-size:13px;font-weight:700;color:var(--text)">사업자등록</div><div style="font-size:10px;color:var(--accent);font-weight:700">필수</div></div>
+        </label>
+        <label style="display:flex;align-items:center;gap:10px;background:var(--soft);border:1.5px solid var(--border);border-radius:10px;padding:11px 14px;cursor:pointer">
+          <input type="checkbox" id="lic3" style="width:16px;height:16px;accent-color:var(--primary);flex-shrink:0">
+          <div><div style="font-size:13px;font-weight:700;color:var(--text)">대기환경 신고</div><div style="font-size:10px;color:var(--muted);font-weight:700">우대</div></div>
+        </label>
+        <label style="display:flex;align-items:center;gap:10px;background:var(--soft);border:1.5px solid var(--border);border-radius:10px;padding:11px 14px;cursor:pointer">
+          <input type="checkbox" id="lic4" style="width:16px;height:16px;accent-color:var(--primary);flex-shrink:0">
+          <div><div style="font-size:13px;font-weight:700;color:var(--text)">폐기물수집운반업</div><div style="font-size:10px;color:var(--muted);font-weight:700">우대</div></div>
+        </label>
+      </div>
+
+      <!-- 서류 등록 -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:6px;cursor:pointer" onclick="toggleDocSection()">
+        <div style="font-size:9px;font-weight:800;color:var(--faint);letter-spacing:.1em;text-transform:uppercase">서류 등록</div>
+        <span id="docToggleIcon" style="font-size:11px;font-weight:800;color:var(--muted)">펼치기 ▼</span>
+      </div>
+      <div id="docSection" style="display:none;flex-direction:column;gap:8px;margin-bottom:16px">
+        <div style="background:var(--soft);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-size:13px;font-weight:800;color:var(--text)">사업자등록증</span>
+            <span id="docStatus0" style="font-size:10px;font-weight:700;color:var(--faint);background:var(--border);border-radius:4px;padding:2px 7px">미등록</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+            <button onclick="triggerFileUpload(0,'사업자등록증',false)" style="background:#fff;border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-weight:700;padding:11px;cursor:pointer;text-align:center;color:var(--muted);font-family:inherit;width:100%">파일 선택</button>
+            <button onclick="triggerFileUpload(0,'사업자등록증',true)" style="background:#fff;border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-weight:700;padding:11px;cursor:pointer;text-align:center;color:var(--muted);font-family:inherit;width:100%">카메라 촬영</button>
+          </div>
+        </div>
+        <div style="background:var(--soft);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-size:13px;font-weight:800;color:var(--text)">면허증 사본</span>
+            <span id="docStatus1" style="font-size:10px;font-weight:700;color:var(--faint);background:var(--border);border-radius:4px;padding:2px 7px">미등록</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+            <button onclick="triggerFileUpload(1,'면허증 사본',false)" style="background:#fff;border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-weight:700;padding:11px;cursor:pointer;text-align:center;color:var(--muted);font-family:inherit;width:100%">파일 선택</button>
+            <button onclick="triggerFileUpload(1,'면허증 사본',true)" style="background:#fff;border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-weight:700;padding:11px;cursor:pointer;text-align:center;color:var(--muted);font-family:inherit;width:100%">카메라 촬영</button>
+          </div>
+        </div>
+        <div style="background:var(--soft);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-size:13px;font-weight:800;color:var(--text)">건설기계 등록증</span>
+            <span id="docStatus2" style="font-size:10px;font-weight:700;color:var(--faint);background:var(--border);border-radius:4px;padding:2px 7px">미등록</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+            <button onclick="triggerFileUpload(2,'건설기계 등록증',false)" style="background:#fff;border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-weight:700;padding:11px;cursor:pointer;text-align:center;color:var(--muted);font-family:inherit;width:100%">파일 선택</button>
+            <button onclick="triggerFileUpload(2,'건설기계 등록증',true)" style="background:#fff;border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-weight:700;padding:11px;cursor:pointer;text-align:center;color:var(--muted);font-family:inherit;width:100%">카메라 촬영</button>
+          </div>
+        </div>
+        <div style="background:var(--soft);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-size:13px;font-weight:800;color:var(--text)">실적증명서</span>
+            <span id="docStatus3" style="font-size:10px;font-weight:700;color:var(--faint);background:var(--border);border-radius:4px;padding:2px 7px">미등록</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+            <button onclick="triggerFileUpload(3,'실적증명서',false)" style="background:#fff;border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-weight:700;padding:11px;cursor:pointer;text-align:center;color:var(--muted);font-family:inherit;width:100%">파일 선택</button>
+            <button onclick="triggerFileUpload(3,'실적증명서',true)" style="background:#fff;border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-weight:700;padding:11px;cursor:pointer;text-align:center;color:var(--muted);font-family:inherit;width:100%">카메라 촬영</button>
+          </div>
+        </div>
+        <div style="background:var(--soft);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-size:13px;font-weight:800;color:var(--text)">인감증명서</span>
+            <span id="docStatus4" style="font-size:10px;font-weight:700;color:var(--faint);background:var(--border);border-radius:4px;padding:2px 7px">미등록</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+            <button onclick="triggerFileUpload(4,'인감증명서',false)" style="background:#fff;border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-weight:700;padding:11px;cursor:pointer;text-align:center;color:var(--muted);font-family:inherit;width:100%">파일 선택</button>
+            <button onclick="triggerFileUpload(4,'인감증명서',true)" style="background:#fff;border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-weight:700;padding:11px;cursor:pointer;text-align:center;color:var(--muted);font-family:inherit;width:100%">카메라 촬영</button>
+          </div>
+        </div>
+      </div><!-- /docSection -->
+      <div style="font-size:9px;font-weight:800;color:var(--faint);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:6px">기본 투찰 전략</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
+        <button id="stBtn0" onclick="setStrategy('safe',this)" style="background:var(--soft);border:1.5px solid var(--border);border-radius:10px;font-family:inherit;padding:12px 6px;cursor:pointer;color:var(--muted);text-align:center">
+          <div style="font-size:12px;font-weight:800;letter-spacing:.02em;margin-bottom:3px">안전형</div>
+          <div style="font-size:10px;color:var(--faint)">87.745%+</div>
+        </button>
+        <button id="stBtn1" onclick="setStrategy('balanced',this)" style="background:var(--soft);border:1.5px solid var(--border);border-radius:10px;font-family:inherit;padding:12px 6px;cursor:pointer;color:var(--muted);text-align:center">
+          <div style="font-size:12px;font-weight:800;letter-spacing:.02em;margin-bottom:3px">균형형</div>
+          <div style="font-size:10px;color:var(--faint)">±보정</div>
+        </button>
+        <button id="stBtn2" onclick="setStrategy('aggressive',this)" style="background:var(--soft);border:1.5px solid var(--border);border-radius:10px;font-family:inherit;padding:12px 6px;cursor:pointer;color:var(--muted);text-align:center">
+          <div style="font-size:12px;font-weight:800;letter-spacing:.02em;margin-bottom:3px">공격형</div>
+          <div style="font-size:10px;color:var(--faint)">하한근접</div>
+        </button>
+      </div>
+
+      <!-- 학습 데이터 -->
+      <div id="learningStats" style="background:var(--soft);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--muted);font-weight:600;margin-bottom:16px">학습 데이터 없음 — 결과 기록 시 자동 반영</div>
+
+      <!-- 적용 버튼 -->
+      <button onclick="applyProfile()" style="width:100%;background:var(--primary);color:#fff;border:none;border-radius:var(--r);font-family:inherit;font-size:15px;font-weight:800;padding:16px;cursor:pointer;letter-spacing:.02em">적용하기</button>
+    </div>
+  </div>
+</div>
+<!-- Outcome Sheet (사후 학습 기록) -->
+<div class="backdrop" id="bd4" onclick="closeOutcome()"></div>
+<div class="sheet" id="sh4" style="max-height:70vh">
+  <div class="shead"><span class="stitle2">입찰 결과 기록</span><button class="sclose" onclick="closeOutcome()">×</button></div>
+  <div style="padding:16px;display:flex;flex-direction:column;gap:10px;overflow-y:auto">
+    <div id="outcomeTitleBox" style="background:var(--soft);border-radius:10px;padding:10px 14px;font-size:13px;font-weight:700;color:var(--text);line-height:1.4"></div>
+    <div style="display:flex;gap:8px">
+      <button id="outResultWin" onclick="setOutcomeResult('win')" style="flex:1;background:var(--soft);border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;font-weight:700;padding:11px;cursor:pointer;color:var(--muted)">낙찰</button>
+      <button id="outResultLose" onclick="setOutcomeResult('lose')" style="flex:1;background:var(--primary);border:1.5px solid var(--primary);border-radius:8px;font-family:inherit;font-size:13px;font-weight:700;padding:11px;cursor:pointer;color:#fff">탈락</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:5px;font-weight:600">투찰가 (원)</div>
+        <input id="outSubmittedPrice" type="number" placeholder="투찰가" style="width:100%;background:var(--soft);border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:14px;padding:10px 12px;outline:none;color:var(--text)"/>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:5px;font-weight:600">낙찰가 (원)</div>
+        <input id="outWinningPrice" type="number" placeholder="낙찰가" style="width:100%;background:var(--soft);border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:14px;padding:10px 12px;outline:none;color:var(--text)"/>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:5px;font-weight:600">순위</div>
+      <input id="outRankNo" type="number" placeholder="순위 (탈락시 2 이상)" style="width:100%;background:var(--soft);border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:14px;padding:10px 12px;outline:none;color:var(--text)"/>
+    </div>
+    <div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:5px;font-weight:600">비고</div>
+      <input id="outNotes" placeholder="예: 근소한 차이 탈락" style="width:100%;background:var(--soft);border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:14px;padding:10px 12px;outline:none;color:var(--text)"/>
+    </div>
+    <button onclick="saveOutcome()" style="background:var(--primary);color:#fff;border:none;border-radius:var(--r);font-family:inherit;font-size:14px;font-weight:800;padding:14px;cursor:pointer">결과 저장 · 학습 반영</button>
+    <div id="outcomeHistory" style="font-size:12px;color:var(--muted)"></div>
   </div>
 </div>
 
@@ -367,7 +716,49 @@ const SC={'마감임박':'#DC2626','D-1':'#DC2626','D-3':'#E9A23B','진행중':'
 const SBG={'마감임박':'#FEECEC','D-1':'#FEECEC','D-3':'#FFF7E8','진행중':'#EAF7EE','마감':'#F3F4F6'};
 const SCLS={'마감임박':'urg','D-1':'urg','D-3':'d3','진행중':'act','마감':'cls'};
 let allItems=[],rawItems=[],currentFilter='전체',searched=false;
+let currentStrategy='balanced';
+let currentOutcomeItem=null;
+let currentOutcomeResult='lose';
+let filterKw='';
+let filterRegion='';
+let filterSort='score';
+let filterSubKw='';
+
+// 대분류 → 소분류 매핑
+const CAT_SUB={
+  전체:[''],
+  중장비:['','굴착기','포크레인','크레인','로더','불도저','천공기'],
+  특수차:['','살수차','노면청소','제설','급수차','덤프트럭','탱크로리'],
+  용역:['','청소','환경','공사','관리','운영','용역','조사','점검']
+};
 const $=id=>document.getElementById(id);
+
+// ════════════════════════════════════════════
+// RULES ENGINE (ported from Python rules JSON)
+// ════════════════════════════════════════════
+const RULES={
+  salsoo:{
+    industry_name:'살수차',
+    allowed_regions:['충북','충남','경기','전북'],
+    required_licenses:['건설기계대여업','사업자등록'],
+    preferred_licenses:['대기환경 관련 신고','폐기물수집운반업'],
+    min_experience_years:1,
+    min_completed_projects:2,
+    min_vehicle_count:1,
+    joint_bidding_allowed_default:true,
+    risk_weights:{
+      license_missing:40,region_mismatch:25,experience_short:20,
+      missing_docs:15,deadline_urgent:10,joint_bidding_restricted:20,budget_too_low:15
+    },
+    price_strategy:{
+      default_lower_limit_ratio:0.87745,
+      safe_margin:0.0032,
+      aggressive_margin:0.0018,
+      distribution_bias:0.0007
+    }
+  }
+};
+const EQUIP_KEYWORDS=['살수차','굴착기','덤프트럭','포크레인','크레인','로더','노면청소','제설','급수차','물차','용수'];
 
 // ── 유틸 ──
 function toNum(v){const n=Number(String(v||0).replace(/[^\d.-]/g,''));return isFinite(n)?n:0;}
@@ -378,68 +769,206 @@ function getStatus(s){const dt=parseDL(s);if(!dt)return'확인필요';const h=(d
 function getDday(s){const dt=parseDL(s);if(!dt)return null;const diff=dt-Date.now();if(diff<0)return'마감됨';const ts=Math.floor(diff/1000),d=Math.floor(ts/86400),h=Math.floor((ts%86400)/3600),m=Math.floor((ts%3600)/60),sec=ts%60;if(d>0)return d+'일 '+h+'시간 '+m+'분';if(h>0)return h+'시간 '+m+'분 '+sec+'초';return m+'분 '+sec+'초';}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-// ── ① 스코어링 엔진 ──
-const EQUIP_KEYWORDS=['살수차','굴착기','덤프트럭','포크레인','크레인','로더','노면청소','제설','급수차','물차','용수'];
+// ════════════════════════════════════════════
+// PROFILE
+// ════════════════════════════════════════════
 function getProfile(){
-  return{region:($('selRegion')||{value:'충북'}).value,equip:($('selEquip')||{value:'살수차'}).value};
+  try{
+    const saved=JSON.parse(localStorage.getItem('bg_profile')||'{}');
+    return{
+      region:($('selRegion')||{value:saved.region||'충북'}).value||saved.region||'충북',
+      equip:($('selEquip')||{value:saved.equip||'살수차'}).value||saved.equip||'살수차',
+      expYears:parseInt(($('selExpYears')||{value:saved.expYears||3}).value)||saved.expYears||3,
+      vehicles:parseInt(($('selVehicles')||{value:saved.vehicles||2}).value)||saved.vehicles||2,
+      projects:parseInt(($('selProjects')||{value:saved.projects||12}).value)||saved.projects||12,
+      licenses:getLicenses(saved.licenses),
+      strategy:currentStrategy||saved.strategy||'balanced'
+    };
+  }catch{return{region:'충북',equip:'살수차',expYears:3,vehicles:2,projects:12,licenses:['건설기계대여업','사업자등록'],strategy:'balanced'};}
 }
+function getLicenses(fallback){
+  const lics=[];
+  if($('lic1')&&$('lic1').checked)lics.push('건설기계대여업');
+  if($('lic2')&&$('lic2').checked)lics.push('사업자등록');
+  if($('lic3')&&$('lic3').checked)lics.push('대기환경 관련 신고');
+  if($('lic4')&&$('lic4').checked)lics.push('폐기물수집운반업');
+  return lics.length?lics:(fallback||['건설기계대여업','사업자등록']);
+}
+function setStrategy(s,btn){
+  currentStrategy=s;
+  ['stBtn0','stBtn1','stBtn2'].forEach(id=>{
+    const el=$(id);if(!el)return;
+    el.style.background='var(--soft)';
+    el.style.borderColor='var(--border)';
+    el.style.color='var(--muted)';
+    el.querySelectorAll('div').forEach(d=>d.style.color='');
+  });
+  if(btn){
+    btn.style.background='var(--primary)';
+    btn.style.borderColor='var(--primary)';
+    btn.style.color='#fff';
+  }
+  updateProfileSummary();
+}
+function saveProfileToStorage(){
+  const p=getProfile();
+  localStorage.setItem('bg_profile',JSON.stringify(p));
+}
+function loadProfileFromStorage(){
+  try{
+    const s=JSON.parse(localStorage.getItem('bg_profile')||'{}');
+    if(s.region&&$('selRegion'))$('selRegion').value=s.region;
+    if(s.equip&&$('selEquip'))$('selEquip').value=s.equip;
+    if(s.expYears&&$('selExpYears'))$('selExpYears').value=s.expYears;
+    if(s.vehicles&&$('selVehicles'))$('selVehicles').value=s.vehicles;
+    if(s.projects&&$('selProjects'))$('selProjects').value=s.projects;
+    if(s.licenses){
+      if($('lic1'))$('lic1').checked=s.licenses.includes('건설기계대여업');
+      if($('lic2'))$('lic2').checked=s.licenses.includes('사업자등록');
+      if($('lic3'))$('lic3').checked=s.licenses.includes('대기환경 관련 신고');
+      if($('lic4'))$('lic4').checked=s.licenses.includes('폐기물수집운반업');
+    }
+    if(s.strategy){currentStrategy=s.strategy;const map={safe:'stBtn0',balanced:'stBtn1',aggressive:'stBtn2'};setStrategy(s.strategy,$(map[s.strategy]));}
+    updateProfileSummary();
+  }catch{}
+}
+
+// ════════════════════════════════════════════
+// LEARNING ENGINE (ported from Python get_company_learning_factor)
+// ════════════════════════════════════════════
+function getOutcomes(){try{return JSON.parse(localStorage.getItem('bg_outcomes')||'[]');}catch{return[];}}
+function saveOutcomes(arr){try{localStorage.setItem('bg_outcomes',JSON.stringify(arr.slice(0,100)));}catch{}}
+
+function getLearningFactor(){
+  const outcomes=getOutcomes().slice(-50);
+  if(!outcomes.length)return 0;
+  const wins=outcomes.filter(o=>o.result==='win').length;
+  const winRate=wins/outcomes.length;
+  const gaps=outcomes.filter(o=>o.winningPrice&&o.submittedPrice).map(o=>(o.submittedPrice-o.winningPrice)/Math.max(o.winningPrice,1));
+  const avgGap=gaps.length?gaps.reduce((a,b)=>a+b,0)/gaps.length:0;
+  const factor=(winRate-0.2)*0.0015-avgGap*0.3;
+  return Math.max(-0.005,Math.min(0.005,factor));
+}
+function getLearningStats(){
+  const outcomes=getOutcomes();
+  if(!outcomes.length)return null;
+  const wins=outcomes.filter(o=>o.result==='win').length;
+  const total=outcomes.length;
+  const factor=getLearningFactor();
+  return{total,wins,winRate:Math.round(wins/total*100),factor:Math.round(factor*10000)/10000};
+}
+function renderLearningStats(){
+  const s=getLearningStats();
+  const el=$('learningStats');
+  if(!el)return;
+  if(!s){el.textContent='학습 데이터 없음 (결과 기록 시 자동 반영)';return;}
+  const dir=s.factor>0?'▲ 가격 소폭 상향 조정':s.factor<0?'▼ 가격 소폭 하향 조정':'→ 보정 없음';
+  el.innerHTML=`<b style="color:var(--text)">학습 ${s.total}건</b> · 낙찰률 ${s.winRate}% · ${dir} <span style="color:var(--faint)">(보정값 ${(s.factor*100).toFixed(3)}%)</span>`;
+}
+
+// ════════════════════════════════════════════
+// SCORING ENGINE (risk-weight based)
+// ════════════════════════════════════════════
 function scoreItem(item){
   const p=getProfile();
+  const rule=RULES.salsoo;
+  const w=rule.risk_weights;
   const title=item.title||'',agency=item.agency||'',region=item.region||'';
-  let s=0,detail={equip:0,region:0,urgency:0,amount:0};
+  let riskPenalty=0;
+  const riskItems=[];
 
-  // 장비 적합도 40점
-  if(title.includes(p.equip)){detail.equip=40;}
-  else if(EQUIP_KEYWORDS.some(k=>title.includes(k))){detail.equip=20;}
+  // 지역 리스크 (25점 패널티)
+  const regionMatch=agency.includes(p.region)||region.includes(p.region)||rule.allowed_regions.includes(region);
+  if(!regionMatch){riskPenalty+=w.region_mismatch;riskItems.push({code:'region_mismatch',label:'지역 불일치'});}
 
-  // 지역 적합도 25점
-  if(agency.includes(p.region)||region.includes(p.region)){detail.region=25;}
-  else if(agency.includes('전국')||!region){detail.region=10;}
+  // 면허 리스크 (40점 패널티)
+  const myLicenses=new Set(p.licenses);
+  const missingReq=rule.required_licenses.filter(l=>!myLicenses.has(l));
+  if(missingReq.length){riskPenalty+=w.license_missing;riskItems.push({code:'license_missing',label:'면허 누락: '+missingReq.join(', ')});}
 
-  // 마감 긴박도 15점 (진행중=15, D-3=12, D-1=8, 마감임박=5)
-  const urgMap={'진행중':15,'D-3':12,'D-1':8,'마감임박':5,'마감':0};
-  detail.urgency=urgMap[item.status]||0;
+  // 업력/실적 리스크 (20점)
+  if(p.expYears<rule.min_experience_years){riskPenalty+=w.experience_short;riskItems.push({code:'exp_short',label:'업력 부족'});}
+  if(p.projects<rule.min_completed_projects){riskPenalty+=10;riskItems.push({code:'proj_short',label:'실적 부족'});}
+  if(p.vehicles<rule.min_vehicle_count){riskPenalty+=10;riskItems.push({code:'vehicle_short',label:'차량 부족'});}
 
-  // 예산 적정성 20점 (500만~3억 = 만점)
+  // 마감 긴박 (10점)
+  if(item.status==='마감임박'){riskPenalty+=w.deadline_urgent;riskItems.push({code:'deadline',label:'마감 임박'});}
+
+  // 예산 낮음 (15점)
   const amt=toNum(item.amount);
-  if(amt>=5000000&&amt<=300000000)detail.amount=20;
-  else if(amt>=1000000&&amt<=500000000)detail.amount=12;
-  else if(amt>0)detail.amount=6;
+  if(amt>0&&amt<3000000){riskPenalty+=w.budget_too_low;riskItems.push({code:'budget_low',label:'예산 과소'});}
 
-  s=detail.equip+detail.region+detail.urgency+detail.amount;
-  return{score:Math.min(s,100),detail};
+  // 점수 계산 (100 - 리스크패널티 + 긍정 보정)
+  let baseScore=100-Math.min(riskPenalty,100);
+
+  // 장비 적합도 보정
+  let equipBonus=0;
+  if(title.includes(p.equip))equipBonus=15;
+  else if(EQUIP_KEYWORDS.some(k=>title.includes(k)))equipBonus=5;
+
+  // 긴박도 보정 (진행중이 가장 좋음)
+  const urgBonus={'진행중':5,'D-3':3,'D-1':1,'마감임박':0,'마감':-10}[item.status]||0;
+
+  // 예산 적정 보정
+  const amtBonus=(amt>=5000000&&amt<=300000000)?5:(amt>=1000000&&amt<=500000000)?2:0;
+
+  const finalScore=Math.max(0,Math.min(100,baseScore+equipBonus+urgBonus+amtBonus));
+  const riskLevel=riskPenalty>=70?'HIGH':riskPenalty>=40?'MEDIUM':'LOW';
+
+  return{score:finalScore,riskPenalty,riskItems,riskLevel,equipBonus,urgBonus};
 }
 function scoreClass(n){if(n>=75)return'score-hi';if(n>=50)return'score-mid';if(n>=30)return'score-lo';return'score-na';}
 function scoreLabel(n){if(n>=75)return'HIGH';if(n>=50)return'MID';if(n>=30)return'LOW';return'—';}
 
-// ── ② 투찰가 추천 엔진 ──
-function calcBidPrice(amount){
+// ════════════════════════════════════════════
+// BID PRICE ENGINE (full port from Python)
+// ════════════════════════════════════════════
+function calcBidPrice(amount,strategy,competitorDensity,recentBidBias){
   const base=toNum(amount);
   if(!base)return null;
-  if(base<200000000){
-    // 적격심사 (2억 미만): 낙찰하한율 87.745%
-    const rate=0.87745;
-    return{method:'적격심사',rate:'87.745%',
-      min:Math.round(base*0.875),
-      rec:Math.round(base*rate),
-      max:Math.round(base*0.895)};
-  } else {
-    // 복수예비가 (2억 이상): 통계적 범위
-    return{method:'복수예비가',rate:'82~88% 추정',
-      min:Math.round(base*0.820),
-      rec:Math.round(base*0.851),
-      max:Math.round(base*0.880)};
-  }
+  const rule=RULES.salsoo.price_strategy;
+  strategy=strategy||currentStrategy||'balanced';
+  competitorDensity=competitorDensity||0.5;
+  recentBidBias=recentBidBias||0.5;
+
+  const lowerLimit=base<200000000?rule.default_lower_limit_ratio:0.82;
+  const method=base<200000000?'적격심사':'복수예비가';
+
+  const strategyMargin={safe:rule.safe_margin,balanced:(rule.safe_margin+rule.aggressive_margin)/2,aggressive:rule.aggressive_margin};
+  const margin=strategyMargin[strategy]||strategyMargin.balanced;
+
+  const competitorAdjust=(competitorDensity-0.5)*rule.distribution_bias*2;
+  const recentBiasAdjust=(recentBidBias-0.5)*0.0010;
+  const learningFactor=getLearningFactor();
+
+  const finalRatio=lowerLimit+margin-competitorAdjust-recentBiasAdjust+learningFactor;
+  const rec=Math.round(base*finalRatio);
+  const safe=Math.round(base*(lowerLimit+rule.safe_margin));
+  const aggressive=Math.round(base*(lowerLimit+rule.aggressive_margin-0.001));
+
+  return{method,lowerLimit,strategy,margin,competitorAdjust,recentBiasAdjust,learningFactor,finalRatio:Math.round(finalRatio*100000)/100000,
+    safe,rec,aggressive,
+    rateStr:(finalRatio*100).toFixed(4)+'%',
+    why:['업종별 하한율 기반 기준가','경쟁 밀집도 보정','최근 개찰 편향 반영','자사 학습 팩터 반영']
+  };
 }
 
 // ── 아이템 가공 ──
+function getGrade(score){return score>=80?'최적합':score>=65?'적합':score>=50?'검토':score>=35?'주의':'부적합';}
+function getGradeColor(score){return score>=80?'#0F766E':score>=65?'#15803D':score>=50?'#B45309':score>=35?'#DC2626':'#9CA3AF';}
+function getGradeBg(score){return score>=80?'#CCFBF1':score>=65?'#DCFCE7':score>=50?'#FEF9C3':score>=35?'#FEE2E2':'#F3F4F6';}
+
 function processItem(i){
   const status=getStatus(i.deadline);
-  const {score,detail}=scoreItem({...i,status});
-  const recommend=status!=='마감'&&score>=55;
-  return{...i,status,score,detail,recommend};
+  const {score,riskPenalty,riskItems,riskLevel,equipBonus,urgBonus}=scoreItem({...i,status});
+  const recommend=status!=='마감'&&score>=55&&riskLevel!=='HIGH';
+  const grade=getGrade(score);
+  return{...i,status,score,grade,riskPenalty,riskItems,riskLevel,equipBonus,urgBonus,recommend};
 }
 
+// ════════════════════════════════════════════
+// STATS & LIST
+// ════════════════════════════════════════════
 function updateStats(){
   const t=allItems.length,u=allItems.filter(i=>i.status==='마감임박'||i.status==='D-1').length;
   const d=allItems.filter(i=>i.status==='D-3').length,a=allItems.filter(i=>i.status==='진행중').length;
@@ -462,25 +991,43 @@ function updateStats(){
 function getFiltered(){
   if(currentFilter==='추천')return allItems.filter(i=>i.recommend);
   if(currentFilter==='검토')return allItems.filter(i=>i.status==='진행중'||i.status==='D-3'||i.status==='D-1');
-  if(currentFilter==='제외')return allItems.filter(i=>i.status==='마감');
+  if(currentFilter==='제외')return allItems.filter(i=>i.status==='마감'||i.riskLevel==='HIGH');
   if(currentFilter==='마감임박')return allItems.filter(i=>i.status==='마감임박'||i.status==='D-1');
   return allItems;
 }
 function setFilter(f,btn){currentFilter=f;document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));if(btn)btn.classList.add('on');renderList();}
 
 function renderList(){
-  const items=getFiltered().slice().sort((a,b)=>b.score-a.score);
+  let items=getFiltered().slice();
+  // 정렬 적용
+  if(filterSort==='amount_desc')items.sort((a,b)=>toNum(b.amount)-toNum(a.amount));
+  else if(filterSort==='amount_asc')items.sort((a,b)=>toNum(a.amount)-toNum(b.amount));
+  else if(filterSort==='newest')items.sort((a,b)=>String(b.id||'').localeCompare(String(a.id||'')));
+  else if(filterSort==='deadline_asc')items.sort((a,b)=>{const da=parseDL(a.deadline)||new Date(9999,0),db=parseDL(b.deadline)||new Date(9999,0);return da-db;});
+  else if(filterSort==='deadline_desc')items.sort((a,b)=>{const da=parseDL(a.deadline)||new Date(0),db=parseDL(b.deadline)||new Date(0);return db-da;});
+  else items.sort((a,b)=>b.score-a.score);
   $('countBadge').textContent=items.length+'건';
   if(!searched){$('cardList').innerHTML='<div class="loading"><div class="spinner"></div>데이터 로딩중...</div>';return;}
   if(!items.length){$('cardList').innerHTML='<div class="empty">조건에 맞는 공고가 없습니다</div>';return;}
-  $('cardList').innerHTML=items.map(item=>`
-    <div class="card${item.recommend?' rec':''}">
+  $('cardList').innerHTML=items.map(item=>{
+    const isTop=item.score>=70&&item.riskLevel!=='HIGH';
+    const isRisk=item.riskLevel==='HIGH';
+    const cardClass=`card${isTop?' top-match':isRisk?' high-risk':''}`;
+    const gc=getGradeColor(item.score),gb=getGradeBg(item.score);
+    return `
+    <div class="${cardClass}">
       <div class="ctop">
         <div class="cbadges">
           <span class="sb ${SCLS[item.status]||'cls'}">${esc(item.status)}</span>
+          <span class="grade-badge" style="background:${gb};color:${gc}">${item.grade||'—'}</span>
           ${item.recommend?'<span class="rb">추천</span>':''}
+          ${isRisk?'<span class="sb urg">위험</span>':''}
         </div>
-        <span class="score-badge ${scoreClass(item.score)}">${item.score}pt</span>
+        <div style="display:flex;align-items:center;gap:4px">
+          ${isWatched(item.id)?'<span style="font-size:10px;font-weight:800;color:#B45309;background:#FEF9C3;border-radius:3px;padding:2px 6px">관심</span>':''}
+          ${isBidIntent(item.id)?'<span style="font-size:10px;font-weight:800;color:#15803D;background:#DCFCE7;border-radius:3px;padding:2px 6px">참여</span>':''}
+          <span class="score-badge ${scoreClass(item.score)}">${item.score}<span style="font-size:9px;font-weight:700;margin-left:1px">점</span></span>
+        </div>
       </div>
       <div class="ctitle">${esc(item.title||'—')}</div>
       <div class="cagency">${esc(item.agency||'—')}</div>
@@ -488,11 +1035,15 @@ function renderList(){
         <div class="mbox"><div class="mlbl">기초금액</div><div class="mval big">${esc(fmtAmt(item.amount))}</div></div>
         <div class="mbox"><div class="mlbl">마감일시</div><div class="mval">${esc(fmtDL(item.deadline))}</div></div>
       </div>
-      <div class="mbox"><div class="mlbl">공고번호</div><div class="mval" style="color:var(--faint);font-weight:500">${esc(item.id||'—')}</div></div>
-    </div>`).join('');
+      <div class="mbox"><div class="mlbl">공고번호</div><div class="mval" style="color:var(--faint);font-weight:500;font-size:11px">${esc(item.id||'—')}</div></div>
+    </div>`;
+  }).join('');
   document.querySelectorAll('.card').forEach((el,i)=>{el.onclick=()=>openDetail(items[i]);});
 }
 
+// ════════════════════════════════════════════
+// DATA LOADING
+// ════════════════════════════════════════════
 async function fetchWithTO(url,ms=30000){
   const ctrl=new AbortController();
   const tid=setTimeout(()=>ctrl.abort(),ms);
@@ -501,8 +1052,7 @@ async function fetchWithTO(url,ms=30000){
 }
 
 async function loadAllBids(retry=0){
-  setErr('');searched=true;
-  currentPage=1;rawItems=[];
+  setErr('');searched=true;currentPage=1;rawItems=[];
   const cl=$('cardList'),sb=$('searchBtn');
   sb.disabled=true;sb.textContent='조회중';
   cl.innerHTML=`<div class="loading"><div class="spinner"></div>${retry?'재연결 중... ('+retry+'/3)':'나라장터 데이터 조회중...'}<br><small style="color:var(--faint);margin-top:8px;display:block">첫 접속 시 서버 기동에 최대 30초 소요</small></div>`;
@@ -518,15 +1068,14 @@ async function loadAllBids(retry=0){
   }catch(e){
     if(retry<3){
       let sec=5;
-      const countdown=setInterval(()=>{sec--;if(cl)cl.innerHTML=`<div class="loading"><div class="spinner"></div>서버 기동 중, ${sec}초 후 재시도...</div>`;},1000);
+      const cd=setInterval(()=>{sec--;if(cl)cl.innerHTML=`<div class="loading"><div class="spinner"></div>서버 기동 중, ${sec}초 후 재시도...</div>`;},1000);
       await new Promise(r=>setTimeout(r,5000));
-      clearInterval(countdown);
-      sb.disabled=false;sb.textContent='검색';
+      clearInterval(cd);sb.disabled=false;sb.textContent='검색';
       return loadAllBids(retry+1);
     }
     rawItems=[];allItems=[];updateStats();
     cl.innerHTML=`<div class="empty" style="padding:40px 20px;text-align:center">
-      <div style="font-size:32px;margin-bottom:10px">⚠️</div>
+      <div style="font-size:32px;margin-bottom:10px">️</div>
       <div style="font-weight:800;color:var(--text);margin-bottom:6px">서버 연결 실패</div>
       <div style="font-size:12px;color:var(--faint);margin-bottom:20px">${esc(e.message||'네트워크 오류')}</div>
       <button onclick="loadAllBids(0)" style="background:var(--primary);color:#fff;border:none;border-radius:var(--r);font-family:inherit;font-size:14px;font-weight:800;padding:12px 28px;cursor:pointer">다시 시도</button>
@@ -536,17 +1085,14 @@ async function loadAllBids(retry=0){
 }
 
 async function loadMore(){
-  if(isLoadingMore)return;
-  isLoadingMore=true;
-  const btn=$('loadMoreBtn');
-  btn.textContent='불러오는 중...';btn.disabled=true;
+  if(isLoadingMore)return;isLoadingMore=true;
+  const btn=$('loadMoreBtn');btn.textContent='불러오는 중...';btn.disabled=true;
   try{
     currentPage++;
     const res=await fetchWithTO(PROXY+'/api/bids?numOfRows=100&pageNo='+currentPage);
     const data=await res.json();
     if(!data.ok)throw new Error(data.message||'조회 실패');
-    const newItems=(data.items||[]).map(processItem);
-    rawItems=[...rawItems,...newItems];
+    rawItems=[...rawItems,...(data.items||[]).map(processItem)];
     const kw=($('kwInput').value||'').trim();
     allItems=kw?rawItems.filter(i=>(i.title||'').includes(kw)):rawItems;
     updateStats();renderList();updateLoadMore();
@@ -555,103 +1101,506 @@ async function loadMore(){
 }
 
 function updateLoadMore(){
-  const wrap=$('loadMoreWrap'),btn=$('loadMoreBtn');
-  if(!wrap)return;
+  const wrap=$('loadMoreWrap'),btn=$('loadMoreBtn');if(!wrap)return;
   const loaded=rawItems.length;
   if(loaded<totalCount){wrap.style.display='block';btn.textContent=`더보기 (${loaded}/${totalCount}건)`;}
   else{wrap.style.display='none';}
 }
 
-function doSearch(){applySearch();$('listHeader').scrollIntoView({behavior:'smooth',block:'start'});}
-function applySearch(){
-  const kw=($('kwInput').value||'').trim();
-  allItems=kw?rawItems.filter(i=>(i.title||'').includes(kw)):rawItems;
-  updateStats();currentFilter='전체';document.querySelectorAll('.fbtn').forEach((b,i)=>b.classList.toggle('on',i===0));
-  renderList();if(kw)addHistory(kw);
-  if(kw&&!allItems.length)setErr('"'+kw+'" 검색 결과 없음');else setErr('');
-}
-function quickSearch(btn,kw){$('kwInput').value=kw;document.querySelectorAll('.qbtn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');applySearch();$('listHeader').scrollIntoView({behavior:'smooth',block:'start'});}
+function doSearch(){applyFilters();$('listHeader').scrollIntoView({behavior:'smooth',block:'start'});}
+function applySearch(){applyFilters();}
+function quickSearch(btn,kw){$('kwInput').value=kw;filterSubKw=kw;applyFilters();$('listHeader').scrollIntoView({behavior:'smooth',block:'start'});}
 function setErr(msg){const e=$('errBox');e.textContent=msg;e.style.display=msg?'block':'none';}
 
+// ════════════════════════════════════════════
+// FILTER PANEL CONTROLS
+// ════════════════════════════════════════════
+function switchFtab(idx,btn){
+  document.querySelectorAll('.ftab').forEach((t,i)=>t.classList.toggle('on',i===idx));
+  document.querySelectorAll('.ftpanel').forEach((p,i)=>p.classList.toggle('on',i===idx));
+}
+
+function selectCat(btn){
+  document.querySelectorAll('#catChips .chip').forEach(c=>c.classList.remove('on'));
+  btn.classList.add('on');
+  const cat=btn.dataset.cat;
+  const subs=CAT_SUB[cat]||[''];
+  const wrap=$('subChips');
+  if(!wrap)return;
+  const subLabel=$('subLabel');
+  if(subLabel)subLabel.textContent=cat==='전체'?'— 대분류 선택 후 활성화':'';
+  wrap.innerHTML=subs.map((s,i)=>`<button class="chip${i===0?' on':''}" data-kw="${s}" onclick="selectSub(this,'${s}')">${s||'전체'}</button>`).join('');
+  filterSubKw='';
+  applyFilters();
+}
+
+function selectSub(btn,kw){
+  const wrap=$('subChips');
+  if(wrap)wrap.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+  btn.classList.add('on');
+  filterSubKw=kw;
+  $('kwInput').value=kw;
+  applyFilters();
+}
+
+function selectRegion(btn,region){
+  document.querySelectorAll('#regionChips .chip').forEach(c=>c.classList.remove('on'));
+  btn.classList.add('on');
+  filterRegion=region;
+  applyFilters();
+}
+
+function selectSort(btn,sort){
+  document.querySelectorAll('#sortOptions .sort-opt').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  filterSort=sort;
+  applyFilters();
+}
+
+function applyFilters(){
+  const kw=($('kwInput').value||filterSubKw||'').trim();
+  let items=rawItems;
+  if(kw)items=items.filter(i=>(i.title||'').includes(kw));
+  if(filterRegion)items=items.filter(i=>(i.agency||'').includes(filterRegion)||(i.region||'').includes(filterRegion));
+  allItems=items;
+  updateStats();
+  currentFilter='전체';
+  document.querySelectorAll('.fbtn').forEach((b,i)=>b.classList.toggle('on',i===0));
+  renderList();
+  setErr('');
+}
+
+// ── 정렬 함수 업데이트 ──
+function getWatchlist(){try{return JSON.parse(localStorage.getItem('bg_watch')||'[]');}catch{return[];}}
+function getBidIntents(){try{return JSON.parse(localStorage.getItem('bg_intents')||'[]');}catch{return[];}}
+
+function toggleWatch(item){
+  let w=getWatchlist();
+  const idx=w.findIndex(x=>x.id===item.id);
+  if(idx>=0){w.splice(idx,1);} else {w.unshift({id:item.id,title:item.title,agency:item.agency,amount:item.amount,deadline:item.deadline,savedAt:new Date().toISOString()});}
+  localStorage.setItem('bg_watch',JSON.stringify(w.slice(0,50)));
+  return idx<0;
+}
+function isWatched(id){return getWatchlist().some(x=>x.id===id);}
+
+function toggleBidIntent(item){
+  let intents=getBidIntents();
+  const idx=intents.findIndex(x=>x.id===item.id);
+  if(idx>=0){intents.splice(idx,1);} else {intents.unshift({id:item.id,title:item.title,agency:item.agency,amount:item.amount,deadline:item.deadline,intendedAt:new Date().toISOString()});}
+  localStorage.setItem('bg_intents',JSON.stringify(intents.slice(0,50)));
+  return idx<0;
+}
+function isBidIntent(id){return getBidIntents().some(x=>x.id===id);}
+
+// ════════════════════════════════════════════
+// DETAIL MODAL
+// ════════════════════════════════════════════
 function openDetail(item){
   const color=SC[item.status]||'#999',bg=SBG[item.status]||'#F3F4F6',dday=getDday(item.deadline);
   const bp=calcBidPrice(item.amount);
   const sc=item.score||0;
+  const watched=isWatched(item.id);
+  const intending=isBidIntent(item.id);
+  const riskLevel=item.riskLevel||'LOW';
+  const grade=item.grade||getGrade(sc);
+  const gradeColor=getGradeColor(sc);
+  const gradeBg=getGradeBg(sc);
+  const matchProb=Math.round(sc*(riskLevel==='HIGH'?0.45:riskLevel==='MEDIUM'?0.72:0.91));
 
-  $('dBadges').innerHTML=`
-    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-      <span class="sb ${SCLS[item.status]||'cls'}">${esc(item.status)}</span>
-      ${item.recommend?'<span class="rb">추천</span>':''}
-      <span class="score-badge ${scoreClass(sc)}">${sc}pt ${scoreLabel(sc)}</span>
+  $('dBadges').innerHTML=`<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+    <span class="sb ${SCLS[item.status]||'cls'}">${esc(item.status)}</span>
+    <span class="grade-badge" style="background:${gradeBg};color:${gradeColor}">${grade}</span>
+    ${item.recommend?'<span class="rb">추천</span>':''}
+    ${riskLevel==='HIGH'?'<span class="sb urg">위험</span>':''}
+    ${watched?'<span style="font-size:10px;font-weight:800;color:#B45309;background:#FEF9C3;border-radius:3px;padding:2px 6px">관심</span>':''}
+  </div>`;
+
+  // ── 마감 카운트다운 ──
+  const ddayHtml=dday?`<div class="dday-box" style="background:${bg};border-color:${color}40;margin-bottom:14px"><span class="dday-lbl">마감까지</span><span class="dday-val" id="ddayTimer" style="color:${item.status==='마감'?'#9CA3AF':color}">${esc(dday)}</span></div>`:'';
+
+  // ── 점수 / 매칭 블록 ──
+  const circumference=2*Math.PI*32;
+  const dashOffset=circumference*(1-sc/100);
+  const scoreHtml=`
+    <div class="rpt-score-block">
+      <div class="rpt-score-left">
+        <div style="position:relative;width:64px;height:64px">
+          <svg viewBox="0 0 64 64" style="width:64px;height:64px;transform:rotate(-90deg)">
+            <circle cx="32" cy="32" r="28" fill="none" stroke="rgba(0,0,0,.07)" stroke-width="6"/>
+            <circle cx="32" cy="32" r="28" fill="none" stroke="${gradeColor}" stroke-width="6"
+              stroke-dasharray="${circumference}" stroke-dashoffset="${dashOffset}" stroke-linecap="round"/>
+          </svg>
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+            <span class="rpt-score-num" style="color:${gradeColor}">${sc}</span>
+          </div>
+        </div>
+        <span class="rpt-score-unit">/ 100점</span>
+      </div>
+      <div class="rpt-score-right">
+        <div class="rpt-grade-pill" style="background:${gradeBg};color:${gradeColor}">${grade}</div>
+        <div class="rpt-match-row">
+          <span class="rpt-match-label">매칭 확률&nbsp;</span>
+          <span class="rpt-match-num" style="color:${gradeColor}">${matchProb}</span>
+          <span class="rpt-match-unit" style="color:${gradeColor}">%</span>
+        </div>
+        <div class="rpt-match-hint">${riskLevel==='HIGH'?'고위험 — 진입 전 재검토 필요':riskLevel==='MEDIUM'?'조건 일부 미충족 — 보완 후 참여 가능':'기본 요건 충족 — 참여 적합'}</div>
+      </div>
     </div>`;
 
-  const ddayHtml=dday?`<div class="dday-box" style="background:${bg};border-color:${color}40"><span class="dday-lbl">마감까지</span><span class="dday-val" id="ddayTimer" style="color:${item.status==='마감'?'#9CA3AF':color}">${esc(dday)}</span></div>`:'';
+  // ── 적합도 바 ──
+  const eqScore=item.equipBonus||0;
+  const urgScore=item.urgBonus||0;
+  const regionOk=(item.riskItems||[]).every(r=>r.code!=='region_mismatch');
+  const licOk=(item.riskItems||[]).every(r=>r.code!=='license_missing');
+  const amtScore=toNum(item.amount)>=5000000&&toNum(item.amount)<=300000000?100:toNum(item.amount)>0?60:0;
+  const barsHtml=`
+    <div class="rpt-bars">
+      <div style="font-size:9px;font-weight:800;color:var(--faint);letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px">적합도 분석</div>
+      ${[
+        {lbl:'장비 적합',pct:eqScore/15*100,ok:eqScore>=10,val:eqScore>=10?'일치':eqScore>0?'부분':'불일치'},
+        {lbl:'지역 적합',pct:regionOk?100:25,ok:regionOk,val:regionOk?'일치':'불일치'},
+        {lbl:'면허 보유',pct:licOk?100:0,ok:licOk,val:licOk?'충족':'누락'},
+        {lbl:'예산 규모',pct:amtScore,ok:amtScore>=80,val:amtScore>=80?'적정':amtScore>0?'확인':'미확인'},
+        {lbl:'마감 여유',pct:urgScore/5*100,ok:urgScore>=3,val:item.status==='진행중'?'여유':item.status==='D-3'?'D-3':item.status==='D-1'?'D-1':'임박'},
+      ].map(b=>`
+        <div class="rpt-bar-row">
+          <span class="rpt-bar-lbl">${b.lbl}</span>
+          <div class="rpt-bar-track"><div class="rpt-bar-fill" style="width:${Math.max(b.pct,b.pct>0?6:0)}%;background:${b.ok?gradeColor:'#DC2626'}"></div></div>
+          <span class="rpt-bar-val" style="color:${b.ok?gradeColor:'#DC2626'}">${b.val}</span>
+        </div>`).join('')}
+    </div>`;
 
-  const bpHtml=bp?`
-    <div class="bid-rec-box">
-      <div class="bid-rec-title">💡 투찰가 추천 · ${bp.method} (${bp.rate})</div>
-      <div class="bid-rec-grid">
-        <div class="bid-rec-item"><div class="bid-rec-lbl">최저선</div><div class="bid-rec-val">${fmtAmt(bp.min)}</div></div>
-        <div class="bid-rec-item"><div class="bid-rec-lbl">추천가</div><div class="bid-rec-val accent">${fmtAmt(bp.rec)}</div></div>
-        <div class="bid-rec-item"><div class="bid-rec-lbl">안전선</div><div class="bid-rec-val">${fmtAmt(bp.max)}</div></div>
+  // ── 투찰가 리포트 테이블 ──
+  const amt=toNum(item.amount);
+  const lf=getLearningFactor();
+  const priceHtml=bp?`
+    <div class="rpt-price-block">
+      <div class="rpt-price-head">
+        <span class="rpt-price-head-title">낙찰 제시가 분석</span>
+        <span class="rpt-price-head-sub">${bp.method} · ${bp.lowerLimit?((bp.lowerLimit*100).toFixed(3))+'%':''} 하한율</span>
       </div>
+      <div class="rpt-price-base">
+        <span class="rpt-price-base-lbl">기초금액</span>
+        <span class="rpt-price-base-val">${fmtAmt(item.amount)}</span>
+      </div>
+      <div style="display:flex;gap:6px;padding:10px 14px 0;border-top:1px solid var(--border)">
+        ${['safe','balanced','aggressive'].map((s,i)=>`<button onclick="updateBidPrice('${esc(item.id||'')}','${s}',this)" style="flex:1;background:${bp.strategy===s?'var(--primary)':'var(--soft)'};border:1.5px solid ${bp.strategy===s?'var(--primary)':'var(--border)'};color:${bp.strategy===s?'#fff':'var(--muted)'};border-radius:6px;font-family:inherit;font-size:11px;font-weight:700;padding:6px 2px;cursor:pointer" id="stratBtn${i}">${['안전형','균형형','공격형'][i]}</button>`).join('')}
+      </div>
+      <table class="rpt-price-table" id="priceTable">
+        <tr><th>전략</th><th>제시가</th><th>적용률</th></tr>
+        <tr${bp.strategy==='safe'?' class="rec-row"':''}><td>안전형${bp.strategy==='safe'?'<span class="rec-tag">추천</span>':''}</td><td class="price-val">${fmtAmt(bp.safe)}</td><td class="rate-val">${((bp.lowerLimit+RULES.salsoo.price_strategy.safe_margin)*100).toFixed(3)}%</td></tr>
+        <tr${bp.strategy==='balanced'?' class="rec-row"':''}><td>균형형${bp.strategy==='balanced'?'<span class="rec-tag">추천</span>':''}</td><td class="price-val">${fmtAmt(bp.rec)}</td><td class="rate-val">${(bp.finalRatio*100).toFixed(3)}%</td></tr>
+        <tr${bp.strategy==='aggressive'?' class="rec-row"':''}><td>공격형${bp.strategy==='aggressive'?'<span class="rec-tag">추천</span>':''}</td><td class="price-val">${fmtAmt(bp.aggressive)}</td><td class="rate-val">${((bp.lowerLimit+RULES.salsoo.price_strategy.aggressive_margin)*100).toFixed(3)}%</td></tr>
+      </table>
+      ${lf!==0?`<div style="padding:8px 14px;font-size:11px;color:var(--muted);border-top:1px solid var(--border);background:rgba(0,0,0,.01)">학습 보정 ${lf>0?'+':''}${(lf*100).toFixed(3)}% 적용 · 과거 입찰 데이터 기반</div>`:''}
     </div>`:'';
 
-  const scoreHtml=`
-    <div style="background:var(--soft);border-radius:var(--r);padding:10px 14px;margin-bottom:12px">
-      <div style="font-size:10px;font-weight:800;color:var(--faint);letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px">적합도 분석</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-        <div style="font-size:12px;color:var(--muted)">🔧 장비 적합도 <b style="color:var(--text);float:right">${item.detail?.equip||0}/40</b></div>
-        <div style="font-size:12px;color:var(--muted)">📍 지역 적합도 <b style="color:var(--text);float:right">${item.detail?.region||0}/25</b></div>
-        <div style="font-size:12px;color:var(--muted)">⏰ 마감 긴박도 <b style="color:var(--text);float:right">${item.detail?.urgency||0}/15</b></div>
-        <div style="font-size:12px;color:var(--muted)">💰 예산 적정성 <b style="color:var(--text);float:right">${item.detail?.amount||0}/20</b></div>
+  // ── 리스크 항목 ──
+  const riskHtml=(item.riskItems&&item.riskItems.length)?`
+    <div style="margin-bottom:14px">
+      <div class="rpt-section-title">위험 항목</div>
+      ${item.riskItems.map(r=>`<div class="rpt-risk-item"><span class="rpt-risk-label">${esc(r.label)}</span><span class="rpt-risk-tag">감점</span></div>`).join('')}
+    </div>`:'';
+
+  // ── 액션 버튼 ──
+  const actionHtml=`
+    <div class="rpt-section-title">액션</div>
+    <div class="action-row">
+      <button id="watchBtn" class="action-btn watch${watched?' on':''}" onclick="onWatch()">${watched?'관심 해제':'관심 등록'}</button>
+      <button id="bidBtn" class="action-btn bid${intending?' on':''}" onclick="onBidIntent()">${intending?'참여 취소':'입찰 참여'}</button>
+    </div>
+    <div class="action-row" style="margin-bottom:14px">
+      <button class="action-btn outcome" onclick="openOutcome(currentDetailItem)">결과 기록</button>
+      <button class="action-btn share" onclick="copyBidId('${esc(item.id||'')}')">공고번호 복사</button>
+    </div>`;
+
+  // ── G2B 링크 (수정) ──
+  const g2bSearch=`https://www.g2b.go.kr:8101/ep/invitation/publish/bidInfoSrch.do?bidNtceNo=${encodeURIComponent(item.id||'')}&bidNtceOrd=00`;
+  const g2bMain='https://www.g2b.go.kr';
+  const g2bHtml=`
+    <div class="rpt-section-title">나라장터 연결</div>
+    <a href="${g2bSearch}" target="_blank" rel="noopener" class="g2b-btn-primary" onclick="return checkG2bLink(this,'${esc(item.id||'')}')">나라장터 공고 검색 (공고번호 조회)</a>
+    <a href="${g2bMain}" target="_blank" rel="noopener" class="g2b-btn-secondary">나라장터 메인 접속</a>
+    <div style="font-size:10px;color:var(--faint);text-align:center;margin-bottom:12px">공고번호: <b style="color:var(--text);user-select:all">${esc(item.id||'—')}</b> — 직접 검색 시 위 번호 사용</div>`;
+
+  // ── 공고 상세 정보 ──
+  const infoHtml=`
+    <div class="analysis-section">
+      <div class="analysis-tab-bar">
+        <button class="atab on" onclick="switchTab(0,this)">위험 분석</button>
+        <button class="atab" onclick="switchTab(1,this)">가격 분석</button>
+        <button class="atab" onclick="switchTab(2,this)">공고 상세</button>
+      </div>
+      <div class="analysis-panel on" id="apanel0">
+        ${(item.riskItems&&item.riskItems.length)?item.riskItems.map(r=>`<div class="arow"><span class="akey">${esc(r.label)}</span><span class="aval" style="color:#B91C1C">감점</span></div>`).join(''):'<div class="arow"><span class="akey">리스크 없음</span><span class="aval" style="color:#15803D">이상없음</span></div>'}
+        <div class="arow"><span class="akey">위험 등급</span><span class="aval" style="color:${riskLevel==='HIGH'?'#B91C1C':riskLevel==='MEDIUM'?'#B45309':'#15803D'}">${riskLevel}</span></div>
+        <div class="arow"><span class="akey">리스크 감점</span><span class="aval">-${item.riskPenalty||0}점</span></div>
+      </div>
+      <div class="analysis-panel" id="apanel1">
+        <div class="arow"><span class="akey">기초금액</span><span class="aval">${fmtAmt(item.amount)}</span></div>
+        <div class="arow"><span class="akey">낙찰하한율</span><span class="aval">${amt<200000000?'87.745%':'82% 추정'}</span></div>
+        <div class="arow"><span class="akey">방식</span><span class="aval">${bp?bp.method:'—'}</span></div>
+        <div class="arow"><span class="akey">추천 제시가</span><span class="aval" style="color:var(--accent)">${bp?fmtAmt(bp.rec):'—'}</span></div>
+        <div class="arow"><span class="akey">학습 보정</span><span class="aval">${lf!==0?((lf>0?'+':'')+(lf*100).toFixed(3)+'%'):'보정 없음'}</span></div>
+      </div>
+      <div class="analysis-panel" id="apanel2">
+        <table class="rpt-info-table">
+          <tr><td>공고번호</td><td style="font-size:11px;font-family:monospace">${esc(item.id||'—')}</td></tr>
+          <tr><td>발주기관</td><td>${esc(item.agency||'—')}</td></tr>
+          <tr><td>공고유형</td><td>${esc(item.bidType||'—')}</td></tr>
+          <tr><td>지역</td><td>${esc(item.region||'—')}</td></tr>
+          <tr><td>마감일시</td><td>${esc(fmtDL(item.deadline))}</td></tr>
+          <tr><td>기초금액</td><td>${esc(fmtAmt(item.amount))}</td></tr>
+        </table>
       </div>
     </div>`;
 
-  const g2bUrl=`https://www.g2b.go.kr:8101/ep/invitation/publish/bidInfoSrch.do?bidNtceNo=${encodeURIComponent(item.id||'')}&bidNtceOrd=00&fromDt=&toDt=&radOrgan=1&searchDiv=1`;
-
   $('dBody').innerHTML=`
-    <div class="dtitle">${esc(item.title||'—')}</div>
-    <div class="dagency">${esc(item.agency||'—')}</div>
     ${ddayHtml}
-    ${bpHtml}
     ${scoreHtml}
-    <div class="igrid">
-      <div class="ibox"><div class="ilbl">기초금액</div><div class="ival big">${esc(fmtAmt(item.amount))}</div></div>
-      <div class="ibox"><div class="ilbl">마감일시</div><div class="ival">${esc(fmtDL(item.deadline))}</div></div>
-      <div class="ibox"><div class="ilbl">공고유형</div><div class="ival">${esc(item.bidType||'—')}</div></div>
-      <div class="ibox"><div class="ilbl">지역</div><div class="ival">${esc(item.region||'—')}</div></div>
-    </div>
-    <div class="ibox" style="margin-bottom:16px"><div class="ilbl">공고번호</div><div class="ival" style="color:var(--faint);font-weight:500">${esc(item.id||'—')}</div></div>
-    <a href="${g2bUrl}" target="_blank" rel="noopener" class="g2b-btn">나라장터에서 보기</a>
-    <a href="https://www.g2b.go.kr/pt/menu/selectSubFrame.do?framesrc=/pt/menu/frameTgong.do" target="_blank" rel="noopener" style="display:block;background:var(--soft);color:var(--muted);border:1px solid var(--border);border-radius:var(--r);padding:12px;text-align:center;font-size:13px;font-weight:600;text-decoration:none;margin-bottom:8px">나라장터 메인</a>
+    ${barsHtml}
+    ${priceHtml}
+    ${actionHtml}
+    ${g2bHtml}
+    ${infoHtml}
     <button class="close-btn" onclick="closeDetail()">닫기</button>`;
 
+  window.currentDetailItem=item;
+  addViewHistory(item);
   $('bd1').classList.add('open');$('sh1').classList.add('open');
   if(window._ti)clearInterval(window._ti);
   const dl=item.deadline;
   window._ti=setInterval(()=>{const e=$('ddayTimer');if(!e){clearInterval(window._ti);return;}e.textContent=getDday(dl)||'마감됨';},1000);
 }
-function closeDetail(){$('bd1').classList.remove('open');$('sh1').classList.remove('open');if(window._ti)clearInterval(window._ti);}
 
-function loadHistory(){try{return JSON.parse(localStorage.getItem('bg_hist')||'[]');}catch{return[];}}
-function saveHistory(h){try{localStorage.setItem('bg_hist',JSON.stringify(h.slice(0,10)));}catch{}}
-function addHistory(kw){let h=loadHistory();h=[kw,...h.filter(x=>x!==kw)].slice(0,10);saveHistory(h);renderHistory();}
-function removeHistory(kw){saveHistory(loadHistory().filter(x=>x!==kw));renderHistory();}
-function renderHistory(){const h=loadHistory(),el=$('histList');if(!h.length){el.innerHTML='<div class="hempty">조회기록 없음</div>';return;}el.innerHTML=h.map(kw=>`<div class="hist-item"><button class="hist-kw" onclick="histSearch('${esc(kw)}')">${esc(kw)}</button><button class="hist-del" onclick="removeHistory('${esc(kw)}')">삭제</button></div>`).join('');}
-function histSearch(kw){closeHist();$('kwInput').value=kw;doSearch();}
+
+function checkG2bLink(el,bidId){
+  const urlNoPort='https://www.g2b.go.kr/ep/invitation/publish/bidInfoSrch.do?bidNtceNo='+encodeURIComponent(bidId);
+  window.open(urlNoPort,'_blank');
+  return false;
+}
+function copyBidId(id){
+  if(!id)return;
+  const copy=()=>{const t=document.createElement('textarea');t.value=id;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);};
+  if(navigator.clipboard){navigator.clipboard.writeText(id).catch(copy);}else{copy();}
+  alert('공고번호 복사 완료\n'+id+'\n\n나라장터 검색창에 붙여넣기 하세요.');
+}
+
+function onWatch(){
+  const item=window.currentDetailItem;if(!item)return;
+  const now=toggleWatch(item);
+  const btn=$('watchBtn');if(!btn)return;
+  btn.className='action-btn watch'+(now?' on':'');
+  btn.innerHTML=`<span class="icon">${now?'⭐':''}</span><span>${now?'관심 해제':'관심 등록'}</span>`;
+  renderList();
+}
+function onBidIntent(){
+  const item=window.currentDetailItem;if(!item)return;
+  const now=toggleBidIntent(item);
+  const btn=$('bidBtn');if(!btn)return;
+  btn.className='action-btn bid'+(now?' on':'');
+  btn.innerHTML=`<span class="icon">${now?'':''}</span><span>${now?'참여 취소':'입찰 참여'}</span>`;
+  if(now)alert('입찰 참여 의향 저장!\n마감 후  결과 기록으로 학습 데이터를 쌓아주세요.');
+}
+function switchTab(idx,btn){
+  document.querySelectorAll('.atab').forEach((t,i)=>t.classList.toggle('on',i===idx));
+  document.querySelectorAll('.analysis-panel').forEach((p,i)=>p.classList.toggle('on',i===idx));
+}
+
+function updateBidPrice(itemId,strategy,btn){
+  const item=allItems.find(i=>i.id===itemId)||window.currentDetailItem;
+  if(!item)return;
+  const bp=calcBidPrice(item.amount,strategy);
+  if(!bp)return;
+  document.querySelectorAll('#stratBtns button').forEach(b=>{
+    b.style.background='var(--soft)';b.style.borderColor='var(--border)';b.style.color='var(--muted)';
+  });
+  if(btn){btn.style.background='var(--primary)';btn.style.borderColor='var(--primary)';btn.style.color='#fff';}
+  const grid=$('bidRecGrid');
+  if(grid)grid.innerHTML=`
+    <div class="bid-rec-item"><div class="bid-rec-lbl">안전형</div><div class="bid-rec-val">${fmtAmt(bp.safe)}</div></div>
+    <div class="bid-rec-item"><div class="bid-rec-lbl">추천가 </div><div class="bid-rec-val accent">${fmtAmt(bp.rec)}</div></div>
+    <div class="bid-rec-item"><div class="bid-rec-lbl">공격형</div><div class="bid-rec-val">${fmtAmt(bp.aggressive)}</div></div>`;
+}
+
+// ════════════════════════════════════════════
+// OUTCOME RECORDING (학습 루프)
+// ════════════════════════════════════════════
+function openOutcome(item){
+  if(!item)return;
+  currentOutcomeItem=item;
+  currentOutcomeResult='lose';
+  const tb=$('outcomeTitleBox');if(tb)tb.textContent=item.title||'—';
+  const sp=$('outSubmittedPrice');
+  if(sp){const bp=calcBidPrice(item.amount);sp.value=bp?bp.rec:'';}
+  const wp=$('outWinningPrice');if(wp)wp.value='';
+  const rn=$('outRankNo');if(rn)rn.value='';
+  const nt=$('outNotes');if(nt)nt.value='';
+  setOutcomeResult('lose');
+  renderOutcomeHistory();
+  $('bd4').classList.add('open');$('sh4').classList.add('open');
+}
+function closeOutcome(){$('bd4').classList.remove('open');$('sh4').classList.remove('open');}
+function setOutcomeResult(r){
+  currentOutcomeResult=r;
+  const w=$('outResultWin'),l=$('outResultLose');
+  if(r==='win'){
+    if(w){w.style.background='var(--primary)';w.style.borderColor='var(--primary)';w.style.color='#fff';}
+    if(l){l.style.background='var(--soft)';l.style.borderColor='var(--border)';l.style.color='var(--muted)';}
+  }else{
+    if(l){l.style.background='var(--primary)';l.style.borderColor='var(--primary)';l.style.color='#fff';}
+    if(w){w.style.background='var(--soft)';w.style.borderColor='var(--border)';w.style.color='var(--muted)';}
+  }
+}
+function saveOutcome(){
+  if(!currentOutcomeItem)return;
+  const outcome={
+    id:Date.now(),
+    tenderId:currentOutcomeItem.id,
+    tenderTitle:currentOutcomeItem.title,
+    result:currentOutcomeResult,
+    submittedPrice:toNum($('outSubmittedPrice').value),
+    winningPrice:toNum($('outWinningPrice').value)||null,
+    rankNo:parseInt($('outRankNo').value)||null,
+    notes:($('outNotes').value||'').trim(),
+    savedAt:new Date().toISOString()
+  };
+  const outcomes=getOutcomes();
+  outcomes.unshift(outcome);
+  saveOutcomes(outcomes);
+  renderOutcomeHistory();
+  renderLearningStats();
+  // 학습 반영 후 재계산
+  rawItems=rawItems.map(processItem);
+  allItems=allItems.map(processItem);
+  updateStats();renderList();
+  alert(`결과 저장 완료!\n학습 팩터 업데이트: ${(getLearningFactor()*100).toFixed(3)}%`);
+  closeOutcome();
+}
+function renderOutcomeHistory(){
+  const outcomes=getOutcomes().slice(0,5);
+  const el=$('outcomeHistory');if(!el)return;
+  if(!outcomes.length){el.textContent='기록된 결과 없음';return;}
+  el.innerHTML='<div style="font-weight:700;margin-bottom:6px;color:var(--text)">최근 기록</div>'+outcomes.map(o=>`
+    <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border)">
+      <span style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%">${esc(o.tenderTitle||'—')}</span>
+      <span style="font-size:11px;font-weight:700;color:${o.result==='win'?'#15803D':'#B91C1C'};flex-shrink:0">${o.result==='win'?'낙찰':'탈락'} ${o.submittedPrice?fmtAmt(o.submittedPrice):''}</span>
+    </div>`).join('');
+}
+
+// ════════════════════════════════════════════
+// HISTORY / PROFILE
+// ════════════════════════════════════════════
+// ════════════════════════════════════════════
+// VIEW HISTORY (실제 열람 로그)
+// ════════════════════════════════════════════
+function getViewHistory(){try{return JSON.parse(localStorage.getItem('bg_viewhist')||'[]');}catch{return[];}}
+function addViewHistory(item){
+  let h=getViewHistory();
+  const entry={id:item.id,title:item.title,agency:item.agency,amount:item.amount,status:item.status,grade:item.grade,score:item.score,deadline:item.deadline,viewedAt:new Date().toISOString()};
+  h=[entry,...h.filter(x=>x.id!==item.id)].slice(0,100);
+  localStorage.setItem('bg_viewhist',JSON.stringify(h));
+}
+function renderHistory(){
+  const h=getViewHistory(),el=$('histList');
+  if(!h.length){el.innerHTML='<div class="hempty">열람한 공고가 없습니다</div>';return;}
+  el.innerHTML=h.map(v=>`
+    <div class="hist-item" style="flex-direction:column;align-items:flex-start;gap:4px">
+      <div style="display:flex;width:100%;justify-content:space-between;align-items:center">
+        <span style="font-size:11px;color:var(--faint)">${esc(v.viewedAt?v.viewedAt.slice(0,16).replace('T',' '):'')}</span>
+        <div style="display:flex;gap:4px;align-items:center">
+          <span style="border-radius:4px;font-size:10px;font-weight:800;padding:1px 6px;background:${getGradeBg(v.score||0)};color:${getGradeColor(v.score||0)}">${v.grade||'—'}</span>
+          <span style="font-size:10px;font-weight:700;color:var(--faint)">${v.score||0}pt</span>
+          <button class="hist-del" onclick="removeViewHistory('${esc(v.id)}')">삭제</button>
+        </div>
+      </div>
+      <button class="hist-kw" style="font-weight:700;font-size:13px;text-align:left" onclick="histSearch('${esc(v.id)}')">${esc(v.title||'—')}</button>
+      <div style="font-size:11px;color:var(--muted)">${esc(v.agency||'—')} · ${fmtAmt(v.amount)} · ${esc(v.status||'')}</div>
+    </div>`).join('');
+}
+function removeViewHistory(id){
+  let h=getViewHistory().filter(x=>x.id!==id);
+  localStorage.setItem('bg_viewhist',JSON.stringify(h));
+  renderHistory();
+}
+// histSearch: 해당 공고를 검색에서 찾아서 열기
+function histSearch(idOrKw){
+  closeHist();
+  const item=rawItems.find(i=>i.id===idOrKw);
+  if(item){openDetail(item);return;}
+  $('kwInput').value=idOrKw;
+  doSearch();
+}
+function loadHistory(){return getViewHistory();}
+function saveHistory(){}
+function addHistory(){}
+function removeHistory(kw){removeViewHistory(kw);}
 function openHist(){renderHistory();$('bd2').classList.add('open');$('sh2').classList.add('open');}
 function closeHist(){$('bd2').classList.remove('open');$('sh2').classList.remove('open');}
-function openProfile(){$('bd3').classList.add('open');$('sh3').classList.add('open');}
+function openProfile(){
+  renderLearningStats();
+  const map={safe:'stBtn0',balanced:'stBtn1',aggressive:'stBtn2'};
+  setStrategy(currentStrategy,$(map[currentStrategy]||'stBtn1'));
+  // 서류 섹션 닫힌 상태로 초기화
+  const sec=$('docSection'),icon=$('docToggleIcon');
+  if(sec){sec.style.display='none';}
+  if(icon){icon.textContent='펼치기 ▼';}
+  $('bd3').classList.add('open');
+  $('sh3').classList.add('open');
+  // 시트 애니메이션(300ms) 완료 후 스크롤 초기화
+  setTimeout(()=>{
+    const body=$('profileBody');
+    if(body)body.scrollTop=0;
+  },320);
+}
 function closeProfile(){$('bd3').classList.remove('open');$('sh3').classList.remove('open');}
-function updateProfileSummary(){const r=$('selRegion').value,e=$('selEquip').value,s=$('selScale').value;const t=$('profileSummary');if(t)t.textContent=r+' · '+e+' · '+s;}
+
+function toggleDocSection(){
+  const sec=$('docSection'),icon=$('docToggleIcon');
+  if(!sec)return;
+  const open=sec.style.display==='flex';
+  sec.style.display=open?'none':'flex';
+  if(icon)icon.textContent=open?'펼치기 ▼':'접기 ▲';
+  if(!open)sec.style.marginBottom='16px';
+}
+
+function triggerFileUpload(idx, name, useCamera){
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = useCamera ? 'image/*' : 'image/*,application/pdf';
+  if(useCamera) input.setAttribute('capture','environment');
+  input.style.display = 'none';
+  input.onchange = () => handleDocUpload(idx, name, input);
+  document.body.appendChild(input);
+  input.click();
+  setTimeout(()=>document.body.removeChild(input), 30000);
+}
+
+function handleDocUpload(idx,name,input){
+  if(!input.files||!input.files[0])return;
+  const el=$('docStatus'+idx);
+  if(el){el.textContent='등록완료';el.style.color='#15803D';el.style.background='#DCFCE7';}
+  // localStorage에 파일명 저장
+  try{
+    const docs=JSON.parse(localStorage.getItem('bg_docs')||'{}');
+    docs[idx]={name,fileName:input.files[0].name,savedAt:new Date().toISOString()};
+    localStorage.setItem('bg_docs',JSON.stringify(docs));
+  }catch(e){}
+}
+function updateProfileSummary(){
+  const r=($('selRegion')||{value:'충북'}).value,e=($('selEquip')||{value:'살수차'}).value;
+  const t=$('profileSummary');if(t)t.textContent=r+' · '+e+' · '+currentStrategy+'형';
+}
 function applyProfile(){
-  closeProfile();
+  saveProfileToStorage();
   rawItems=rawItems.map(processItem);
   allItems=allItems.map(processItem);
   updateStats();renderList();updateProfileSummary();
+  closeProfile();
 }
 
+// ── INIT ──
+loadProfileFromStorage();
 updateStats();
 loadAllBids();
 </script>
