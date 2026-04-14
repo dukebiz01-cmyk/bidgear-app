@@ -7,10 +7,47 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <style>
 :root{
+  /* Core */
   --bg:#F6F8FB;--surface:#FFFFFF;--soft:#F1F5F9;--border:#E5E7EB;
   --text:#1F2937;--muted:#6B7280;--faint:#9CA3AF;
   --primary:#0E2A47;--accent:#2FB7A4;
   --r:12px;--r2:16px;
+
+  /* Semantic color palette */
+  --color-surface: #FFFFFF;
+  --color-border: #E5E7EB;
+  --color-success: #16A34A;
+  --color-warning: #D97706;
+  --color-error:   #DC2626;
+  --color-primary: #0E2A47;
+  --color-accent:  #2FB7A4;
+
+  /* Spacing */
+  --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:20px;
+  --radius-sm:6px;--radius-md:10px;--radius-lg:14px;
+  --shadow-sm:0 1px 4px rgba(15,23,42,.05);
+
+  /* Typography */
+  --text-xs:10px;--text-sm:11px;--text-base:13px;--text-md:14px;--text-lg:16px;--text-xl:22px;
+
+  /* State tokens — color-mix(in oklab) 기반 */
+  --state-success-border: color-mix(in oklab, var(--color-success) 24%, var(--color-border));
+  --state-success-bg:     linear-gradient(180deg, var(--color-surface) 0%, color-mix(in oklab, var(--color-success) 6%, var(--color-surface)) 100%);
+  --state-success-text:   var(--color-success);
+  --state-warning-border: color-mix(in oklab, var(--color-warning) 24%, var(--color-border));
+  --state-warning-bg:     linear-gradient(180deg, var(--color-surface) 0%, color-mix(in oklab, var(--color-warning) 7%, var(--color-surface)) 100%);
+  --state-warning-text:   var(--color-warning);
+  --state-danger-border:  color-mix(in oklab, var(--color-error) 24%, var(--color-border));
+  --state-danger-bg:      linear-gradient(180deg, var(--color-surface) 0%, color-mix(in oklab, var(--color-error) 6%, var(--color-surface)) 100%);
+  --state-danger-text:    var(--color-error);
+
+  /* eval-badge backgrounds via color-mix */
+  --state-success-badge-bg: color-mix(in oklab, var(--color-success) 10%, var(--color-surface));
+  --state-warning-badge-bg: color-mix(in oklab, var(--color-warning) 10%, var(--color-surface));
+  --state-danger-badge-bg:  color-mix(in oklab, var(--color-error)   10%, var(--color-surface));
+
+  /* Score ring */
+  --ring-size:72px;--ring-stroke:7px;--ring-circumference:175.93;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100%;overflow-x:hidden}
@@ -117,28 +154,43 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .score-lo{color:#9CA3AF}
 .score-na{color:#D1D5DB}
 
-/* ── 종합 평가 카드 ── */
-.eval-card{border-radius:var(--r);padding:16px;margin-bottom:12px;border:1.5px solid}
-.eval-top{display:flex;align-items:center;gap:16px;margin-bottom:14px}
-.score-ring{position:relative;width:80px;height:80px;flex-shrink:0}
-.score-ring svg{width:80px;height:80px;transform:rotate(-90deg)}
+/* ── 종합 평가 카드 — 디자인 토큰 기반 ── */
+.eval-card{border-radius:var(--radius-lg);padding:var(--space-4);margin-bottom:var(--space-3);border:1px solid var(--border);background:var(--surface);box-shadow:var(--shadow-sm)}
+.eval-card[data-state="good"]{border-color:var(--state-success-border);background:var(--state-success-bg)}
+.eval-card[data-state="warn"]{border-color:var(--state-warning-border);background:var(--state-warning-bg)}
+.eval-card[data-state="danger"]{border-color:var(--state-danger-border);background:var(--state-danger-bg)}
+.eval-card[data-state="closed"]{border-color:var(--border);background:var(--soft)}
+.eval-top{display:flex;align-items:center;gap:var(--space-4);margin-bottom:var(--space-3)}
+.score-ring{position:relative;width:var(--ring-size);height:var(--ring-size);flex-shrink:0}
+.score-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.score-ring-bg{fill:none;stroke:rgba(0,0,0,.07);stroke-width:var(--ring-stroke)}
+.score-ring-fill{fill:none;stroke-width:var(--ring-stroke);stroke-linecap:round;stroke-dasharray:var(--ring-circumference);transition:stroke-dashoffset .45s ease,stroke .2s ease}
 .score-ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.score-ring-num{font-size:24px;font-weight:900;line-height:1;letter-spacing:-.04em}
-.score-ring-lbl{font-size:9px;font-weight:700;letter-spacing:.06em;margin-top:2px;text-transform:uppercase}
+.score-ring-num{font-size:var(--text-xl);font-weight:900;line-height:1;letter-spacing:-.04em;color:var(--text)}
+.score-ring-lbl{font-size:var(--text-xs);font-weight:700;letter-spacing:.06em;margin-top:var(--space-1);text-transform:uppercase;color:var(--muted)}
 .eval-meta{flex:1}
-.eval-grade{font-size:26px;font-weight:900;letter-spacing:-.03em;line-height:1;margin-bottom:6px}
-.eval-prob-row{display:flex;align-items:baseline;gap:6px;margin-bottom:4px}
-.eval-prob-label{font-size:11px;font-weight:700;color:var(--muted)}
-.eval-prob-num{font-size:28px;font-weight:900;line-height:1;letter-spacing:-.04em}
-.eval-prob-unit{font-size:13px;font-weight:800}
-.eval-hint{font-size:11px;color:var(--muted);font-weight:600;line-height:1.4}
-.eval-bars{display:flex;flex-direction:column;gap:8px;margin-top:2px}
-.ebar-row{display:flex;align-items:center;gap:8px}
-.ebar-lbl{font-size:11px;font-weight:700;width:60px;flex-shrink:0;color:var(--muted)}
+.eval-title{font-size:var(--text-xs);font-weight:800;color:var(--muted);margin-bottom:var(--space-1);letter-spacing:.04em;text-transform:uppercase}
+.eval-grade{font-size:clamp(1.4rem,1.2rem + 1vw,1.8rem);font-weight:900;letter-spacing:-.03em;line-height:1.1;color:var(--text)}
+.eval-badge{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:999px;font-size:var(--text-sm);font-weight:800;border:1px solid transparent;margin-bottom:var(--space-2)}
+.eval-badge[data-state="good"]{background:var(--state-success-badge-bg);color:var(--state-success-text);border-color:var(--state-success-border)}
+.eval-badge[data-state="warn"]{background:var(--state-warning-badge-bg);color:var(--state-warning-text);border-color:var(--state-warning-border)}
+.eval-badge[data-state="danger"]{background:var(--state-danger-badge-bg);color:var(--state-danger-text);border-color:var(--state-danger-border)}
+.eval-badge[data-state="closed"]{background:var(--soft);color:var(--faint);border-color:var(--border)}
+.eval-prob-row{display:flex;align-items:baseline;gap:var(--space-2);margin-bottom:var(--space-1)}
+.eval-prob-label{font-size:var(--text-sm);font-weight:700;color:var(--muted)}
+.eval-prob-num{font-size:clamp(1.5rem,1.2rem + 1.2vw,2rem);font-weight:900;line-height:1;letter-spacing:-.04em;color:var(--text)}
+.eval-prob-unit{font-size:var(--text-base);font-weight:800;color:var(--muted)}
+.eval-hint{font-size:var(--text-sm);color:var(--muted);font-weight:600;line-height:1.4}
+.eval-update{margin-top:var(--space-2);font-size:var(--text-xs);color:var(--faint);font-weight:600}
+.eval-bars{display:flex;flex-direction:column;gap:var(--space-2);margin-top:var(--space-3)}
+.ebar-row{display:flex;align-items:center;gap:var(--space-2)}
+.ebar-lbl{font-size:var(--text-sm);font-weight:700;width:60px;flex-shrink:0;color:var(--muted)}
 .ebar-track{flex:1;height:8px;background:rgba(0,0,0,.07);border-radius:4px;overflow:hidden}
 .ebar-fill{height:100%;border-radius:4px;transition:width .5s ease}
-.ebar-val{font-size:11px;font-weight:800;width:38px;text-align:right;flex-shrink:0}
-
+.ebar-val{font-size:var(--text-sm);font-weight:800;width:38px;text-align:right;color:var(--text)}
+.eval-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:var(--space-3);padding-top:var(--space-3);border-top:1px dashed var(--border)}
+.eval-tags{display:flex;flex-wrap:wrap;gap:var(--space-1)}
+.eval-tag{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:999px;background:var(--soft);border:1px solid var(--border);font-size:var(--text-xs);font-weight:700;color:var(--muted)}
 /* ── 섹션 타이틀 (이모티콘 없이) ── */
 .sec-title{font-size:11px;font-weight:800;color:var(--primary);letter-spacing:.06em;text-transform:uppercase;border-bottom:2px solid var(--primary);padding-bottom:5px;margin-bottom:10px}
 
@@ -1173,13 +1225,181 @@ function renderList(){
 }
 
 // ════════════════════════════════════════════
-// DATA LOADING
+// 공고 상세 파싱 엔진
 // ════════════════════════════════════════════
+function parseBidConditions(item){
+  const title = item.title||'';
+  const agency = item.agency||'';
+  const amt = toNum(item.amount);
+  const result = {
+    conditions: [],   // 특수조건 목록
+    warnings: [],     // 경고 항목
+    tags: [],         // 요약 태그
+    bidMethod: '',    // 입찰 방식
+    jointAllowed: null,
+    localLimit: null,
+    licenseRequired: [],
+    performanceRequired: false,
+    estimatedCompetitors: '',
+  };
+
+  // ── 입찰 방식 판별 ──
+  if(amt > 0){
+    if(amt < 50000000){
+      result.bidMethod = '수의계약 가능';
+      result.tags.push({label:'수의계약 가능', color:'#16A34A'});
+    } else if(amt < 200000000){
+      result.bidMethod = '적격심사 (87.745%)';
+      result.tags.push({label:'적격심사', color:'#0E2A47'});
+    } else if(amt < 2000000000){
+      result.bidMethod = '복수예비가 (82%)';
+      result.tags.push({label:'복수예비가', color:'#D97706'});
+      result.warnings.push('복수예비가: 예비율 15개 추첨 방식 — 가격 예측 어려움');
+    } else {
+      result.bidMethod = '대형공사 입찰';
+      result.tags.push({label:'대형공사', color:'#DC2626'});
+    }
+  }
+
+  // ── 공동수급 ──
+  if(title.includes('공동수급') || title.includes('공동계약')){
+    result.jointAllowed = true;
+    result.conditions.push({label:'공동수급 허용', type:'info'});
+    result.tags.push({label:'공동수급', color:'#2FB7A4'});
+  }
+  if(title.includes('단독') || title.includes('단일업체')){
+    result.jointAllowed = false;
+    result.conditions.push({label:'단독입찰 (공동수급 불가)', type:'warn'});
+  }
+
+  // ── 지역 제한 ──
+  const regionKeywords = ['충북','충남','경북','경남','전북','전남','경기','강원','서울','부산','대구','인천','광주','대전','울산','제주','충청북도','충청남도'];
+  const foundRegion = regionKeywords.find(r => agency.includes(r) || title.includes(r+'지역'));
+  if(foundRegion){
+    result.localLimit = foundRegion;
+    result.conditions.push({label:`지역 제한: ${foundRegion}`, type:'warn'});
+  }
+
+  // ── 실적 제한 ──
+  if(title.includes('실적') || title.includes('시공실적') || title.includes('납품실적')){
+    result.performanceRequired = true;
+    result.conditions.push({label:'실적 제한 있음 — 공고문 확인 필수', type:'danger'});
+    result.warnings.push('실적 제한: 과거 유사 실적 증명서 필요');
+  }
+
+  // ── 면허/자격 키워드 ──
+  const licKeywords = [
+    {kw:'건설기계', label:'건설기계대여업 면허'},
+    {kw:'청소업', label:'청소업 신고'},
+    {kw:'폐기물', label:'폐기물 수집·운반업 허가'},
+    {kw:'방역', label:'방역업 신고'},
+    {kw:'대기', label:'대기환경 관련 신고'},
+  ];
+  licKeywords.forEach(({kw,label})=>{
+    if(title.includes(kw)) result.licenseRequired.push(label);
+  });
+
+  // ── 계약 기간 파싱 ──
+  const periodMatch = title.match(/(\d+)(?:개월|년)/);
+  if(periodMatch){
+    result.conditions.push({label:`계약 기간: ${periodMatch[0]}`, type:'info'});
+    result.tags.push({label:periodMatch[0], color:'#6B7280'});
+  }
+
+  // ── 경쟁 밀집도 추정 ──
+  if(amt < 30000000) result.estimatedCompetitors = '경쟁 낮음 (소규모)';
+  else if(amt < 100000000) result.estimatedCompetitors = '경쟁 보통 (3~8개사)';
+  else if(amt < 500000000) result.estimatedCompetitors = '경쟁 높음 (5~15개사)';
+  else result.estimatedCompetitors = '경쟁 매우 높음 (대형)';
+
+  // ── 2차 작업 / 연장 ──
+  if(title.match(/\d차/)) result.conditions.push({label:'차수 공고 (연속 계약 가능)', type:'info'});
+  if(title.includes('협상') || title.includes('협상에의한')) {
+    result.conditions.push({label:'협상에 의한 계약', type:'warn'});
+    result.warnings.push('협상 방식: 기술·가격 협상 과정 있음');
+  }
+  if(title.includes('긴급')) {
+    result.conditions.push({label:'긴급 입찰', type:'warn'});
+    result.tags.push({label:'긴급', color:'#DC2626'});
+  }
+
+  return result;
+}
+// ════════════════════════════════════════════
+// 낙찰 결과 수집 엔진
+// ════════════════════════════════════════════
+const RESULT_CACHE_KEY='bg_bid_results';
+function getResultCache(){try{return JSON.parse(localStorage.getItem(RESULT_CACHE_KEY)||'{}');}catch{return{};}}
+function setResultCache(bidId,data){
+  try{
+    const cache=getResultCache();
+    cache[bidId]={data,savedAt:Date.now()};
+    const keys=Object.keys(cache);
+    if(keys.length>200){keys.sort((a,b)=>cache[a].savedAt-cache[b].savedAt).slice(0,50).forEach(k=>delete cache[k]);}
+    localStorage.setItem(RESULT_CACHE_KEY,JSON.stringify(cache));
+  }catch{}
+}
+function getCachedResult(bidId){
+  const c=getResultCache()[bidId];
+  if(!c)return null;
+  if(Date.now()-c.savedAt>7*86400000)return null;
+  return c.data;
+}
+async function fetchBidResult(bidId){
+  if(!bidId)return null;
+  const cached=getCachedResult(bidId);
+  if(cached)return cached;
+  // 1. 프록시 시도
+  try{
+    const res=await fetchWithTO(`${PROXY}/api/bid-result?bidNtceNo=${encodeURIComponent(bidId)}`,8000);
+    if(res.ok){const d=await res.json();if(d.ok&&d.result){setResultCache(bidId,d.result);return d.result;}}
+  }catch{}
+  // 2. G2B 직접 시도
+  try{
+    const url=`https://api.g2b.go.kr:8082/openapi/service/rest/BidResultInfoService/getBidResultListSvc?ServiceKey=e659aac35f8bc0e62f69f413136572460935d8d4e713f5f2289adac949e7f900&bidNtceNo=${encodeURIComponent(bidId)}&numOfRows=1&pageNo=1&type=json`;
+    const res=await fetchWithTO(url,8000);
+    if(res.ok){
+      const raw=await res.json();
+      const items=raw?.response?.body?.items?.item;
+      const i=Array.isArray(items)?items[0]:items;
+      if(i){
+        const r={winnerNm:i.bidprcprcBidprcprcNm||i.sucsfbidNm||null,winPrice:i.sucsfbidAmt||i.bidprcprcAmt||null,winRate:i.sucsfbidRt||null,competitorCnt:i.bidprcprcCnt||null,openDate:i.opengDate||null};
+        setResultCache(bidId,r);return r;
+      }
+    }
+  }catch{}
+  return null;
+}
+async function loadAndShowBidResult(bidId){
+  const el=document.getElementById('bidResultSection');if(!el)return;
+  el.innerHTML='<div style="font-size:11px;color:var(--faint);padding:8px 0">낙찰 결과 조회 중...</div>';
+  const r=await fetchBidResult(bidId);
+  if(!r){el.innerHTML='<div style="font-size:11px;color:var(--faint);padding:8px 0">낙찰 결과 없음 (진행 중이거나 미공개)</div>';return;}
+  el.innerHTML=`
+    <div style="background:var(--soft);border-radius:10px;padding:12px 14px;border:1px solid var(--border)">
+      <div style="font-size:9px;font-weight:800;color:var(--faint);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">낙찰 결과</div>
+      ${r.winPrice?`<div class="arow"><span class="akey">낙찰가</span><span class="aval" style="color:#16A34A;font-weight:900">${fmtAmt(r.winPrice)}</span></div>`:''}
+      ${r.winRate?`<div class="arow"><span class="akey">낙찰률</span><span class="aval">${r.winRate}%</span></div>`:''}
+      ${r.winnerNm?`<div class="arow"><span class="akey">낙찰업체</span><span class="aval">${esc(r.winnerNm)}</span></div>`:''}
+      ${r.competitorCnt?`<div class="arow"><span class="akey">투찰 업체수</span><span class="aval">${r.competitorCnt}개사</span></div>`:''}
+      ${r.openDate?`<div class="arow" style="border:none"><span class="akey">개찰일</span><span class="aval">${esc(r.openDate)}</span></div>`:''}
+    </div>`;
+}
+
 async function fetchWithTO(url,ms=30000){
-  const ctrl=new AbortController();
-  const tid=setTimeout(()=>ctrl.abort(),ms);
-  try{return await fetch(url,{signal:ctrl.signal});}
-  finally{clearTimeout(tid);}
+  // AbortController가 지원되지 않는 환경(Claude 샌드박스 등) 대응
+  try{
+    const ctrl=new AbortController();
+    const tid=setTimeout(()=>ctrl.abort(),ms);
+    try{return await fetch(url,{signal:ctrl.signal});}
+    finally{clearTimeout(tid);}
+  }catch(e){
+    // AbortSignal 직렬화 오류 시 signal 없이 재시도
+    if(e.message&&e.message.includes('clone')){
+      return await fetch(url);
+    }
+    throw e;
+  }
 }
 
 async function loadAllBids(retry=0){
@@ -1361,41 +1581,48 @@ function openDetail(item){
   const ddayHtml=dday?`<div class="dday-box" style="background:var(--soft);border:1.5px solid var(--border);margin-bottom:14px"><span class="dday-lbl">마감까지</span><span class="dday-val" id="ddayTimer" style="color:${isClosed?'#9CA3AF':'var(--text)'};font-weight:900">${esc(dday)}</span></div>`:'';
 
   // ── 점수 / 매칭 블록 ── (마감 공고는 별도 처리)
-  const circumference=2*Math.PI*32;
-  const dashOffset=circumference*(1-sc/100);
   // 색상: 검정 기반으로 통일, 등급별 accent만 사용
-  const ringColor=isClosed?'#9CA3AF':gradeColor;
   const matchProbDisplay=isClosed?'—':`${matchProb}%`;
   const hintDisplay=isClosed?'마감된 공고입니다':
     riskLevel==='HIGH'?'고위험 — 진입 전 재검토 필요':
     riskLevel==='MEDIUM'?'조건 일부 미충족 — 보완 후 참여 가능':
     '기본 요건 충족 — 참여 적합';
 
+  // eval-card state 결정
+  const evalState=isClosed?'closed':sc>=65?'good':sc>=50?'warn':'danger';
+  const barColor=sc>=65?'var(--state-success-text)':sc>=50?'var(--state-warning-text)':'var(--state-danger-text)';
+  // ring: r=28, circumference=2π×28≈175.93 (--ring-circumference 토큰과 일치)
+  const ringCirc=175.93;
+  const dashOff=ringCirc*(1-sc/100);
+  const ringStroke=isClosed?'#D1D5DB':sc>=65?'#16A34A':sc>=50?'#D97706':'#DC2626';
+
   const scoreHtml=`
-    <div class="rpt-score-block">
-      <div class="rpt-score-left">
-        <div style="position:relative;width:64px;height:64px">
-          <svg viewBox="0 0 64 64" style="width:64px;height:64px;transform:rotate(-90deg)">
-            <circle cx="32" cy="32" r="28" fill="none" stroke="#E5E7EB" stroke-width="6"/>
-            <circle cx="32" cy="32" r="28" fill="none" stroke="${isClosed?'#D1D5DB':'#1E293B'}" stroke-width="6"
-              stroke-dasharray="${circumference}" stroke-dashoffset="${dashOffset}" stroke-linecap="round"/>
+    <div class="eval-card" data-state="${evalState}" style="margin-bottom:14px">
+      <div class="eval-top">
+        <div class="score-ring">
+          <svg viewBox="0 0 64 64">
+            <circle class="score-ring-bg" cx="32" cy="32" r="28"/>
+            <circle class="score-ring-fill" cx="32" cy="32" r="28"
+              style="stroke:${ringStroke};stroke-dashoffset:${dashOff}"/>
           </svg>
-          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
-            <span class="rpt-score-num" style="color:#111827">${sc}</span>
+          <div class="score-ring-center">
+            <span class="score-ring-num">${sc}</span>
+            <span class="score-ring-lbl">/ 100</span>
           </div>
         </div>
-        <span class="rpt-score-unit" style="color:#9CA3AF">/ 100점</span>
-      </div>
-      <div class="rpt-score-right">
-        <div class="rpt-grade-pill" style="background:#F3F4F6;color:#374151">${gradeDisplay}</div>
-        <div class="rpt-match-row">
-          <span class="rpt-match-label" style="color:#9CA3AF">매칭 확률&nbsp;</span>
-          <span class="rpt-match-num" style="color:#111827">${isClosed?'—':matchProb}</span>
-          ${isClosed?'':'<span class="rpt-match-unit" style="color:#6B7280">%</span>'}
+        <div class="eval-meta">
+          <div class="eval-title">매칭 분석</div>
+          <span class="eval-badge" data-state="${evalState}">${gradeDisplay}</span>
+          <div class="eval-prob-row">
+            <span class="eval-prob-label">매칭 확률&nbsp;</span>
+            <span class="eval-prob-num">${isClosed?'—':matchProb}</span>
+            ${isClosed?'':'<span class="eval-prob-unit">%</span>'}
+          </div>
+          <div class="eval-hint">${hintDisplay}</div>
         </div>
-        <div class="rpt-match-hint" style="color:#9CA3AF">${hintDisplay}</div>
       </div>
     </div>`;
+
 
   // ── 적합도 바 ──
   const eqScore=item.equipBonus||0;
@@ -1404,20 +1631,29 @@ function openDetail(item){
   const licOk=(item.riskItems||[]).every(r=>r.code!=='license_missing');
   const amtScore=toNum(item.amount)>=5000000&&toNum(item.amount)<=300000000?100:toNum(item.amount)>0?60:0;
   const barsHtml=`
-    <div class="rpt-bars">
-      <div style="font-size:9px;font-weight:800;color:var(--faint);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px">적합도 분석</div>
-      ${[
-        {lbl:'장비 적합',pct:eqScore/15*100,ok:eqScore>=10,val:eqScore>=10?'일치':eqScore>0?'부분':'불일치'},
-        {lbl:'지역 적합',pct:regionOk?100:20,ok:regionOk,val:regionOk?'일치':'불일치'},
-        {lbl:'면허 보유',pct:licOk?100:0,ok:licOk,val:licOk?'충족':'누락'},
-        {lbl:'예산 규모',pct:amtScore,ok:amtScore>=80,val:amtScore>=80?'적정':amtScore>0?'확인':'미확인'},
-        {lbl:'마감 여유',pct:urgScore/5*100,ok:urgScore>=3,val:item.status==='진행중'?'여유':item.status==='D-3'?'D-3':item.status==='D-1'?'D-1':'임박'},
-      ].map(b=>`
-        <div class="rpt-bar-row">
-          <span class="rpt-bar-lbl" style="color:#6B7280">${b.lbl}</span>
-          <div class="rpt-bar-track"><div class="rpt-bar-fill" style="width:${Math.max(b.pct,b.pct>0?6:0)}%;background:${b.ok?'#374151':'#D1D5DB'}"></div></div>
-          <span class="rpt-bar-val" style="color:${b.ok?'#111827':'#9CA3AF'};font-size:11px">${b.val}</span>
-        </div>`).join('')}
+    <div class="eval-card" data-state="${evalState}" style="margin-bottom:14px">
+      <div style="font-size:9px;font-weight:800;color:var(--faint);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px">적합도 분석</div>
+      <div class="eval-bars">
+        ${[
+          {lbl:'장비 적합',pct:eqScore/15*100,ok:eqScore>=10,val:eqScore>=10?'일치':eqScore>0?'부분':'불일치'},
+          {lbl:'지역 적합',pct:regionOk?100:20,ok:regionOk,val:regionOk?'일치':'불일치'},
+          {lbl:'면허 보유',pct:licOk?100:0,ok:licOk,val:licOk?'충족':'누락'},
+          {lbl:'예산 규모',pct:amtScore,ok:amtScore>=80,val:amtScore>=80?'적정':amtScore>0?'확인':'미확인'},
+          {lbl:'마감 여유',pct:urgScore/5*100,ok:urgScore>=3,val:item.status==='진행중'?'여유':item.status==='D-3'?'D-3':item.status==='D-1'?'D-1':'임박'},
+        ].map(b=>`
+          <div class="ebar-row">
+            <span class="ebar-lbl">${b.lbl}</span>
+            <div class="ebar-track"><div class="ebar-fill" style="width:${Math.max(b.pct,b.pct>0?6:0)}%;background:${b.ok?barColor:'#D1D5DB'}"></div></div>
+            <span class="ebar-val" style="color:${b.ok?'#111827':'#9CA3AF'}">${b.val}</span>
+          </div>`).join('')}
+      </div>
+      <div class="eval-footer">
+        <div class="eval-tags">
+          <span class="eval-tag">${item.region||'지역정보없음'}</span>
+          <span class="eval-tag">${fmtAmt(item.amount)}</span>
+          <span class="eval-tag">${item.bidType||'일반입찰'}</span>
+        </div>
+      </div>
     </div>`;
 
   // ── 투찰가 리포트 테이블 ──
@@ -1452,7 +1688,57 @@ function openDetail(item){
       ${item.riskItems.map(r=>`<div class="rpt-risk-item"><span class="rpt-risk-label">${esc(r.label)}</span><span class="rpt-risk-tag">감점</span></div>`).join('')}
     </div>`:'';
 
-  // ── 액션 버튼 ──
+  // ── 장비 요구사항 파싱 ──
+  const EQUIP_DETAIL_MAP={
+    '살수차':    {name:'살수차',     spec:'살수차 1톤 이상 / 용수 탑재',      license:'건설기계대여업·사업자등록',note:'규격·용량 공고문 확인 필수'},
+    '굴착기':    {name:'굴착기',     spec:'굴착기 0.4㎥ 이상',               license:'건설기계대여업',          note:'붐·암·버킷 규격 확인'},
+    '덤프트럭':  {name:'덤프트럭',   spec:'덤프 8~25톤',                     license:'건설기계대여업',          note:'적재 톤수 확인'},
+    '로더':      {name:'로더',       spec:'로더 1.0㎥ 이상',                  license:'건설기계대여업',          note:'버킷 용량 확인'},
+    '지게차':    {name:'지게차',     spec:'지게차 2.5톤 이상',               license:'건설기계대여업',          note:'용량·마스트 높이 확인'},
+    '크레인':    {name:'크레인',     spec:'크레인 5톤 이상',                  license:'건설기계대여업',          note:'인양 하중·붐 길이 확인'},
+    '고소작업차':{name:'고소작업차', spec:'고소작업차 12m 이상',              license:'건설기계대여업',          note:'작업 높이 확인'},
+    '암롤':      {name:'암롤트럭',   spec:'암롤 8톤 이상',                    license:'건설기계대여업',          note:'컨테이너 규격 확인'},
+    '노면청소':  {name:'노면청소차', spec:'노면청소차 4톤 이상',              license:'건설기계대여업',          note:'흡입·청소 폭 확인'},
+    '제설':      {name:'제설차',     spec:'제설차 / 살포기 포함',             license:'건설기계대여업',          note:'제설제 살포 규격 확인'},
+    '방역':      {name:'방역차',     spec:'방역차 / 분무기 탑재',             license:'사업자등록',              note:'약품 규격·인허가 확인'},
+    '청소차':    {name:'청소차',     spec:'청소차 4톤 이상',                  license:'건설기계대여업',          note:'차종·용도 확인'},
+    '급수차':    {name:'급수차',     spec:'급수차 / 탱크 탑재',               license:'건설기계대여업',          note:'탱크 용량 확인'},
+    '포크레인':  {name:'굴착기(포크레인)', spec:'굴착기 0.4㎥ 이상',        license:'건설기계대여업',          note:'버킷 규격 확인'},
+  };
+  const p=getProfile();
+  // 공고 제목에서 장비 감지
+  const detectedEquip=Object.entries(EQUIP_DETAIL_MAP).find(([k])=>item.title&&item.title.includes(k));
+  const equipInfo=detectedEquip?detectedEquip[1]:null;
+  // 부분 일치 장비 감지 (EQUIP_KEYWORDS 기반)
+  const partialEquip=EQUIP_KEYWORDS.find(k=>item.title&&item.title.includes(k)&&k!==p.equip);
+  // 톤수/규격 자동 추출
+  const tonMatch=(item.title||'').match(/(\d+(?:\.\d+)?)\s*(?:톤|TON|ton)/i);
+  const mMatch=(item.title||'').match(/(\d+(?:\.\d+)?)\s*(?:m\b|미터)/i);
+
+  const equipDetailHtml=`
+    <div style="background:var(--soft);border-radius:10px;padding:12px 14px;margin-bottom:8px;border:1px solid var(--border)">
+      <div style="font-size:9px;font-weight:800;color:var(--faint);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">장비 요구사항 분석</div>
+      ${equipInfo?`
+        <div class="arow"><span class="akey">공고 장비</span><span class="aval" style="color:var(--accent);font-weight:900">${equipInfo.name}</span></div>
+        <div class="arow"><span class="akey">기준 규격</span><span class="aval">${tonMatch?tonMatch[0]+' (공고 명시)':mMatch?mMatch[0]+' (공고 명시)':equipInfo.spec}</span></div>
+        <div class="arow"><span class="akey">필수 면허</span><span class="aval">${equipInfo.license}</span></div>
+        <div class="arow"><span class="akey">확인 사항</span><span class="aval" style="color:#D97706">${equipInfo.note}</span></div>
+      `:`
+        <div class="arow"><span class="akey">공고 장비</span><span class="aval" style="color:var(--muted)">제목에서 미감지</span></div>
+        <div class="arow"><span class="akey">확인 방법</span><span class="aval" style="color:#D97706">공고문 직접 확인 필요</span></div>
+      `}
+      <div style="height:1px;background:var(--border);margin:8px 0"></div>
+      <div style="font-size:9px;font-weight:800;color:var(--faint);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">내 장비 매칭</div>
+      <div class="arow"><span class="akey">보유 장비</span><span class="aval" style="font-weight:900">${p.equip}</span></div>
+      <div class="arow" style="border:none"><span class="akey">매칭 결과</span>
+        ${item.equipMatch===true
+          ? '<span class="aval" style="color:#16A34A;font-weight:900">일치 — 즉시 참여 가능</span>'
+          : equipInfo
+            ? `<span class="aval" style="color:#D97706;font-weight:800">불일치 — 공고 장비: ${equipInfo.name} / 내 장비: ${p.equip}</span>`
+            : '<span class="aval" style="color:#9CA3AF">미확인 — 공고문 확인 필요</span>'
+        }
+      </div>
+    </div>`;
   const actionHtml=`
     <div class="rpt-section-title">액션</div>
     <div class="action-row">
@@ -1473,27 +1759,45 @@ function openDetail(item){
     <a href="${g2bMain}" target="_blank" rel="noopener" class="g2b-btn-secondary">나라장터 메인 접속</a>
     <div style="font-size:10px;color:var(--faint);text-align:center;margin-bottom:12px">공고번호: <b style="color:var(--text);user-select:all">${esc(item.id||'—')}</b> — 직접 검색 시 위 번호 사용</div>`;
 
+  // ── 공고 조건 파싱 ──
+  const parsed=parseBidConditions(item);
+  const condHtml=parsed.conditions.length?parsed.conditions.map(c=>'<div class="arow"><span class="akey">'+esc(c.label)+'</span><span class="aval" style="color:'+(c.type==='danger'?'#DC2626':c.type==='warn'?'#D97706':'#16A34A')+'">'+(c.type==='danger'?'주의':c.type==='warn'?'확인':'해당')+'</span></div>').join(''):'<div class="arow"><span class="akey">특이사항 없음</span><span class="aval" style="color:#16A34A">정상</span></div>';
+  const tagsHtml=parsed.tags.length?'<div class="eval-tags" style="margin-top:10px">'+parsed.tags.map(t=>'<span class="eval-tag" style="color:'+t.color+'">'+esc(t.label)+'</span>').join('')+'</div>':'';
+  const warningsHtml=parsed.warnings.length?'<div style="margin-top:8px">'+parsed.warnings.map(w=>'<div style="font-size:11px;color:#D97706;font-weight:600;padding:5px 0;border-top:1px dashed var(--border)">'+esc(w)+'</div>').join('')+'</div>':'';
+
   // ── 공고 상세 정보 ──
   const infoHtml=`
     <div class="analysis-section">
       <div class="analysis-tab-bar">
         <button class="atab on" onclick="switchTab(0,this)">위험 분석</button>
-        <button class="atab" onclick="switchTab(1,this)">가격 분석</button>
-        <button class="atab" onclick="switchTab(2,this)">공고 상세</button>
+        <button class="atab" onclick="switchTab(1,this)">입찰 조건</button>
+        <button class="atab" onclick="switchTab(2,this)">가격 분석</button>
+        <button class="atab" onclick="switchTab(3,this)">공고 상세</button>
       </div>
       <div class="analysis-panel on" id="apanel0">
-        ${(item.riskItems&&item.riskItems.length)?item.riskItems.map(r=>`<div class="arow"><span class="akey">${esc(r.label)}</span><span class="aval" style="color:#B91C1C">감점</span></div>`).join(''):'<div class="arow"><span class="akey">리스크 없음</span><span class="aval" style="color:#15803D">이상없음</span></div>'}
-        <div class="arow"><span class="akey">위험 등급</span><span class="aval" style="color:${riskLevel==='HIGH'?'#B91C1C':riskLevel==='MEDIUM'?'#B45309':'#15803D'}">${riskLevel}</span></div>
-        <div class="arow"><span class="akey">리스크 감점</span><span class="aval">-${item.riskPenalty||0}점</span></div>
+        ${equipDetailHtml}
+        ${(item.riskItems&&item.riskItems.length)?item.riskItems.map(r=>`<div class="arow"><span class="akey">${esc(r.label)}</span><span class="aval" style="color:#DC2626">감점</span></div>`).join(''):'<div class="arow"><span class="akey">리스크 없음</span><span class="aval" style="color:#15803D">이상없음</span></div>'}
+        <div class="arow"><span class="akey">위험 등급</span><span class="aval" style="font-weight:900;color:${riskLevel==='HIGH'?'#DC2626':riskLevel==='MEDIUM'?'#D97706':'#16A34A'}">${riskLevel}</span></div>
+        <div class="arow" style="border:none"><span class="akey">리스크 감점</span><span class="aval">-${item.riskPenalty||0}점</span></div>
+        <div id="bidResultSection" style="margin-top:8px"></div>
       </div>
       <div class="analysis-panel" id="apanel1">
+        <div style="font-size:9px;font-weight:800;color:var(--faint);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">입찰 방식 분석</div>
+        <div class="arow"><span class="akey">입찰 방식</span><span class="aval" style="font-weight:900">${parsed.bidMethod||'—'}</span></div>
+        <div class="arow"><span class="akey">예상 경쟁</span><span class="aval">${parsed.estimatedCompetitors}</span></div>
+        ${tagsHtml}
+        <div style="font-size:9px;font-weight:800;color:var(--faint);letter-spacing:.08em;text-transform:uppercase;margin:12px 0 8px">특수 조건</div>
+        ${condHtml}
+        ${warningsHtml}
+      </div>
+      <div class="analysis-panel" id="apanel2">
         <div class="arow"><span class="akey">기초금액</span><span class="aval">${fmtAmt(item.amount)}</span></div>
         <div class="arow"><span class="akey">낙찰하한율</span><span class="aval">${amt<200000000?'87.745%':'82% 추정'}</span></div>
         <div class="arow"><span class="akey">방식</span><span class="aval">${bp?bp.method:'—'}</span></div>
         <div class="arow"><span class="akey">추천 제시가</span><span class="aval" style="color:var(--accent)">${bp?fmtAmt(bp.rec):'—'}</span></div>
-        <div class="arow"><span class="akey">학습 보정</span><span class="aval">${lf!==0?((lf>0?'+':'')+(lf*100).toFixed(3)+'%'):'보정 없음'}</span></div>
+        <div class="arow" style="border:none"><span class="akey">학습 보정</span><span class="aval">${lf!==0?((lf>0?'+':'')+(lf*100).toFixed(3)+'%'):'보정 없음'}</span></div>
       </div>
-      <div class="analysis-panel" id="apanel2">
+      <div class="analysis-panel" id="apanel3">
         <table class="rpt-info-table">
           <tr><td>공고번호</td><td style="font-size:11px;font-family:monospace">${esc(item.id||'—')}</td></tr>
           <tr><td>발주기관</td><td>${esc(item.agency||'—')}</td></tr>
@@ -1504,10 +1808,22 @@ function openDetail(item){
         </table>
       </div>
     </div>`;
-
   $('dBody').innerHTML=`
     ${ddayHtml}
     ${scoreHtml}
+    <div id="aiSummaryBox" style="background:var(--soft);border:1.5px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div style="font-size:9px;font-weight:800;color:var(--faint);letter-spacing:.1em;text-transform:uppercase">AI 공고 분석</div>
+        <div style="font-size:10px;color:var(--faint);display:flex;align-items:center;gap:4px"><span id="aiStatusDot" style="width:6px;height:6px;border-radius:50%;background:#D1D5DB;display:inline-block"></span><span id="aiStatusTxt">대기</span></div>
+      </div>
+      <div id="aiVerdictBox" style="display:none;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:13px;font-weight:800;line-height:1.5"></div>
+      <div id="aiSummaryContent">
+        <button onclick="triggerAiSummary()" style="width:100%;background:var(--primary);color:#fff;border:none;border-radius:var(--r);font-family:inherit;font-size:14px;font-weight:800;padding:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:.02em">
+          <span style="width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.2);display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:900">?</span>
+          이 공고 AI 분석하기
+        </button>
+      </div>
+    </div>
     ${barsHtml}
     ${priceHtml}
     ${actionHtml}
@@ -1521,6 +1837,19 @@ function openDetail(item){
   if(window._ti)clearInterval(window._ti);
   const dl=item.deadline;
   window._ti=setInterval(()=>{const e=$('ddayTimer');if(!e){clearInterval(window._ti);return;}e.textContent=getDday(dl)||'마감됨';},1000);
+  // 마감 공고 낙찰 결과 로드
+  if(item.status==='마감'&&item.id){
+    setTimeout(()=>loadAndShowBidResult(item.id),400);
+  }
+}
+
+function triggerAiSummary(){
+  const item=window.currentDetailItem;
+  if(!item)return;
+  // 버튼을 로딩 상태로 전환
+  const box=$('aiSummaryContent');
+  if(box)box.innerHTML='<div style="text-align:center;padding:8px 0;font-size:12px;color:var(--faint)">분석 중...</div>';
+  loadAiSummary(item);
 }
 
 
@@ -1528,6 +1857,143 @@ function checkG2bLink(el,bidId){
   const urlNoPort='https://www.g2b.go.kr/ep/invitation/publish/bidInfoSrch.do?bidNtceNo='+encodeURIComponent(bidId);
   window.open(urlNoPort,'_blank');
   return false;
+}
+
+// ── AI 공고 요약 ──
+const _aiCache={};
+async function loadAiSummary(item){
+  const box=$('aiSummaryContent');
+  const dot=$('aiStatusDot');
+  const txt=$('aiStatusTxt');
+  if(!box)return;
+
+  const cacheKey=item.id||item.title;
+  if(_aiCache[cacheKey]){
+    renderAiResult(_aiCache[cacheKey],item);
+    if(dot)dot.style.background='#16A34A';
+    if(txt)txt.textContent='분석 완료 (캐시)';
+    return;
+  }
+  // 버튼 상태로 초기화 (직접 호출된 경우)
+  if(dot)dot.style.background='#F59E0B';
+  if(txt)txt.textContent='분석 중...';
+  box.innerHTML='<div style="color:var(--faint);font-size:12px">AI가 공고를 분석하고 있습니다...</div>';
+
+  const p=getProfile();
+  const prompt=`당신은 나라장터 입찰 전문가입니다. 아래 공고를 분석해서 실제 현장 운영자가 바로 이해할 수 있도록 설명해주세요.
+
+공고명: ${item.title||'—'}
+발주기관: ${item.agency||'—'}
+기초금액: ${item.amount?Math.round(item.amount/10000)+'만원':'미확인'}
+마감일: ${item.deadline||'—'}
+사용자 보유장비: ${p.equip} / 지역: ${p.region}
+
+반드시 아래 형식으로만 답하세요:
+
+[한줄요약] (15자 이내로 이 공고의 핵심을 한 문장으로. 예: "도로 살수 작업 용역" / "놀이터 위탁 운영" / "굴착기 임대 입찰")
+
+1. **이 공고가 뭔가요?** (1~2문장)
+2. **어디서 무슨 목적으로?** (1~2문장)
+3. **뭐가 필요한가요?** (필요 장비·인력·자격, 1~2문장)
+4. **나한테 맞나요?** (${p.equip} 보유, ${p.region} 기준으로 단호하게 한 문장)`;
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:600,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data=await res.json();
+    const text=data?.content?.[0]?.text||'';
+    if(!text)throw new Error('empty');
+
+    // [한줄요약] 추출
+    const verdictMatch=text.match(/\[한줄요약\]\s*(.+)/);
+    const verdict=verdictMatch?verdictMatch[1].trim():'';
+    const bodyText=text.replace(/\[한줄요약\].+\n?/,'');
+
+    // 마크다운 → HTML
+    const html=bodyText
+      .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+      .replace(/^(\d+\.\s)/gm,'<br><span style="font-weight:800;color:var(--primary)">$1</span>')
+      .replace(/\n/g,'<br>');
+
+    const rendered=`<div style="font-size:13px;color:var(--text);line-height:1.8;font-weight:500">${html}</div>`;
+    const verdictHtml=verdict?`__VERDICT__${verdict}__BODY__${rendered}`:rendered;
+    _aiCache[cacheKey]=verdictHtml;
+    renderAiResult(verdictHtml,item);
+    if(dot)dot.style.background='#16A34A';
+    if(txt)txt.textContent='분석 완료';
+  }catch(e){
+    const fallback=buildFallbackSummary(item,p);
+    _aiCache[cacheKey]=fallback;
+    renderAiResult(fallback,item);
+    if(dot)dot.style.background='#9CA3AF';
+    if(txt)txt.textContent='기본 분석';
+  }
+}
+
+function renderAiResult(cached,item){
+  const box=$('aiSummaryContent');
+  const vbox=$('aiVerdictBox');
+  if(!box)return;
+  if(cached.includes('__VERDICT__')){
+    const parts=cached.split('__VERDICT__')[1].split('__BODY__');
+    const verdict=parts[0];
+    const body=parts[1]||'';
+    // verdict 배경색: 매칭 여부에 따라
+    const isMatch=item&&item.equipMatch;
+    const vbg=isMatch?'#ecfdf3':'#FFF7ED';
+    const vcolor=isMatch?'#15803D':'#D97706';
+    const vborder=isMatch?'rgba(22,163,74,.2)':'rgba(217,119,6,.2)';
+    if(vbox){
+      vbox.style.display='block';
+      vbox.style.background=vbg;
+      vbox.style.color=vcolor;
+      vbox.style.border=`1.5px solid ${vborder}`;
+      vbox.textContent=verdict;
+    }
+    box.innerHTML=body;
+  } else {
+    if(vbox)vbox.style.display='none';
+    box.innerHTML=cached;
+  }
+}
+
+function buildFallbackSummary(item,p){
+  const title=item.title||'';
+  const agency=item.agency||'';
+  const amt=toNum(item.amount);
+  const amtStr=fmtAmt(item.amount);
+
+  // 업무 유형 추론
+  let workType='업무 내용을 공고문에서 확인하세요.';
+  if(title.includes('살수')||title.includes('살수차'))workType='도로·공사현장·행사 등에 살수차로 물을 뿌리는 작업입니다.';
+  else if(title.includes('청소')||title.includes('노면'))workType='도로 또는 시설의 청소·정비 작업입니다.';
+  else if(title.includes('제설'))workType='겨울철 도로 제설 및 제빙 작업입니다.';
+  else if(title.includes('폐기물')||title.includes('쓰레기'))workType='폐기물 수거·운반·처리 관련 작업입니다.';
+  else if(title.includes('굴착')||title.includes('토공'))workType='굴착기를 이용한 토목·공사 보조 작업입니다.';
+  else if(title.includes('운영')||title.includes('관리'))workType='시설 운영 및 관리 용역입니다.';
+  else if(title.includes('용역'))workType='외주 용역 작업입니다. 공고문에서 상세 확인이 필요합니다.';
+
+  const matchText=item.equipMatch
+    ?`<strong style="color:#16A34A">내 ${p.equip}으로 참여 가능합니다.</strong>`
+    :`<strong style="color:#D97706">${p.equip} 보유자에게 맞지 않을 수 있습니다. 공고문 확인 필요.</strong>`;
+
+  return `<div style="font-size:13px;color:var(--text);line-height:1.8;font-weight:500">
+    <span style="font-weight:800;color:var(--primary)">1. 이 공고가 뭔가요?</span><br>
+    ${workType}<br><br>
+    <span style="font-weight:800;color:var(--primary)">2. 어디서 무슨 목적으로?</span><br>
+    ${esc(agency)}에서 발주한 ${amtStr} 규모 공고입니다.<br><br>
+    <span style="font-weight:800;color:var(--primary)">3. 뭐가 필요한가요?</span><br>
+    관련 장비·면허·실적 요건을 나라장터 공고문에서 확인하세요.<br><br>
+    <span style="font-weight:800;color:var(--primary)">4. 나한테 맞나요?</span><br>
+    ${matchText}
+  </div>`;
 }
 
 function closeDetail(){
