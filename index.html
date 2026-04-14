@@ -44,7 +44,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 /* ── STAT ── */
 .stat{background:var(--surface);border-radius:var(--r2);margin:12px 16px 0;padding:16px;border:1px solid var(--border);box-shadow:0 2px 8px rgba(15,23,42,.06)}
 .stat-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
-.stat-num{font-size:36px;font-weight:900;color:var(--text);letter-spacing:-.04em;line-height:1}
+.stat-num{font-size:clamp(22px,5vw,36px);font-weight:900;color:var(--text);letter-spacing:-.04em;line-height:1}
 .stat-sub{font-size:10px;color:var(--faint);font-weight:700;letter-spacing:.06em;margin-top:3px;text-transform:uppercase}
 .stat-rec{font-size:14px;font-weight:800;color:var(--accent)}
 .stat-sub2{font-size:11px;color:var(--faint);margin-top:3px}
@@ -251,6 +251,13 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .mlbl{font-size:9px;color:var(--faint);margin-bottom:2px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
 .mval{font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mval.big{font-size:13px;font-weight:800}
+
+.card.closed{opacity:.55;filter:grayscale(35%)}
+.card.closed .ctitle{text-decoration:line-through;color:var(--muted)}
+.card.closed:hover{opacity:.65;transform:none;box-shadow:0 2px 8px rgba(15,23,42,.06)}
+.award-row{display:flex;align-items:center;justify-content:space-between;padding:5px 10px;background:#F0FDF4;border-radius:6px;margin-top:5px;border:1px solid #DCFCE7}
+.award-lbl{font-size:9px;font-weight:800;color:#15803D;letter-spacing:.06em;text-transform:uppercase}
+.award-val{font-size:13px;font-weight:900;color:#15803D}
 
 .loading,.empty,.intro{padding:50px 20px;text-align:center;color:var(--muted);font-size:13px}
 .spinner{width:26px;height:26px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;margin:0 auto 14px;animation:spin .7s linear infinite}
@@ -507,7 +514,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
       <!-- 버전 표시 -->
       <div style="padding:8px 16px 32px;text-align:center;border-top:1px solid var(--border);margin-top:4px">
         <div style="font-size:10px;font-weight:800;color:var(--faint);letter-spacing:.08em;text-transform:uppercase">BIDGEAR PRO</div>
-        <div id="versionTag" style="font-size:11px;font-weight:700;color:var(--muted);margin-top:3px">v1.0.0 · 2026.04.14</div>
+        <div id="versionTag" style="font-size:11px;font-weight:700;color:var(--muted);margin-top:3px">v1.4.0 · —</div>
         <div style="font-size:10px;color:var(--faint);margin-top:2px">살수비드 입찰 자동화 엔진</div>
       </div>
     </div>
@@ -939,12 +946,14 @@ function scoreItem(item){
   const hasRelatedKeyword=EQUIP_KEYWORDS.some(k=>title.includes(k));
   if(!equipMatch){
     if(!hasRelatedKeyword){
-      // 완전 무관 → 최대 49점 (주의 수준)
-      finalScore=Math.min(finalScore,49);
+      finalScore=Math.min(finalScore,49); // 완전 무관: 최대 주의
     } else {
-      // 관련 업종이지만 주력 장비 불일치 → 최대 64점 (검토 수준)
-      finalScore=Math.min(finalScore,64);
+      finalScore=Math.min(finalScore,64); // 관련 업종 불일치: 최대 검토
     }
+  }
+  // 마감 공고는 최대 검토 수준 (참여 불가 공고이므로)
+  if(item.status==='마감'){
+    finalScore=Math.min(finalScore,64);
   }
 
   // ── 위험 등급 ──
@@ -1017,7 +1026,9 @@ function updateStats(){
   const d=allItems.filter(i=>i.status==='D-3').length,a=allItems.filter(i=>i.status==='진행중').length;
   const c=allItems.filter(i=>i.status==='마감').length;
   const b=allItems.reduce((s,i)=>s+toNum(i.amount),0),r=allItems.filter(i=>i.recommend).length;
-  if($('sTotal'))$('sTotal').textContent=t||'—';
+  // TOTAL BIDS: 나라장터 실제 전체 건수 표시 (신뢰도)
+  const displayTotal=totalCount>0?totalCount.toLocaleString():t||'—';
+  if($('sTotal'))$('sTotal').textContent=displayTotal;
   if($('sRec'))$('sRec').textContent=r?r+'건 추천':'추천 없음';
   if($('sBudget'))$('sBudget').textContent=b?fmtAmt(b)+' 총예산':'—';
   if($('dVal'))$('dVal').textContent=a||'0';
@@ -1053,13 +1064,17 @@ function renderList(){
   if(!searched){$('cardList').innerHTML='<div class="loading"><div class="spinner"></div>데이터 로딩중...</div>';return;}
   if(!items.length){$('cardList').innerHTML='<div class="empty">조건에 맞는 공고가 없습니다</div>';return;}
   $('cardList').innerHTML=items.map(item=>{
-    const isTop=item.score>=70&&item.riskLevel!=='HIGH'&&item.equipMatch===true;
+    const isClosed=item.status==='마감';
+    const isTop=item.score>=70&&item.riskLevel!=='HIGH'&&item.equipMatch===true&&!isClosed;
     const isRisk=item.riskLevel==='HIGH';
-    const cardClass=`card${isTop?' top-match':isRisk?' high-risk':''}`;
+    const cardClass=`card${isTop?' top-match':isRisk&&!isClosed?' high-risk':isClosed?' closed':''}`;
     const gc=getGradeColor(item.score),gb=getGradeBg(item.score);
-    const gradeDisplay=item.status==='마감'?'마감됨':item.grade||'—';
-    const gradeColor=item.status==='마감'?'#9CA3AF':gc;
-    const gradeBgColor=item.status==='마감'?'#F3F4F6':gb;
+    const gradeDisplay=isClosed?'마감됨':item.grade||'—';
+    const gradeColor=isClosed?'#9CA3AF':gc;
+    const gradeBgColor=isClosed?'#F3F4F6':gb;
+    // 낙찰가 (API에서 제공 시 표시)
+    const awardPrice=item.awardPrice||item.successPrice||item.winPrice||item.succsPrice||null;
+    const awardRow=isClosed&&awardPrice?`<div class="award-row"><span class="award-lbl">최종 낙찰가</span><span class="award-val">${fmtAmt(awardPrice)}</span></div>`:'';
     return `
     <div class="${cardClass}">
       <div class="ctop">
@@ -1082,6 +1097,7 @@ function renderList(){
         <div class="mbox"><div class="mlbl">마감일시</div><div class="mval">${esc(fmtDL(item.deadline))}</div></div>
       </div>
       <div class="mbox"><div class="mlbl">공고번호</div><div class="mval" style="color:var(--faint);font-weight:500;font-size:11px">${esc(item.id||'—')}</div></div>
+      ${awardRow}
     </div>`;
   }).join('');
   document.querySelectorAll('.card').forEach((el,i)=>{el.onclick=()=>openDetail(items[i]);});
@@ -1101,12 +1117,17 @@ async function loadAllBids(retry=0){
   setErr('');searched=true;currentPage=1;rawItems=[];
   const cl=$('cardList'),sb=$('searchBtn');
   sb.disabled=true;sb.textContent='조회중';
-  cl.innerHTML=`<div class="loading"><div class="spinner"></div>${retry?'재연결 중... ('+retry+'/3)':'나라장터 데이터 조회중...'}<br><small style="color:var(--faint);margin-top:8px;display:block">첫 접속 시 서버 기동에 최대 30초 소요</small></div>`;
+  cl.innerHTML=`<div class="loading"><div class="spinner"></div>${retry?`서버 기동 중... (${retry}/3회 재시도)`:'나라장터 데이터 조회중...'}<br><small style="color:var(--faint);margin-top:8px;display:block">${retry?'Render 무료 서버 기동에 최대 50초 소요':'첫 접속 시 서버 기동에 최대 30초 소요'}</small></div>`;
   try{
     const res=await fetchWithTO(PROXY+'/api/bids?numOfRows=100&pageNo=1');
     const data=await res.json();
     if(!data.ok)throw new Error(data.message||'조회 실패');
-    totalCount=data.total||0;
+    // API 응답 구조 디버그 (개발용)
+    console.log('[BIDGEAR] API 응답 키:', Object.keys(data));
+    console.log('[BIDGEAR] total 관련:', {total:data.total,totalCount:data.totalCount,count:data.count,numOfRows:data.numOfRows,totalNumOfRows:data.totalNumOfRows});
+    // 전체 건수 - 가능한 모든 필드 시도
+    totalCount=data.totalCount||data.total||data.totalNumOfRows||data.numOfRows_total||data.cnt||0;
+    if($('sTotal'))$('sTotal').textContent=totalCount>0?totalCount.toLocaleString():data.items?.length||'—';
     rawItems=(data.items||[]).map(processItem);
     allItems=rawItems;updateStats();currentFilter='전체';
     document.querySelectorAll('.fbtn').forEach((b,i)=>b.classList.toggle('on',i===0));
@@ -1253,9 +1274,14 @@ function openDetail(item){
   const gradeBg=getGradeBg(sc);
   const matchProb=Math.round(sc*(riskLevel==='HIGH'?0.45:riskLevel==='MEDIUM'?0.72:0.91));
 
+  const isClosed=item.status==='마감';
+  const gradeDisplay=isClosed?'마감됨':grade;
+  const gradeBgDisplay=isClosed?'#F3F4F6':gradeBg;
+  const gradeColorDisplay=isClosed?'#9CA3AF':gradeColor;
+
   $('dBadges').innerHTML=`<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
     <span class="sb ${SCLS[item.status]||'cls'}">${esc(item.status)}</span>
-    <span class="grade-badge" style="background:${gradeBg};color:${gradeColor}">${grade}</span>
+    <span class="grade-badge" style="background:${gradeBgDisplay};color:${gradeColorDisplay}">${gradeDisplay}</span>
     ${item.recommend?'<span class="rb">추천</span>':''}
     ${riskLevel==='HIGH'?'<span class="sb urg">위험</span>':''}
     ${watched?'<span style="font-size:10px;font-weight:800;color:#B45309;background:#FEF9C3;border-radius:3px;padding:2px 6px">관심</span>':''}
@@ -1265,13 +1291,11 @@ function openDetail(item){
   const ddayHtml=dday?`<div class="dday-box" style="background:${bg};border-color:${color}40;margin-bottom:14px"><span class="dday-lbl">마감까지</span><span class="dday-val" id="ddayTimer" style="color:${item.status==='마감'?'#9CA3AF':color}">${esc(dday)}</span></div>`:'';
 
   // ── 점수 / 매칭 블록 ── (마감 공고는 별도 처리)
-  const isClosed=item.status==='마감';
   const circumference=2*Math.PI*32;
   const dashOffset=circumference*(1-sc/100);
   // 색상: 검정 기반으로 통일, 등급별 accent만 사용
   const ringColor=isClosed?'#9CA3AF':gradeColor;
   const matchProbDisplay=isClosed?'—':`${matchProb}%`;
-  const gradeDisplay=isClosed?'마감됨':grade;
   const hintDisplay=isClosed?'마감된 공고입니다':
     riskLevel==='HIGH'?'고위험 — 진입 전 재검토 필요':
     riskLevel==='MEDIUM'?'조건 일부 미충족 — 보완 후 참여 가능':
@@ -1662,6 +1686,16 @@ function applyProfile(){
 }
 
 // ── INIT ──
+(()=>{
+  const vt=$('versionTag');
+  if(vt){
+    const d=new Date();
+    const ds=d.getFullYear()+'.'+(d.getMonth()+1).toString().padStart(2,'0')+'.'+d.getDate().toString().padStart(2,'0');
+    vt.textContent='v1.4.0 · '+ds;
+  }
+  // 로딩 중 stat 표시
+  if($('sTotal'))$('sTotal').innerHTML='<span style="font-size:12px;color:var(--faint)">기동중...</span>';
+})();
 loadProfileFromStorage();
 updateStats();
 loadAllBids();
