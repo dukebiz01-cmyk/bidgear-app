@@ -504,6 +504,12 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
       <div id="loadMoreWrap" style="padding:0 16px 20px;display:none">
         <button id="loadMoreBtn" onclick="loadMore()" style="width:100%;background:var(--primary);border:none;border-radius:var(--r);font-family:inherit;font-size:14px;font-weight:800;color:#fff;padding:16px;cursor:pointer;letter-spacing:.04em;box-shadow:0 2px 8px rgba(14,42,71,.18);transition:opacity .15s">더보기</button>
       </div>
+      <!-- 버전 표시 -->
+      <div style="padding:8px 16px 32px;text-align:center;border-top:1px solid var(--border);margin-top:4px">
+        <div style="font-size:10px;font-weight:800;color:var(--faint);letter-spacing:.08em;text-transform:uppercase">BIDGEAR PRO</div>
+        <div id="versionTag" style="font-size:11px;font-weight:700;color:var(--muted);margin-top:3px">v1.0.0 · 2026.04.14</div>
+        <div style="font-size:10px;color:var(--faint);margin-top:2px">살수비드 입찰 자동화 엔진</div>
+      </div>
     </div>
 
   </div><!-- /layout -->
@@ -511,9 +517,9 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 
 <!-- Detail Sheet -->
 <div class="backdrop" id="bd1" onclick="closeDetail()"></div>
-<div class="sheet" id="sh1" style="max-height:85vh">
-  <div class="shead"><div id="dBadges"></div><button class="sclose" onclick="closeDetail()">×</button></div>
-  <div class="sbody" id="dBody"></div>
+<div class="sheet" id="sh1" style="max-height:85vh;display:flex;flex-direction:column">
+  <div class="shead" style="flex-shrink:0;position:relative;z-index:2"><div id="dBadges"></div><button class="sclose" onclick="closeDetail()" style="position:relative;z-index:3">×</button></div>
+  <div class="sbody" id="dBody" style="overflow-y:auto;flex:1"></div>
 </div>
 
 <!-- History Sheet -->
@@ -877,46 +883,63 @@ function scoreItem(item){
   let riskPenalty=0;
   const riskItems=[];
 
-  // 지역 리스크 (25점 패널티)
-  const regionMatch=agency.includes(p.region)||region.includes(p.region)||rule.allowed_regions.includes(region);
-  if(!regionMatch){riskPenalty+=w.region_mismatch;riskItems.push({code:'region_mismatch',label:'지역 불일치'});}
+  // ── 장비 적합도 (핵심 항목) ──
+  // 완전 일치: +15 보너스 / 관련 키워드: 0 / 무관: -20 패널티
+  let equipBonus=0;
+  if(title.includes(p.equip)){
+    equipBonus=15;
+  } else if(EQUIP_KEYWORDS.some(k=>title.includes(k))){
+    equipBonus=0; // 관련 장비지만 주력 장비 아님
+    riskPenalty+=10;
+    riskItems.push({code:'equip_partial',label:'장비 부분 일치 (주력 장비 아님)'});
+  } else {
+    riskPenalty+=20; // 완전 무관
+    riskItems.push({code:'equip_mismatch',label:'장비 불일치'});
+  }
 
-  // 면허 리스크 (40점 패널티)
+  // ── 지역 리스크 ──
+  const regionMatch=agency.includes(p.region)||region.includes(p.region)||rule.allowed_regions.includes(region)||!region;
+  if(!regionMatch){
+    riskPenalty+=w.region_mismatch;
+    riskItems.push({code:'region_mismatch',label:'지역 불일치'});
+  }
+
+  // ── 면허 리스크 ──
   const myLicenses=new Set(p.licenses);
   const missingReq=rule.required_licenses.filter(l=>!myLicenses.has(l));
   if(missingReq.length){riskPenalty+=w.license_missing;riskItems.push({code:'license_missing',label:'면허 누락: '+missingReq.join(', ')});}
 
-  // 업력/실적 리스크 (20점)
+  // ── 업력/실적/차량 ──
   if(p.expYears<rule.min_experience_years){riskPenalty+=w.experience_short;riskItems.push({code:'exp_short',label:'업력 부족'});}
   if(p.projects<rule.min_completed_projects){riskPenalty+=10;riskItems.push({code:'proj_short',label:'실적 부족'});}
   if(p.vehicles<rule.min_vehicle_count){riskPenalty+=10;riskItems.push({code:'vehicle_short',label:'차량 부족'});}
 
-  // 마감 긴박 (10점)
+  // ── 마감 긴박 ──
   if(item.status==='마감임박'){riskPenalty+=w.deadline_urgent;riskItems.push({code:'deadline',label:'마감 임박'});}
 
-  // 예산 낮음 (15점)
+  // ── 예산 과소 ──
   const amt=toNum(item.amount);
   if(amt>0&&amt<3000000){riskPenalty+=w.budget_too_low;riskItems.push({code:'budget_low',label:'예산 과소'});}
 
-  // 점수 계산 (100 - 리스크패널티 + 긍정 보정)
-  let baseScore=100-Math.min(riskPenalty,100);
-
-  // 장비 적합도 보정
-  let equipBonus=0;
-  if(title.includes(p.equip))equipBonus=15;
-  else if(EQUIP_KEYWORDS.some(k=>title.includes(k)))equipBonus=5;
-
-  // 긴박도 보정 (진행중이 가장 좋음)
+  // ── 최종 점수 ──
+  const baseScore=100-Math.min(riskPenalty,100);
   const urgBonus={'진행중':5,'D-3':3,'D-1':1,'마감임박':0,'마감':-10}[item.status]||0;
-
-  // 예산 적정 보정
   const amtBonus=(amt>=5000000&&amt<=300000000)?5:(amt>=1000000&&amt<=500000000)?2:0;
-
   const finalScore=Math.max(0,Math.min(100,baseScore+equipBonus+urgBonus+amtBonus));
-  const riskLevel=riskPenalty>=70?'HIGH':riskPenalty>=40?'MEDIUM':'LOW';
+
+  // ── 위험 등급 (기준 현실화) ──
+  // HIGH: 60점 이상 감점 / MEDIUM: 30점 이상 / LOW: 30점 미만
+  const riskLevel=riskPenalty>=60?'HIGH':riskPenalty>=30?'MEDIUM':'LOW';
 
   return{score:finalScore,riskPenalty,riskItems,riskLevel,equipBonus,urgBonus};
 }
+
+// 등급 기준: 장비 일치 + 지역 일치가 모두 있어야 최적합 가능
+function getGrade(score){
+  return score>=80?'최적합':score>=65?'적합':score>=50?'검토':score>=35?'주의':'부적합';
+}
+function getGradeColor(score){return score>=80?'#0F766E':score>=65?'#15803D':score>=50?'#B45309':score>=35?'#DC2626':'#9CA3AF';}
+function getGradeBg(score){return score>=80?'#CCFBF1':score>=65?'#DCFCE7':score>=50?'#FEF9C3':score>=35?'#FEE2E2':'#F3F4F6';}
 function scoreClass(n){if(n>=75)return'score-hi';if(n>=50)return'score-mid';if(n>=30)return'score-lo';return'score-na';}
 function scoreLabel(n){if(n>=75)return'HIGH';if(n>=50)return'MID';if(n>=30)return'LOW';return'—';}
 
