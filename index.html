@@ -88,29 +88,34 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .cards{padding:0 16px 80px;display:flex;flex-direction:column;gap:8px}
 
 /* ── CARDS ── */
-.card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r2);padding:14px 16px;animation:fadeIn .2s ease;cursor:pointer;box-shadow:0 2px 8px rgba(15,23,42,.06);transition:box-shadow .15s,transform .15s;display:flex;flex-direction:column}
-.card:hover{box-shadow:0 6px 20px rgba(15,23,42,.12);transform:translateY(-2px)}
-/* 높은 매칭 카드 강조 */
-.card.top-match{border-left:4px solid var(--accent);background:linear-gradient(to right,#F0FBF9 0%,#fff 60%)}
-.card.top-match:hover{box-shadow:0 6px 20px rgba(47,183,164,.18)}
-.card.high-risk{border-left:4px solid #DC2626;background:linear-gradient(to right,#FFF5F5 0%,#fff 60%)}
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r2);padding:14px 16px;animation:fadeIn .2s ease;cursor:pointer;box-shadow:0 1px 4px rgba(15,23,42,.05);transition:box-shadow .15s,transform .15s;display:flex;flex-direction:column}
+.card:hover{box-shadow:0 4px 16px rgba(15,23,42,.1);transform:translateY(-1px)}
+/* 추천 카드 — 미묘한 왼쪽 보더만 */
+.card.top-match{border-left:3px solid var(--accent)}
+.card.high-risk{border-left:3px solid #E5E7EB}
 .card .cagency{flex:1}
 .ctop{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .cbadges{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
-.sb{border-radius:4px;font-size:10px;font-weight:800;padding:3px 8px;letter-spacing:.02em}
-.urg{background:#FEECEC;color:#B91C1C}
-.d3{background:#FFF7E8;color:#B45309}
-.act{background:#EAF7EE;color:#15803D}
-.cls{background:#F3F4F6;color:#6B7280}
+
+/* 상태 뱃지 — 회색 계열 통일, 마감임박만 포인트 */
+.sb{border-radius:4px;font-size:10px;font-weight:700;padding:3px 8px;letter-spacing:.01em}
+.urg{background:#F3F4F6;color:#374151;font-weight:800}   /* 마감임박 — 진한 회색 */
+.d3{background:#F3F4F6;color:#6B7280}
+.act{background:#F3F4F6;color:#6B7280}
+.cls{background:#F9FAFB;color:#9CA3AF}
+
+/* 추천 뱃지 — 유일한 컬러 포인트 */
 .rb{background:var(--accent);color:#fff;border-radius:4px;font-size:10px;font-weight:800;padding:3px 8px}
-/* 등급 뱃지 */
-.grade-badge{border-radius:4px;font-size:10px;font-weight:800;padding:3px 8px;letter-spacing:.01em}
-/* 점수 뱃지 */
-.score-badge{display:inline-flex;align-items:center;gap:3px;border-radius:6px;font-size:11px;font-weight:900;padding:3px 9px;letter-spacing:.01em;border:1.5px solid}
-.score-hi{background:#E6F7F5;color:#0C6B61;border-color:rgba(47,183,164,.3)}
-.score-mid{background:#FFF7E8;color:#92400E;border-color:rgba(180,83,9,.25)}
-.score-lo{background:#FEF2F2;color:#991B1B;border-color:rgba(185,28,28,.2)}
-.score-na{background:#F3F4F6;color:#4B5563;border-color:rgba(107,114,128,.2)}
+
+/* 등급 뱃지 — 회색 */
+.grade-badge{border-radius:4px;font-size:10px;font-weight:700;padding:3px 8px;letter-spacing:.01em;background:#F3F4F6;color:#6B7280}
+
+/* 점수 뱃지 — 숫자만 강조, 색 제거 */
+.score-badge{display:inline-flex;align-items:center;border-radius:6px;font-size:12px;font-weight:900;padding:2px 8px;letter-spacing:-.01em;color:var(--text)}
+.score-hi{color:#111827}
+.score-mid{color:#374151}
+.score-lo{color:#6B7280}
+.score-na{color:#9CA3AF}
 
 /* ── 종합 평가 카드 ── */
 .eval-card{border-radius:var(--r);padding:16px;margin-bottom:12px;border:1.5px solid}
@@ -420,27 +425,29 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 
       <div class="srch">
         <div class="srch-row">
-          <input class="sinput" id="kwInput" placeholder="공고명 입력 후 검색" onkeydown="if(event.key==='Enter'){event.preventDefault();doSearch()}"/>
+          <input class="sinput" id="kwInput" placeholder="공고명/작업명 검색" onkeydown="if(event.key==='Enter'){event.preventDefault();doSearch()}"/>
           <button class="sbtn" id="searchBtn" onclick="doSearch()">검색</button>
         </div>
 
         <!-- 필터 탭 -->
         <div class="filter-tabs">
-          <button class="ftab on" onclick="switchFtab(0,this)">종목</button>
+          <button class="ftab on" onclick="switchFtab(0,this)">업종</button>
           <button class="ftab" onclick="switchFtab(1,this)">지역</button>
           <button class="ftab" onclick="switchFtab(2,this)">정렬</button>
         </div>
 
         <!-- 종목 탭 -->
         <div class="ftpanel on" id="ftpanel0">
-          <div class="ftcat-label">대분류</div>
-          <div class="chip-wrap" id="catChips">
-            <button class="chip cat on" data-cat="전체" onclick="selectCat(this)">전체</button>
-            <button class="chip cat" data-cat="중장비" onclick="selectCat(this)">중장비</button>
-            <button class="chip cat" data-cat="특수차" onclick="selectCat(this)">특수차</button>
-            <button class="chip cat" data-cat="용역" onclick="selectCat(this)">용역</button>
+          <div class="ftcat-label">업종 선택</div>
+          <div class="chip-wrap" id="catChips" style="flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch">
+            <button class="chip cat on" data-cat="전체" onclick="selectCat(this)" style="flex-shrink:0">전체</button>
+            <button class="chip cat" data-cat="중장비" onclick="selectCat(this)" style="flex-shrink:0">중장비</button>
+            <button class="chip cat" data-cat="특수차" onclick="selectCat(this)" style="flex-shrink:0">특수차</button>
+            <button class="chip cat" data-cat="용역" onclick="selectCat(this)" style="flex-shrink:0">용역</button>
+            <button class="chip cat" data-cat="농업인력" onclick="selectCat(this)" style="flex-shrink:0">농업인력</button>
+            <button class="chip cat" data-cat="건설협력업체" onclick="selectCat(this)" style="flex-shrink:0">건설협력</button>
           </div>
-          <div class="ftcat-label">소분류 <span id="subLabel" style="color:var(--muted);font-weight:400;font-size:10px">— 대분류 선택 후 활성화</span></div>
+          <div class="ftcat-label">세부 작업 선택 <span id="subLabel" style="color:var(--muted);font-weight:400;font-size:10px">— 업종 선택 후 활성화</span></div>
           <div class="chip-wrap" id="subChips">
             <button class="chip on" data-kw="" onclick="selectSub(this,'')">전체</button>
             <button class="chip" data-kw="살수차" onclick="selectSub(this,'살수차')">살수차</button>
@@ -569,7 +576,9 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
           <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px">주력 장비</div>
           <div class="sel-wrap" style="margin-bottom:0"><select id="selEquip" onchange="updateProfileSummary()">
             <option>살수차</option><option>굴착기</option><option>덤프트럭</option>
-            <option>포크레인</option><option>크레인</option><option>로더</option>
+            <option>로더</option><option>지게차</option><option>크레인</option>
+            <option>고소작업차</option><option>암롤</option><option>청소차</option>
+            <option>제설차</option><option>방역차</option>
           </select><span class="sel-arrow">▼</span></div>
         </div>
       </div>
@@ -743,9 +752,11 @@ let filterSubKw='';
 // 대분류 → 소분류 매핑
 const CAT_SUB={
   전체:[''],
-  중장비:['','굴착기','포크레인','크레인','로더','불도저','천공기'],
-  특수차:['','살수차','노면청소','제설','급수차','덤프트럭','탱크로리'],
-  용역:['','청소','환경','공사','관리','운영','용역','조사','점검']
+  중장비:['','굴착기','로더','지게차','불도저','크레인','롤러','스키드로더','기타중장비'],
+  특수차:['','살수차','덤프트럭','암롤','사다리차','고소작업차','청소차','제설차','방역차','물차','기타특수차'],
+  용역:['','노면청소','토공정리','폐기물상하차','제설작업','방역작업','시설관리','현장정리','기타용역'],
+  농업인력:['','수확작업','선별작업','포장작업','시설하우스','축산보조','농장관리','단기계절작업','장기근무'],
+  건설협력업체:['','일반공팀','철근팀','형틀팀','미장팀','해체팀','설비보조팀','전기보조팀','청소정리팀','소규모현장지원']
 };
 const $=id=>document.getElementById(id);
 
@@ -774,7 +785,7 @@ const RULES={
     }
   }
 };
-const EQUIP_KEYWORDS=['살수차','굴착기','덤프트럭','포크레인','크레인','로더','노면청소','제설','급수차','물차','용수'];
+const EQUIP_KEYWORDS=['살수차','굴착기','덤프트럭','포크레인','크레인','로더','지게차','불도저','롤러','스키드로더','암롤','사다리차','고소작업차','청소차','제설차','방역차','물차','노면청소','토공','폐기물','시설관리','수확','선별','포장','축산','농장','하우스','철근','형틀','미장','해체','설비'];
 
 // ── 유틸 ──
 function toNum(v){const n=Number(String(v||0).replace(/[^\d.-]/g,''));return isFinite(n)?n:0;}
@@ -1114,31 +1125,33 @@ function renderList(){
     const awardPrice=item.awardPrice||item.successPrice||item.winPrice||null;
     const awardRow=isClosed&&awardPrice?`<div class="award-row"><span class="award-lbl">최종 낙찰가</span><span class="award-val">${fmtAmt(awardPrice)}</span></div>`:'';
     const isNewItem=_newIds&&_newIds.has(item.id)&&!isClosed;
-    const newBadge=isNewItem?'<span style="font-size:9px;font-weight:900;background:#DC2626;color:#fff;border-radius:3px;padding:1px 5px;letter-spacing:.04em">NEW</span>':'';
+    const newBadge=isNewItem?'<span style="font-size:9px;font-weight:800;background:#F3F4F6;color:#374151;border-radius:3px;padding:1px 5px;letter-spacing:.04em">NEW</span>':'';
     const dday=getDday(item.deadline);
-    const ddayBadge=(item.status==='마감임박'||item.status==='D-1')&&dday?`<span style="font-size:9px;font-weight:900;color:#DC2626;background:#FEE2E2;border-radius:3px;padding:1px 5px">${dday}</span>`:'';
+    const ddayBadge=(item.status==='마감임박'||item.status==='D-1')&&dday?`<span style="font-size:9px;font-weight:800;color:#374151;background:#F3F4F6;border-radius:3px;padding:1px 5px">${dday}</span>`:'';
 
     return `<div class="${cardClass}">
       <div class="ctop">
         <div class="cbadges">
           <span class="sb ${SCLS[item.status]||'cls'}">${esc(item.status)}</span>
-          <span class="grade-badge" style="background:${gradeBgColor};color:${gradeColor}">${gradeDisplay}</span>
           ${item.recommend?'<span class="rb">추천</span>':''}
           ${newBadge}${ddayBadge}
         </div>
-        <div style="display:flex;align-items:center;gap:4px">
-          ${isWatched(item.id)?'<span style="font-size:10px;font-weight:800;color:#B45309;background:#FEF9C3;border-radius:3px;padding:2px 6px">관심</span>':''}
-          ${isBidIntent(item.id)?'<span style="font-size:10px;font-weight:800;color:#15803D;background:#DCFCE7;border-radius:3px;padding:2px 6px">참여</span>':''}
-          <span class="score-badge ${scoreClass(item.score)}">${item.score}<span style="font-size:9px;font-weight:700;margin-left:1px">점</span></span>
+        <div style="display:flex;align-items:center;gap:6px">
+          ${isWatched(item.id)?'<span style="font-size:10px;color:var(--faint)">관심</span>':''}
+          ${isBidIntent(item.id)?'<span style="font-size:10px;color:var(--faint)">참여</span>':''}
+          <span class="score-badge ${scoreClass(item.score)}">${item.score}<span style="font-size:10px;color:var(--faint);font-weight:600;margin-left:1px">점</span></span>
         </div>
       </div>
       <div class="ctitle">${esc(item.title||'—')}</div>
-      <div class="cagency">${esc(item.agency||'—')}</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:6px">
+        <span>${esc(item.agency||'—')}</span>
+        <span style="font-size:10px;background:#F3F4F6;color:#6B7280;border-radius:3px;padding:1px 6px;font-weight:700">${gradeDisplay}</span>
+      </div>
       <div class="mgrid">
         <div class="mbox"><div class="mlbl">기초금액</div><div class="mval big">${esc(fmtAmt(item.amount))}</div></div>
         <div class="mbox"><div class="mlbl">마감일시</div><div class="mval">${esc(fmtDL(item.deadline))}</div></div>
       </div>
-      <div class="mbox"><div class="mlbl">공고번호</div><div class="mval" style="color:var(--faint);font-weight:500;font-size:11px">${esc(item.id||'—')}</div></div>
+      <div class="mbox" style="margin-top:5px"><div class="mlbl">공고번호</div><div class="mval" style="color:var(--faint);font-weight:500;font-size:11px">${esc(item.id||'—')}</div></div>
       ${awardRow}
     </div>`;
   }
