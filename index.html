@@ -203,7 +203,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .ftpanel.on{display:block}
 .ftcat-label{font-size:10px;font-weight:800;color:var(--faint);letter-spacing:.06em;text-transform:uppercase;margin:8px 0 5px}
 .chip-wrap{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px}
-.chip{background:var(--soft);border:1.5px solid var(--border);border-radius:6px;font-family:inherit;font-size:11px;font-weight:600;padding:5px 10px;cursor:pointer;color:var(--muted);transition:all .15s;white-space:nowrap}
+.chip{background:var(--soft);border:1.5px solid var(--border);border-radius:6px;font-family:inherit;font-size:11px;font-weight:600;padding:5px 9px;cursor:pointer;color:var(--muted);transition:all .15s;white-space:nowrap}
 .chip.on{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:700}
 .chip.cat{background:var(--surface);border-color:var(--primary);color:var(--primary);font-weight:800}
 .chip.cat.on{background:var(--primary);color:#fff}
@@ -369,7 +369,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
   .hbtn{flex:none;padding:10px 20px}
 
   /* Two-column page layout */
-  .layout{display:grid;grid-template-columns:300px 1fr;gap:0;align-items:start}
+  .layout{display:grid;grid-template-columns:340px 1fr;gap:0;align-items:start}
 
   /* Sidebar (stat + search) */
   .sidebar{position:sticky;top:0;padding:24px 20px 24px 32px;max-height:100vh;overflow-y:auto;overflow-x:visible;border-right:1px solid var(--border)}
@@ -415,7 +415,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 
 @media(min-width:1280px){
   .hd{padding:20px 48px}
-  .layout{grid-template-columns:320px 1fr}
+  .layout{grid-template-columns:360px 1fr}
   .sidebar{padding:24px 20px 24px 48px}
   .main-col{padding:0 48px}
   .cards{grid-template-columns:1fr 1fr 1fr}
@@ -476,9 +476,9 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
         </div>
       </div>
 
-      <!-- 대분류 업종 칩 — srch 박스 밖 독립 스크롤 -->
-      <div id="catChipsWrap" style="display:none;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin:8px 16px 0">
-        <div id="catChips" style="display:flex;gap:5px;white-space:nowrap;padding-bottom:2px">
+      <!-- 대분류 업종 칩 — 2줄 wrap 방식 -->
+      <div id="catChipsWrap" style="display:none;margin:8px 16px 0">
+        <div id="catChips" style="display:flex;flex-wrap:wrap;gap:5px">
           <button class="chip cat on" data-cat="전체" onclick="selectCat(this)">전체</button>
           <button class="chip cat" data-cat="중장비" onclick="selectCat(this)">중장비</button>
           <button class="chip cat" data-cat="특수차" onclick="selectCat(this)">특수차</button>
