@@ -516,6 +516,9 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
       <div style="padding:8px 16px 32px;text-align:center;border-top:1px solid var(--border);margin-top:4px">
         <div style="font-size:10px;font-weight:800;color:var(--faint);letter-spacing:.08em;text-transform:uppercase">BIDGEAR PRO</div>
         <div id="versionTag" style="font-size:11px;font-weight:700;color:var(--muted);margin-top:3px">v1.4.0 · —</div>
+        <div id="lastUpdated" style="font-size:10px;color:var(--faint);margin-top:3px">마지막 조회: —</div>
+        <button onclick="manualRefresh()" style="margin-top:8px;background:none;border:1.5px solid var(--border);border-radius:6px;font-family:inherit;font-size:11px;font-weight:700;color:var(--muted);padding:5px 14px;cursor:pointer">지금 새로고침</button>
+      </div>
       </div>
     </div>
 
@@ -1185,6 +1188,7 @@ async function loadAllBids(retry=0){
     allItems=rawItems;_newIds=null;updateStats();currentFilter='라이브';
     document.querySelectorAll('.fbtn').forEach((b,i)=>b.classList.toggle('on',i===0));
     renderList();updateLoadMore();
+    lastLoadedAt=Date.now();updateLastUpdated();
   }catch(e){
     if(retry<3){
       let sec=5;
@@ -1738,20 +1742,45 @@ function applyProfile(){
   closeProfile();
 }
 
+// ── 마지막 조회 시각 표시 ──
+let lastLoadedAt=null;
+function updateLastUpdated(){
+  if(!lastLoadedAt)return;
+  const el=$('lastUpdated');if(!el)return;
+  const diff=Math.floor((Date.now()-lastLoadedAt)/1000);
+  const txt=diff<60?`${diff}초 전 기준`:diff<3600?`${Math.floor(diff/60)}분 전 기준`:`${Math.floor(diff/3600)}시간 전 기준`;
+  el.textContent='마지막 조회: '+txt;
+}
+function manualRefresh(){
+  clearInterval(window._autoRefreshTi);
+  currentPage=1;rawItems=[];allItems=[];_newIds=null;
+  loadAllBids().then(startAutoRefresh);
+}
+function startAutoRefresh(){
+  clearInterval(window._autoRefreshTi);
+  // 10분마다 자동 갱신
+  window._autoRefreshTi=setInterval(()=>{
+    currentPage=1;rawItems=[];allItems=[];_newIds=null;
+    loadAllBids();
+  },10*60*1000);
+  // 30초마다 "몇 분 전" 텍스트 갱신
+  clearInterval(window._timeTi);
+  window._timeTi=setInterval(updateLastUpdated,30000);
+}
+
 // ── INIT ──
 (()=>{
   const vt=$('versionTag');
   if(vt){
     const d=new Date();
     const ds=d.getFullYear()+'.'+(d.getMonth()+1).toString().padStart(2,'0')+'.'+d.getDate().toString().padStart(2,'0');
-    vt.textContent='v1.4.0 · '+ds;
+    vt.textContent='v1.5.0 · '+ds;
   }
-  // 로딩 중 stat 표시
   if($('sTotal'))$('sTotal').innerHTML='<span style="font-size:12px;color:var(--faint)">기동중...</span>';
 })();
 loadProfileFromStorage();
 updateStats();
-loadAllBids();
+loadAllBids().then(startAutoRefresh);
 </script>
 </body>
 </html>
