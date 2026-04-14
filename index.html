@@ -1897,12 +1897,19 @@ async function loadAiSummary(item){
 
 반드시 아래 형식으로만 답하세요:
 
-[한줄요약] (15자 이내로 이 공고의 핵심을 한 문장으로. 예: "도로 살수 작업 용역" / "놀이터 위탁 운영" / "굴착기 임대 입찰")
+[한줄요약] (15자 이내. 예: "도로 살수 작업 용역" / "굴착기 임대 입찰")
 
-1. **이 공고가 뭔가요?** (1~2문장)
-2. **어디서 무슨 목적으로?** (1~2문장)
-3. **뭐가 필요한가요?** (필요 장비·인력·자격, 1~2문장)
-4. **나한테 맞나요?** (${p.equip} 보유, ${p.region} 기준으로 단호하게 한 문장)`;
+1. **이 공고가 뭔가요?** (1~2문장. 어떤 작업인지 쉽고 구체적으로)
+
+2. **어디서 무슨 목적으로?** (1~2문장. 발주기관이 왜 이 일이 필요한지)
+
+3. **필요 요건** (아래 형식으로 구체적으로 작성. 모르면 "공고문 확인" 대신 추정해서 작성)
+- 장비: (구체적인 장비명과 규격. 예: 살수차 5톤 이상, 굴착기 0.4㎥ 이상)
+- 면허: (필요한 면허·자격증. 예: 건설기계대여업, 사업자등록)
+- 실적: (실적 요건 있으면 명시. 없으면 "별도 실적 요건 없음")
+- 인력: (필요 인력. 예: 운전원 포함, 별도 인력 불필요)
+
+4. **나한테 맞나요?** (${p.equip} 보유, ${p.region} 기준. 단호하게 한 문장. "맞습니다" 또는 "맞지 않습니다"로 시작)`;
 
   try{
     const res=await fetch('https://api.anthropic.com/v1/messages',{
@@ -1910,7 +1917,7 @@ async function loadAiSummary(item){
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
         model:'claude-sonnet-4-20250514',
-        max_tokens:600,
+        max_tokens:700,
         messages:[{role:'user',content:prompt}]
       })
     });
@@ -1923,9 +1930,10 @@ async function loadAiSummary(item){
     const verdict=verdictMatch?verdictMatch[1].trim():'';
     const bodyText=text.replace(/\[한줄요약\].+\n?/,'');
 
-    // 마크다운 → HTML
+    // 마크다운 → HTML (리스트 항목 처리 추가)
     const html=bodyText
-      .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+      .replace(/\*\*(.+?)\*\*/g,'<strong style="color:var(--primary)">$1</strong>')
+      .replace(/^- (.+)$/gm,'<div style="display:flex;gap:6px;padding:3px 0"><span style="color:var(--accent);font-weight:800;flex-shrink:0">·</span><span>$1</span></div>')
       .replace(/^(\d+\.\s)/gm,'<br><span style="font-weight:800;color:var(--primary)">$1</span>')
       .replace(/\n/g,'<br>');
 
@@ -1974,31 +1982,47 @@ function renderAiResult(cached,item){
 function buildFallbackSummary(item,p){
   const title=item.title||'';
   const agency=item.agency||'';
-  const amt=toNum(item.amount);
   const amtStr=fmtAmt(item.amount);
 
   // 업무 유형 추론
-  let workType='업무 내용을 공고문에서 확인하세요.';
-  if(title.includes('살수')||title.includes('살수차'))workType='도로·공사현장·행사 등에 살수차로 물을 뿌리는 작업입니다.';
-  else if(title.includes('청소')||title.includes('노면'))workType='도로 또는 시설의 청소·정비 작업입니다.';
+  let workType='외주 용역 작업입니다.';
+  if(title.includes('살수'))workType='도로·공사현장·행사장에 물을 뿌리는 살수 작업입니다.';
+  else if(title.includes('노면청소')||title.includes('청소차'))workType='도로 노면 청소 및 정비 작업입니다.';
   else if(title.includes('제설'))workType='겨울철 도로 제설 및 제빙 작업입니다.';
-  else if(title.includes('폐기물')||title.includes('쓰레기'))workType='폐기물 수거·운반·처리 관련 작업입니다.';
-  else if(title.includes('굴착')||title.includes('토공'))workType='굴착기를 이용한 토목·공사 보조 작업입니다.';
+  else if(title.includes('폐기물')||title.includes('쓰레기'))workType='폐기물 수거·운반·처리 작업입니다.';
+  else if(title.includes('굴착')||title.includes('토공'))workType='굴착기를 이용한 토목·공사 작업입니다.';
   else if(title.includes('운영')||title.includes('관리'))workType='시설 운영 및 관리 용역입니다.';
-  else if(title.includes('용역'))workType='외주 용역 작업입니다. 공고문에서 상세 확인이 필요합니다.';
+  else if(title.includes('용역'))workType='외주 용역 작업입니다.';
+
+  // 장비/면허 추론
+  const EQUIP_REQ={
+    '살수차':   {equip:'살수차 (1톤 이상)',  lic:'건설기계대여업, 사업자등록', perf:'별도 실적 요건 없음(공고문 확인)', crew:'운전원 포함'},
+    '굴착기':   {equip:'굴착기 0.4㎥ 이상', lic:'건설기계대여업',             perf:'유사 시공실적 요구 가능',         crew:'운전원 포함'},
+    '덤프':     {equip:'덤프트럭 8~25톤',    lic:'건설기계대여업',             perf:'별도 실적 요건 없음',             crew:'운전원 포함'},
+    '노면청소': {equip:'노면청소차 4톤 이상', lic:'건설기계대여업',             perf:'별도 실적 요건 없음',             crew:'운전원 포함'},
+    '제설':     {equip:'제설차+살포기',       lic:'건설기계대여업',             perf:'별도 실적 요건 없음',             crew:'운전원 포함'},
+    '폐기물':   {equip:'화물차 또는 암롤',   lic:'폐기물 수집·운반업 허가',    perf:'유사 실적 요구 가능',             crew:'별도 인력 필요'},
+  };
+  const matchKey=Object.keys(EQUIP_REQ).find(k=>title.includes(k));
+  const req=matchKey?EQUIP_REQ[matchKey]:{equip:'공고문 확인 필요',lic:'관련 면허',perf:'공고문 확인',crew:'공고문 확인'};
 
   const matchText=item.equipMatch
-    ?`<strong style="color:#16A34A">내 ${p.equip}으로 참여 가능합니다.</strong>`
-    :`<strong style="color:#D97706">${p.equip} 보유자에게 맞지 않을 수 있습니다. 공고문 확인 필요.</strong>`;
+    ?`<span style="color:#16A34A;font-weight:800">맞습니다. ${p.equip}으로 직접 참여 가능합니다.</span>`
+    :`<span style="color:#D97706;font-weight:800">맞지 않습니다. 이 공고는 ${req.equip}이 필요한 반면 보유 장비는 ${p.equip}입니다.</span>`;
 
   return `<div style="font-size:13px;color:var(--text);line-height:1.8;font-weight:500">
-    <span style="font-weight:800;color:var(--primary)">1. 이 공고가 뭔가요?</span><br>
+    <strong style="color:var(--primary)">1. 이 공고가 뭔가요?</strong><br>
     ${workType}<br><br>
-    <span style="font-weight:800;color:var(--primary)">2. 어디서 무슨 목적으로?</span><br>
+    <strong style="color:var(--primary)">2. 어디서 무슨 목적으로?</strong><br>
     ${esc(agency)}에서 발주한 ${amtStr} 규모 공고입니다.<br><br>
-    <span style="font-weight:800;color:var(--primary)">3. 뭐가 필요한가요?</span><br>
-    관련 장비·면허·실적 요건을 나라장터 공고문에서 확인하세요.<br><br>
-    <span style="font-weight:800;color:var(--primary)">4. 나한테 맞나요?</span><br>
+    <strong style="color:var(--primary)">3. 필요 요건</strong><br>
+    <div style="background:var(--soft);border-radius:8px;padding:10px 12px;margin:6px 0;border:1px solid var(--border)">
+      <div style="display:flex;gap:6px;padding:3px 0"><span style="color:var(--accent);font-weight:800;flex-shrink:0">·</span><span><b>장비:</b> ${req.equip}</span></div>
+      <div style="display:flex;gap:6px;padding:3px 0"><span style="color:var(--accent);font-weight:800;flex-shrink:0">·</span><span><b>면허:</b> ${req.lic}</span></div>
+      <div style="display:flex;gap:6px;padding:3px 0"><span style="color:var(--accent);font-weight:800;flex-shrink:0">·</span><span><b>실적:</b> ${req.perf}</span></div>
+      <div style="display:flex;gap:6px;padding:3px 0"><span style="color:var(--accent);font-weight:800;flex-shrink:0">·</span><span><b>인력:</b> ${req.crew}</span></div>
+    </div>
+    <strong style="color:var(--primary)">4. 나한테 맞나요?</strong><br>
     ${matchText}
   </div>`;
 }
