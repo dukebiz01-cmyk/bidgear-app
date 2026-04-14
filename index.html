@@ -500,11 +500,12 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
         <span class="lbadge" id="countBadge">0건</span>
       </div>
       <div class="fbar">
-        <button class="fbtn on" onclick="setFilter('전체',this)">전체</button>
+        <button class="fbtn on" onclick="setFilter('라이브',this)">라이브</button>
         <button class="fbtn" onclick="setFilter('추천',this)">추천</button>
         <button class="fbtn" onclick="setFilter('검토',this)">검토</button>
-        <button class="fbtn" onclick="setFilter('제외',this)">제외</button>
-        <button class="fbtn" onclick="setFilter('마감임박',this)">마감임박</button>
+        <button class="fbtn" onclick="setFilter('마감',this)">마감</button>
+        <button class="fbtn" onclick="setFilter('관심',this)">관심</button>
+        <button class="fbtn" onclick="setFilter('전체',this)">전체</button>
       </div>
       <div class="err" id="errBox"></div>
       <div class="cards" id="cardList"><div class="loading"><div class="spinner"></div>데이터 로딩중...</div></div>
@@ -515,7 +516,6 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
       <div style="padding:8px 16px 32px;text-align:center;border-top:1px solid var(--border);margin-top:4px">
         <div style="font-size:10px;font-weight:800;color:var(--faint);letter-spacing:.08em;text-transform:uppercase">BIDGEAR PRO</div>
         <div id="versionTag" style="font-size:11px;font-weight:700;color:var(--muted);margin-top:3px">v1.4.0 · —</div>
-        <div style="font-size:10px;color:var(--faint);margin-top:2px">살수비드 입찰 자동화 엔진</div>
       </div>
     </div>
 
@@ -1043,27 +1043,63 @@ function updateStats(){
 }
 
 function getFiltered(){
-  if(currentFilter==='추천')return allItems.filter(i=>i.recommend);
-  if(currentFilter==='검토')return allItems.filter(i=>i.status==='진행중'||i.status==='D-3'||i.status==='D-1');
-  if(currentFilter==='제외')return allItems.filter(i=>i.status==='마감'||i.riskLevel==='HIGH');
-  if(currentFilter==='마감임박')return allItems.filter(i=>i.status==='마감임박'||i.status==='D-1');
-  return allItems;
+  let items=allItems;
+  if(filterKw){const kw=filterKw.toLowerCase();items=items.filter(i=>(i.title||'').toLowerCase().includes(kw)||(i.agency||'').toLowerCase().includes(kw)||(i.id||'').includes(kw));}
+  if(filterRegion){const RMAP={'충북':['충청북도','충북'],'충남':['충청남도','충남'],'경북':['경상북도','경북'],'경남':['경상남도','경남'],'전북':['전라북도','전북','전북특별자치도'],'전남':['전라남도','전남'],'경기':['경기도','경기'],'강원':['강원도','강원','강원특별자치도'],'서울':['서울특별시','서울'],'부산':['부산광역시','부산'],'대구':['대구광역시','대구'],'인천':['인천광역시','인천'],'광주':['광주광역시','광주'],'대전':['대전광역시','대전'],'울산':['울산광역시','울산'],'세종':['세종특별자치시','세종'],'제주':['제주특별자치도','제주']};const terms=RMAP[filterRegion]||[filterRegion];items=items.filter(i=>{const a=i.agency||'',r=i.region||'';return terms.some(t=>a.includes(t)||r.includes(t));});}
+  if(filterSubKw)items=items.filter(i=>(i.title||'').includes(filterSubKw)||(i.agency||'').includes(filterSubKw));
+  const LIVE=new Set(['마감임박','D-1','D-3','진행중']);
+  if(currentFilter==='라이브')return items.filter(i=>LIVE.has(i.status));
+  if(currentFilter==='추천')return items.filter(i=>i.recommend);
+  if(currentFilter==='검토')return items.filter(i=>!i.recommend&&i.score>=50&&i.status!=='마감');
+  if(currentFilter==='마감')return items.filter(i=>i.status==='마감');
+  if(currentFilter==='관심')return items.filter(i=>isWatched(i.id));
+  return items;
 }
+
 function setFilter(f,btn){currentFilter=f;document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));if(btn)btn.classList.add('on');renderList();}
+
+// 5단계 우선순위 정렬
+function tierSort(items){
+  const LIVE=new Set(['마감임박','D-1','D-3','진행중']);
+  function tier(i){
+    if(i.status==='마감')return 5;
+    if((i.status==='마감임박'||i.status==='D-1')&&i.recommend)return 1;
+    if(i.status==='진행중'&&i.recommend)return 2;
+    if(i.status==='D-3'&&i.recommend)return 3;
+    if(LIVE.has(i.status))return 4;
+    return 4;
+  }
+  return [...items].sort((a,b)=>tier(a)-tier(b)||b.score-a.score);
+}
+
+// NEW 뱃지: 로드된 공고 중 공고번호 기준 상위 10% (최신 등록)
+function getNewIds(items){
+  const sorted=[...items].sort((a,b)=>String(b.id||'').localeCompare(String(a.id||'')));
+  const cutoff=Math.ceil(sorted.length*0.1);
+  return new Set(sorted.slice(0,cutoff).map(i=>i.id));
+}
+let _newIds=null;
 
 function renderList(){
   let items=getFiltered().slice();
-  // 정렬 적용
+  if(!_newIds||_newIds.size===0)_newIds=getNewIds(allItems);
+
   if(filterSort==='amount_desc')items.sort((a,b)=>toNum(b.amount)-toNum(a.amount));
   else if(filterSort==='amount_asc')items.sort((a,b)=>toNum(a.amount)-toNum(b.amount));
   else if(filterSort==='newest')items.sort((a,b)=>String(b.id||'').localeCompare(String(a.id||'')));
   else if(filterSort==='deadline_asc')items.sort((a,b)=>{const da=parseDL(a.deadline)||new Date(9999,0),db=parseDL(b.deadline)||new Date(9999,0);return da-db;});
   else if(filterSort==='deadline_desc')items.sort((a,b)=>{const da=parseDL(a.deadline)||new Date(0),db=parseDL(b.deadline)||new Date(0);return db-da;});
-  else items.sort((a,b)=>b.score-a.score);
+  else items=tierSort(items);
+
   $('countBadge').textContent=items.length+'건';
   if(!searched){$('cardList').innerHTML='<div class="loading"><div class="spinner"></div>데이터 로딩중...</div>';return;}
-  if(!items.length){$('cardList').innerHTML='<div class="empty">조건에 맞는 공고가 없습니다</div>';return;}
-  $('cardList').innerHTML=items.map(item=>{
+  const emptyMsg={'라이브':'진행 중인 공고가 없습니다','추천':'추천 공고가 없습니다','검토':'검토 대상 공고가 없습니다','마감':'마감된 공고가 없습니다','관심':'관심 등록한 공고가 없습니다','전체':'공고가 없습니다'};
+  if(!items.length){$('cardList').innerHTML=`<div class="empty">${emptyMsg[currentFilter]||'조건에 맞는 공고가 없습니다'}</div>`;return;}
+
+  const LIVE=new Set(['마감임박','D-1','D-3','진행중']);
+  const showSections=(currentFilter==='전체'||currentFilter==='라이브')&&filterSort==='score';
+
+  function renderCard(item){
     const isClosed=item.status==='마감';
     const isTop=item.score>=70&&item.riskLevel!=='HIGH'&&item.equipMatch===true&&!isClosed;
     const isRisk=item.riskLevel==='HIGH';
@@ -1072,17 +1108,20 @@ function renderList(){
     const gradeDisplay=isClosed?'마감됨':item.grade||'—';
     const gradeColor=isClosed?'#9CA3AF':gc;
     const gradeBgColor=isClosed?'#F3F4F6':gb;
-    // 낙찰가 (API에서 제공 시 표시)
-    const awardPrice=item.awardPrice||item.successPrice||item.winPrice||item.succsPrice||null;
+    const awardPrice=item.awardPrice||item.successPrice||item.winPrice||null;
     const awardRow=isClosed&&awardPrice?`<div class="award-row"><span class="award-lbl">최종 낙찰가</span><span class="award-val">${fmtAmt(awardPrice)}</span></div>`:'';
-    return `
-    <div class="${cardClass}">
+    const isNewItem=_newIds&&_newIds.has(item.id)&&!isClosed;
+    const newBadge=isNewItem?'<span style="font-size:9px;font-weight:900;background:#DC2626;color:#fff;border-radius:3px;padding:1px 5px;letter-spacing:.04em">NEW</span>':'';
+    const dday=getDday(item.deadline);
+    const ddayBadge=(item.status==='마감임박'||item.status==='D-1')&&dday?`<span style="font-size:9px;font-weight:900;color:#DC2626;background:#FEE2E2;border-radius:3px;padding:1px 5px">${dday}</span>`:'';
+
+    return `<div class="${cardClass}">
       <div class="ctop">
         <div class="cbadges">
           <span class="sb ${SCLS[item.status]||'cls'}">${esc(item.status)}</span>
           <span class="grade-badge" style="background:${gradeBgColor};color:${gradeColor}">${gradeDisplay}</span>
           ${item.recommend?'<span class="rb">추천</span>':''}
-          ${isRisk?'<span class="sb urg">위험</span>':''}
+          ${newBadge}${ddayBadge}
         </div>
         <div style="display:flex;align-items:center;gap:4px">
           ${isWatched(item.id)?'<span style="font-size:10px;font-weight:800;color:#B45309;background:#FEF9C3;border-radius:3px;padding:2px 6px">관심</span>':''}
@@ -1099,7 +1138,21 @@ function renderList(){
       <div class="mbox"><div class="mlbl">공고번호</div><div class="mval" style="color:var(--faint);font-weight:500;font-size:11px">${esc(item.id||'—')}</div></div>
       ${awardRow}
     </div>`;
-  }).join('');
+  }
+
+  // 전체 탭: 라이브 섹션 / 구분선 / 마감 섹션
+  if(showSections){
+    const live=items.filter(i=>LIVE.has(i.status));
+    const closed=items.filter(i=>i.status==='마감');
+    const divider=closed.length?`<div style="grid-column:1/-1;display:flex;align-items:center;gap:10px;padding:6px 0;margin:6px 0">
+      <div style="flex:1;height:1.5px;background:var(--border)"></div>
+      <span style="font-size:10px;font-weight:800;color:var(--faint);letter-spacing:.08em;white-space:nowrap">마감 공고 ${closed.length}건</span>
+      <div style="flex:1;height:1.5px;background:var(--border)"></div>
+    </div>`:'';
+    $('cardList').innerHTML=live.map(renderCard).join('')+divider+closed.map(renderCard).join('');
+  } else {
+    $('cardList').innerHTML=items.map(renderCard).join('');
+  }
   document.querySelectorAll('.card').forEach((el,i)=>{el.onclick=()=>openDetail(items[i]);});
 }
 
@@ -1129,7 +1182,7 @@ async function loadAllBids(retry=0){
     totalCount=data.totalCount||data.total||data.totalNumOfRows||data.numOfRows_total||data.cnt||0;
     if($('sTotal'))$('sTotal').textContent=totalCount>0?totalCount.toLocaleString():data.items?.length||'—';
     rawItems=(data.items||[]).map(processItem);
-    allItems=rawItems;updateStats();currentFilter='전체';
+    allItems=rawItems;_newIds=null;updateStats();currentFilter='라이브';
     document.querySelectorAll('.fbtn').forEach((b,i)=>b.classList.toggle('on',i===0));
     renderList();updateLoadMore();
   }catch(e){
