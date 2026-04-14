@@ -935,9 +935,16 @@ function scoreItem(item){
   const amtBonus=(amt>=5000000&&amt<=300000000)?3:(amt>=1000000&&amt<=500000000)?1:0;
   let finalScore=Math.max(0,Math.min(100,baseScore+equipBonus+urgBonus+amtBonus));
 
-  // ── 장비 불일치 시 점수 상한 ── (최대 검토 수준)
-  if(!equipMatch && !EQUIP_KEYWORDS.some(k=>title.includes(k))){
-    finalScore=Math.min(finalScore,54); // 최적합/적합 불가, 검토 수준으로 억제
+  // ── 점수 상한 규칙 ──
+  const hasRelatedKeyword=EQUIP_KEYWORDS.some(k=>title.includes(k));
+  if(!equipMatch){
+    if(!hasRelatedKeyword){
+      // 완전 무관 → 최대 49점 (주의 수준)
+      finalScore=Math.min(finalScore,49);
+    } else {
+      // 관련 업종이지만 주력 장비 불일치 → 최대 64점 (검토 수준)
+      finalScore=Math.min(finalScore,64);
+    }
   }
 
   // ── 위험 등급 ──
@@ -1046,16 +1053,19 @@ function renderList(){
   if(!searched){$('cardList').innerHTML='<div class="loading"><div class="spinner"></div>데이터 로딩중...</div>';return;}
   if(!items.length){$('cardList').innerHTML='<div class="empty">조건에 맞는 공고가 없습니다</div>';return;}
   $('cardList').innerHTML=items.map(item=>{
-    const isTop=item.score>=70&&item.riskLevel!=='HIGH';
+    const isTop=item.score>=70&&item.riskLevel!=='HIGH'&&item.equipMatch===true;
     const isRisk=item.riskLevel==='HIGH';
     const cardClass=`card${isTop?' top-match':isRisk?' high-risk':''}`;
     const gc=getGradeColor(item.score),gb=getGradeBg(item.score);
+    const gradeDisplay=item.status==='마감'?'마감됨':item.grade||'—';
+    const gradeColor=item.status==='마감'?'#9CA3AF':gc;
+    const gradeBgColor=item.status==='마감'?'#F3F4F6':gb;
     return `
     <div class="${cardClass}">
       <div class="ctop">
         <div class="cbadges">
           <span class="sb ${SCLS[item.status]||'cls'}">${esc(item.status)}</span>
-          <span class="grade-badge" style="background:${gb};color:${gc}">${item.grade||'—'}</span>
+          <span class="grade-badge" style="background:${gradeBgColor};color:${gradeColor}">${gradeDisplay}</span>
           ${item.recommend?'<span class="rb">추천</span>':''}
           ${isRisk?'<span class="sb urg">위험</span>':''}
         </div>
