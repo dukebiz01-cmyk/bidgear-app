@@ -97,25 +97,25 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .ctop{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .cbadges{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
 
-/* 상태 뱃지 — 회색 계열 통일, 마감임박만 포인트 */
+/* 상태 뱃지 — 정보 색상 유지 */
 .sb{border-radius:4px;font-size:10px;font-weight:700;padding:3px 8px;letter-spacing:.01em}
-.urg{background:#F3F4F6;color:#374151;font-weight:800}   /* 마감임박 — 진한 회색 */
-.d3{background:#F3F4F6;color:#6B7280}
-.act{background:#F3F4F6;color:#6B7280}
-.cls{background:#F9FAFB;color:#9CA3AF}
+.urg{background:#FEF2F2;color:#DC2626;font-weight:800}   /* 마감임박 — 빨강 */
+.d3{background:#FFF7ED;color:#C2410C;font-weight:700}    /* D-3 — 주황 */
+.act{background:#F0FDF4;color:#15803D;font-weight:700}   /* 진행중 — 초록 */
+.cls{background:#F9FAFB;color:#9CA3AF}                   /* 마감 — 회색 */
 
-/* 추천 뱃지 — 유일한 컬러 포인트 */
+/* 추천 뱃지 — 민트 유지 */
 .rb{background:var(--accent);color:#fff;border-radius:4px;font-size:10px;font-weight:800;padding:3px 8px}
 
 /* 등급 뱃지 — 회색 */
 .grade-badge{border-radius:4px;font-size:10px;font-weight:700;padding:3px 8px;letter-spacing:.01em;background:#F3F4F6;color:#6B7280}
 
-/* 점수 뱃지 — 숫자만 강조, 색 제거 */
-.score-badge{display:inline-flex;align-items:center;border-radius:6px;font-size:12px;font-weight:900;padding:2px 8px;letter-spacing:-.01em;color:var(--text)}
-.score-hi{color:#111827}
+/* 점수 뱃지 — 숫자 굵기로만 강조 */
+.score-badge{display:inline-flex;align-items:center;border-radius:6px;font-size:12px;font-weight:900;padding:2px 8px;letter-spacing:-.01em}
+.score-hi{color:#0F766E}
 .score-mid{color:#374151}
-.score-lo{color:#6B7280}
-.score-na{color:#9CA3AF}
+.score-lo{color:#9CA3AF}
+.score-na{color:#D1D5DB}
 
 /* ── 종합 평가 카드 ── */
 .eval-card{border-radius:var(--r);padding:16px;margin-bottom:12px;border:1.5px solid}
@@ -1127,7 +1127,7 @@ function renderList(){
     const isNewItem=_newIds&&_newIds.has(item.id)&&!isClosed;
     const newBadge=isNewItem?'<span style="font-size:9px;font-weight:800;background:#F3F4F6;color:#374151;border-radius:3px;padding:1px 5px;letter-spacing:.04em">NEW</span>':'';
     const dday=getDday(item.deadline);
-    const ddayBadge=(item.status==='마감임박'||item.status==='D-1')&&dday?`<span style="font-size:9px;font-weight:800;color:#374151;background:#F3F4F6;border-radius:3px;padding:1px 5px">${dday}</span>`:'';
+    const ddayBadge=(item.status==='마감임박'||item.status==='D-1')&&dday?`<span style="font-size:9px;font-weight:800;color:#DC2626;background:#FEF2F2;border-radius:3px;padding:1px 5px">${dday}</span>`:'';
 
     return `<div class="${cardClass}">
       <div class="ctop">
@@ -1358,7 +1358,7 @@ function openDetail(item){
   </div>`;
 
   // ── 마감 카운트다운 ──
-  const ddayHtml=dday?`<div class="dday-box" style="background:${bg};border-color:${color}40;margin-bottom:14px"><span class="dday-lbl">마감까지</span><span class="dday-val" id="ddayTimer" style="color:${item.status==='마감'?'#9CA3AF':color}">${esc(dday)}</span></div>`:'';
+  const ddayHtml=dday?`<div class="dday-box" style="background:var(--soft);border:1.5px solid var(--border);margin-bottom:14px"><span class="dday-lbl">마감까지</span><span class="dday-val" id="ddayTimer" style="color:${isClosed?'#9CA3AF':'var(--text)'};font-weight:900">${esc(dday)}</span></div>`:'';
 
   // ── 점수 / 매칭 블록 ── (마감 공고는 별도 처리)
   const circumference=2*Math.PI*32;
@@ -1377,23 +1377,23 @@ function openDetail(item){
         <div style="position:relative;width:64px;height:64px">
           <svg viewBox="0 0 64 64" style="width:64px;height:64px;transform:rotate(-90deg)">
             <circle cx="32" cy="32" r="28" fill="none" stroke="#E5E7EB" stroke-width="6"/>
-            <circle cx="32" cy="32" r="28" fill="none" stroke="${ringColor}" stroke-width="6"
+            <circle cx="32" cy="32" r="28" fill="none" stroke="${isClosed?'#D1D5DB':'#1E293B'}" stroke-width="6"
               stroke-dasharray="${circumference}" stroke-dashoffset="${dashOffset}" stroke-linecap="round"/>
           </svg>
           <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
-            <span class="rpt-score-num" style="color:#111827;font-size:28px">${sc}</span>
+            <span class="rpt-score-num" style="color:#111827">${sc}</span>
           </div>
         </div>
-        <span class="rpt-score-unit" style="color:#6B7280">/ 100점</span>
+        <span class="rpt-score-unit" style="color:#9CA3AF">/ 100점</span>
       </div>
       <div class="rpt-score-right">
-        <div class="rpt-grade-pill" style="background:${isClosed?'#F3F4F6':gradeBg};color:${isClosed?'#6B7280':gradeColor};font-size:15px;font-weight:900">${gradeDisplay}</div>
+        <div class="rpt-grade-pill" style="background:#F3F4F6;color:#374151">${gradeDisplay}</div>
         <div class="rpt-match-row">
-          <span class="rpt-match-label" style="color:#6B7280">매칭 확률&nbsp;</span>
-          <span class="rpt-match-num" style="color:#111827;font-size:28px">${isClosed?'—':matchProb}</span>
-          ${isClosed?'':'<span class="rpt-match-unit" style="color:#111827">%</span>'}
+          <span class="rpt-match-label" style="color:#9CA3AF">매칭 확률&nbsp;</span>
+          <span class="rpt-match-num" style="color:#111827">${isClosed?'—':matchProb}</span>
+          ${isClosed?'':'<span class="rpt-match-unit" style="color:#6B7280">%</span>'}
         </div>
-        <div class="rpt-match-hint" style="color:#6B7280">${hintDisplay}</div>
+        <div class="rpt-match-hint" style="color:#9CA3AF">${hintDisplay}</div>
       </div>
     </div>`;
 
@@ -1405,18 +1405,18 @@ function openDetail(item){
   const amtScore=toNum(item.amount)>=5000000&&toNum(item.amount)<=300000000?100:toNum(item.amount)>0?60:0;
   const barsHtml=`
     <div class="rpt-bars">
-      <div style="font-size:9px;font-weight:800;color:var(--faint);letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px">적합도 분석</div>
+      <div style="font-size:9px;font-weight:800;color:var(--faint);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px">적합도 분석</div>
       ${[
         {lbl:'장비 적합',pct:eqScore/15*100,ok:eqScore>=10,val:eqScore>=10?'일치':eqScore>0?'부분':'불일치'},
-        {lbl:'지역 적합',pct:regionOk?100:25,ok:regionOk,val:regionOk?'일치':'불일치'},
+        {lbl:'지역 적합',pct:regionOk?100:20,ok:regionOk,val:regionOk?'일치':'불일치'},
         {lbl:'면허 보유',pct:licOk?100:0,ok:licOk,val:licOk?'충족':'누락'},
         {lbl:'예산 규모',pct:amtScore,ok:amtScore>=80,val:amtScore>=80?'적정':amtScore>0?'확인':'미확인'},
         {lbl:'마감 여유',pct:urgScore/5*100,ok:urgScore>=3,val:item.status==='진행중'?'여유':item.status==='D-3'?'D-3':item.status==='D-1'?'D-1':'임박'},
       ].map(b=>`
         <div class="rpt-bar-row">
-          <span class="rpt-bar-lbl">${b.lbl}</span>
-          <div class="rpt-bar-track"><div class="rpt-bar-fill" style="width:${Math.max(b.pct,b.pct>0?6:0)}%;background:${b.ok?gradeColor:'#DC2626'}"></div></div>
-          <span class="rpt-bar-val" style="color:${b.ok?gradeColor:'#DC2626'}">${b.val}</span>
+          <span class="rpt-bar-lbl" style="color:#6B7280">${b.lbl}</span>
+          <div class="rpt-bar-track"><div class="rpt-bar-fill" style="width:${Math.max(b.pct,b.pct>0?6:0)}%;background:${b.ok?'#374151':'#D1D5DB'}"></div></div>
+          <span class="rpt-bar-val" style="color:${b.ok?'#111827':'#9CA3AF'};font-size:11px">${b.val}</span>
         </div>`).join('')}
     </div>`;
 
