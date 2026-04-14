@@ -476,6 +476,18 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
         </div>
       </div>
 
+      <!-- 대분류 업종 칩 — srch 박스 밖 독립 스크롤 -->
+      <div id="catChipsWrap" style="display:none;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin:8px 16px 0">
+        <div id="catChips" style="display:flex;gap:5px;white-space:nowrap;padding-bottom:2px">
+          <button class="chip cat on" data-cat="전체" onclick="selectCat(this)">전체</button>
+          <button class="chip cat" data-cat="중장비" onclick="selectCat(this)">중장비</button>
+          <button class="chip cat" data-cat="특수차" onclick="selectCat(this)">특수차</button>
+          <button class="chip cat" data-cat="용역" onclick="selectCat(this)">용역</button>
+          <button class="chip cat" data-cat="농업인력" onclick="selectCat(this)">농업인력</button>
+          <button class="chip cat" data-cat="건설협력업체" onclick="selectCat(this)">건설협력</button>
+        </div>
+      </div>
+
       <div class="srch">
         <div class="srch-row">
           <input class="sinput" id="kwInput" placeholder="공고명/작업명 검색" onkeydown="if(event.key==='Enter'){event.preventDefault();doSearch()}"/>
@@ -492,17 +504,6 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
         <!-- 종목 탭 -->
         <div class="ftpanel on" id="ftpanel0">
           <div class="ftcat-label">업종 선택</div>
-          <!-- 대분류: 풀 너비 스크롤 (srch 패딩 밖으로) -->
-          <div style="margin:0 -14px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none">
-            <div id="catChips" style="display:flex;gap:5px;padding:0 14px 6px;white-space:nowrap;min-width:max-content">
-              <button class="chip cat on" data-cat="전체" onclick="selectCat(this)">전체</button>
-              <button class="chip cat" data-cat="중장비" onclick="selectCat(this)">중장비</button>
-              <button class="chip cat" data-cat="특수차" onclick="selectCat(this)">특수차</button>
-              <button class="chip cat" data-cat="용역" onclick="selectCat(this)">용역</button>
-              <button class="chip cat" data-cat="농업인력" onclick="selectCat(this)">농업인력</button>
-              <button class="chip cat" data-cat="건설협력업체" onclick="selectCat(this)">건설협력</button>
-            </div>
-          </div>
           <div class="ftcat-label">세부 작업 선택 <span id="subLabel" style="color:var(--muted);font-weight:400;font-size:10px">— 업종 선택 후 활성화</span></div>
           <div class="chip-wrap" id="subChips">
             <button class="chip on" data-kw="" onclick="selectSub(this,'')">전체</button>
@@ -1479,6 +1480,8 @@ function setErr(msg){const e=$('errBox');e.textContent=msg;e.style.display=msg?'
 function switchFtab(idx,btn){
   document.querySelectorAll('.ftab').forEach((t,i)=>t.classList.toggle('on',i===idx));
   document.querySelectorAll('.ftpanel').forEach((p,i)=>p.classList.toggle('on',i===idx));
+  const wrap=document.getElementById('catChipsWrap');
+  if(wrap)wrap.style.display=idx===0?'block':'none';
 }
 
 function selectCat(btn){
@@ -2260,6 +2263,9 @@ function startAutoRefresh(){
     vt.textContent='v1.5.0 · '+ds;
   }
   if($('sTotal'))$('sTotal').innerHTML='<span style="font-size:12px;color:var(--faint)">기동중...</span>';
+  // 업종 탭 기본 선택 — catChipsWrap 표시
+  const wrap=$('catChipsWrap');
+  if(wrap)wrap.style.display='block';
 })();
 loadProfileFromStorage();
 updateStats();
