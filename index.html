@@ -1030,7 +1030,7 @@ function updateStats(){
   const displayTotal=totalCount>0?totalCount.toLocaleString():t||'—';
   if($('sTotal'))$('sTotal').textContent=displayTotal;
   if($('sRec'))$('sRec').textContent=r?r+'건 추천':'추천 없음';
-  if($('sBudget'))$('sBudget').textContent=b?fmtAmt(b)+' 총예산':'—';
+  if($('sBudget'))$('sBudget').textContent=t?t+'건 분석':'로딩 중';
   if($('dVal'))$('dVal').textContent=a||'0';
   if(t){
     const segs=[{id:'ds1',v:u,c:'#DC2626'},{id:'ds2',v:d,c:'#E9A23B'},{id:'ds3',v:a,c:'#16A34A'},{id:'ds4',v:c,c:'#E5E7EB'}];
